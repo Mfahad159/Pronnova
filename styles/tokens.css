@@ -1,0 +1,85 @@
+:root {
+  /* Canvas & Surface Palette (Figma Reference) */
+  --color-canvas: #fffbf7;
+  --color-surface: #ffffff;
+  --color-surface-warm: #ffeedf;
+  --color-surface-peach: #ffe8c6;
+  --color-surface-cream: #f5f1d8;
+  --color-surface-mint: #e8f5df;
+  --color-surface-sky: #dff5ff;
+  --color-surface-tint-orange: rgba(255, 141, 40, 0.1);
+  --color-surface-tint-coral: rgba(255, 89, 75, 0.1);
+  --color-surface-tint-green: rgba(106, 188, 69, 0.12);
+
+  /* Brand & Action Palette */
+  --color-brand-orange: #ff8d28;
+  --color-brand-orange-soft: #ff9f4b;
+  --color-cta-coral: #ff594b;
+  --color-cta-coral-deep: #ea4335;
+  --color-accent-pink: #ff7b7c;
+  --color-info-blue: #2db8ff;
+  --color-success: #22ad5a;
+  --color-success-deep: #198a47;
+  --color-success-bar: #6abc45;
+  --color-warning: #ffb000;
+
+  /* Text Hierarchy */
+  --color-ink: #100e0e;
+  --color-ink-secondary: #475569;
+  --color-ink-muted: #5b5b5b;
+
+  /* Borders */
+  --color-border-warm: rgba(255, 141, 40, 0.28);
+  --color-border-subtle: #ebebeb;
+
+  /* Radii */
+  --radius-card: 24px;
+  --radius-card-sm: 16px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-card: 0px 1px 20px rgba(0, 0, 0, 0.05);
+  --shadow-nav: 0px -1px 20px rgba(0, 0, 0, 0.05);
+  --shadow-glow-orange: 0px 8px 32px rgba(255, 141, 40, 0.22);
+}
+
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-surface-warm: var(--color-surface-warm);
+  --color-surface-peach: var(--color-surface-peach);
+  --color-surface-cream: var(--color-surface-cream);
+  --color-surface-mint: var(--color-surface-mint);
+  --color-surface-sky: var(--color-surface-sky);
+  --color-surface-tint-orange: var(--color-surface-tint-orange);
+  --color-surface-tint-coral: var(--color-surface-tint-coral);
+  --color-surface-tint-green: var(--color-surface-tint-green);
+
+  --color-brand-orange: var(--color-brand-orange);
+  --color-brand-orange-soft: var(--color-brand-orange-soft);
+  --color-cta-coral: var(--color-cta-coral);
+  --color-cta-coral-deep: var(--color-cta-coral-deep);
+  --color-accent-pink: var(--color-accent-pink);
+  --color-info-blue: var(--color-info-blue);
+  --color-success: var(--color-success);
+  --color-success-deep: var(--color-success-deep);
+  --color-success-bar: var(--color-success-bar);
+  --color-warning: var(--color-warning);
+
+  --color-ink: var(--color-ink);
+  --color-ink-secondary: var(--color-ink-secondary);
+  --color-ink-muted: var(--color-ink-muted);
+
+  --color-border-warm: var(--color-border-warm);
+  --color-border-subtle: var(--color-border-subtle);
+
+  --radius-card: var(--radius-card);
+  --radius-card-sm: var(--radius-card-sm);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-nav: var(--shadow-nav);
+  --shadow-glow-orange: var(--shadow-glow-orange);
+
+  --font-sans: var(--font-quicksand), "Quicksand", system-ui, sans-serif;
+  --font-body: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+}
