@@ -1,8 +1,8 @@
-import { ArrowLeft, Mic, Volume2 } from "lucide-react";
+import { Suspense } from "react";
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,13 +15,11 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { LEVEL_BADGE_VARIANT } from "@/features/chapters";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PracticeWorkspace } from "@/features/practice";
 import { getAllExercises, getExerciseById } from "@/lib/mock-data/curriculum";
-import { DIFFICULTY_LABELS, EXERCISE_KIND_LABELS } from "@/types";
 
 export function generateStaticParams() {
   return getAllExercises().map((exercise) => ({
@@ -44,9 +42,41 @@ export async function generateMetadata({
   };
 }
 
-export default async function StudentPracticePage({
+function PracticeSkeleton() {
+  return (
+    <div className="mx-auto flex max-w-3xl flex-col gap-6 animate-pulse">
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-4 w-20 rounded-full" />
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-28 rounded-full" />
+      </div>
+
+      <Card className="py-7">
+        <CardHeader className="gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <Skeleton className="h-6 w-16 rounded-full" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+            </div>
+            <Skeleton className="h-6 w-28 rounded-full" />
+          </div>
+          <Skeleton className="h-8 w-64 rounded-md" />
+          <Skeleton className="h-4 w-96 rounded-md" />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-6">
+          <Skeleton className="h-28 w-full rounded-[20px]" />
+          <Skeleton className="h-56 w-full rounded-[22px]" />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+async function PracticeExerciseContent({
   params,
-}: PageProps<"/student/practice/[exerciseId]">) {
+}: {
+  params: Promise<{ exerciseId: string }>;
+}) {
   const { exerciseId } = await params;
   const record = getExerciseById(exerciseId);
 
@@ -57,8 +87,8 @@ export default async function StudentPracticePage({
   const { chapter, exercise } = record;
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6 animate-fade-up">
-      <Breadcrumb>
+    <div className="mx-auto flex max-w-2xl flex-col gap-3 animate-fade-up">
+      <Breadcrumb className="text-xs">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
@@ -69,90 +99,66 @@ export default async function StudentPracticePage({
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link href={`/student/chapters/${chapter.id}`}>
-                Chapter {chapter.number}
+                Ch. {chapter.number}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="font-semibold text-brand-orange">
+            <BreadcrumbPage className="font-semibold text-brand-orange truncate max-w-[140px] sm:max-w-xs">
               {exercise.title}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Card className="py-7">
-        <CardHeader className="gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={LEVEL_BADGE_VARIANT[exercise.level]}>
-                {DIFFICULTY_LABELS[exercise.level]}
-              </Badge>
-              <Badge variant="outline">
-                {EXERCISE_KIND_LABELS[exercise.kind]}
-              </Badge>
-              {exercise.focusSounds.map((sound) => (
-                <Badge key={sound} variant="orange">
-                  {sound}
-                </Badge>
-              ))}
-            </div>
-
+      <Card className="py-3 sm:py-4 border-border/70 shadow-xs">
+        <CardHeader className="px-3 sm:px-5 pb-2">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">
+              Chapter {chapter.number} · {exercise.title}
+            </span>
             {typeof exercise.bestScore === "number" ? (
-              <Badge variant="green">Best Score: {exercise.bestScore}%</Badge>
+              <span className="font-medium text-success">
+                Best: {exercise.bestScore}%
+              </span>
             ) : null}
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <CardTitle className="text-2xl sm:text-3xl">
-              {exercise.title}
-            </CardTitle>
-            <CardDescription>
-              Read the text below aloud at a natural pace to check your pronunciation.
-            </CardDescription>
           </div>
         </CardHeader>
 
-        <CardContent className="flex flex-col gap-6">
-          <div className="rounded-[20px] border-l-4 border-brand-orange bg-surface-tint-orange px-6 py-7">
-            <p className="text-center text-2xl font-bold leading-relaxed text-foreground sm:text-3xl">
+        <CardContent className="flex flex-col gap-3 px-3 sm:px-5 pt-0">
+          {/* Prominent, readable prompt sentence directly above workspace */}
+          <div className="rounded-xl border border-brand-orange-soft/30 bg-surface-peach/30 px-4 py-3 sm:py-3.5">
+            <p className="text-center text-xl sm:text-2xl font-bold tracking-tight text-foreground font-heading">
               {exercise.promptText}
             </p>
           </div>
 
-          <div className="flex flex-col items-center gap-4 rounded-[22px] border border-border bg-background/80 p-6 text-center">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon-lg" disabled aria-label="Listen to reference audio">
-                <Volume2 aria-hidden="true" />
-              </Button>
-              <Button
-                size="icon-lg"
-                disabled
-                aria-label="Start recording"
-                className="size-16 shadow-glow-orange [&_svg:not([class*='size-'])]:size-7"
-              >
-                <Mic aria-hidden="true" />
-              </Button>
-            </div>
-            <p className="font-body text-xs text-muted-foreground">
-              Tap the microphone when voice recording is connected to capture and score your speech.
-            </p>
-          </div>
+          <PracticeWorkspace exerciseId={exerciseId} chapterId={chapter.id} />
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <Button asChild variant="outline" size="sm">
+      <div className="flex items-center justify-between text-xs text-muted-foreground pt-0.5">
+        <Button asChild variant="ghost" size="sm" className="h-7 text-xs gap-1">
           <Link href={`/student/chapters/${chapter.id}`}>
-            <ArrowLeft data-icon="inline-start" aria-hidden="true" />
+            <ArrowLeft data-icon="inline-start" aria-hidden="true" className="size-3" />
             Back to Chapter {chapter.number}
           </Link>
         </Button>
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="ghost" size="sm" className="h-7 text-xs">
           <Link href="/student/progress">View Progress</Link>
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function StudentPracticePage({
+  params,
+}: PageProps<"/student/practice/[exerciseId]">) {
+  return (
+    <Suspense fallback={<PracticeSkeleton />}>
+      <PracticeExerciseContent params={params} />
+    </Suspense>
   );
 }

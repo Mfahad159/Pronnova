@@ -4,9 +4,9 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ProgressFilterList } from "@/features/chapters";
+import { ProgressFilterList } from "@/features/curriculum";
 import {
   getAllChapters,
   getChapterProgress,
@@ -39,78 +39,62 @@ export default function StudentProgressPage() {
     activeItem.chapter.exercises[0];
 
   return (
-    <div className="flex flex-col gap-8 animate-fade-up">
+    <div className="flex flex-col gap-6 animate-fade-up">
       <PageHeader
-        title="Pronunciation"
-        accentTitle="Progress"
-        description="Track chapter completion, review past attempts, and focus on sounds that need extra practice."
+        title="Student Progress"
+        description="Track completed exercises, accuracy rates, and target sounds."
       />
 
+      {/* Big Number + Tiny Label metrics */}
       <section
         aria-label="Progress metrics"
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
-        <Card className="gap-2 py-5">
-          <CardHeader className="gap-2">
-            <span className="inline-flex size-10 items-center justify-center rounded-[14px] bg-surface-mint text-success">
-              <Award className="size-5" aria-hidden="true" />
-            </span>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Average Accuracy
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-foreground">
+        <Card className="py-4">
+          <CardContent className="flex flex-col gap-1">
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span className="text-xs font-medium">Average Accuracy</span>
+              <Award className="size-4 text-success" aria-hidden="true" />
+            </div>
+            <p className="text-2xl font-bold text-foreground font-heading">
               {overview.averageAccuracy}%
             </p>
           </CardContent>
         </Card>
 
-        <Card className="gap-2 py-5">
-          <CardHeader className="gap-2">
-            <span className="inline-flex size-10 items-center justify-center rounded-[14px] bg-surface-peach text-brand-orange">
-              <CheckCircle2 className="size-5" aria-hidden="true" />
-            </span>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Exercises Practiced
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-foreground">
-              {overview.completedExercises} / {overview.totalExercises}
+        <Card className="py-4">
+          <CardContent className="flex flex-col gap-1">
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span className="text-xs font-medium">Exercises Done</span>
+              <CheckCircle2 className="size-4 text-brand-orange" aria-hidden="true" />
+            </div>
+            <p className="text-2xl font-bold text-foreground font-heading">
+              {overview.completedExercises}/{overview.totalExercises}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="gap-2 py-5">
-          <CardHeader className="gap-2">
-            <span className="inline-flex size-10 items-center justify-center rounded-[14px] bg-surface-sky text-[#0284c7]">
-              <Mic className="size-5" aria-hidden="true" />
-            </span>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Total Attempts
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-foreground">
+        <Card className="py-4">
+          <CardContent className="flex flex-col gap-1">
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span className="text-xs font-medium">Total Attempts</span>
+              <Mic className="size-4 text-info-blue" aria-hidden="true" />
+            </div>
+            <p className="text-2xl font-bold text-foreground font-heading">
               {overview.totalAttempts}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="gap-2 py-5">
-          <CardHeader className="gap-2">
-            <span className="inline-flex size-10 items-center justify-center rounded-[14px] bg-surface-tint-coral text-primary">
-              <Target className="size-5" aria-hidden="true" />
-            </span>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Focus Sounds
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-1">
+        <Card className="py-4">
+          <CardContent className="flex flex-col gap-1">
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span className="text-xs font-medium">Target Sounds</span>
+              <Target className="size-4 text-cta-coral" aria-hidden="true" />
+            </div>
+            <div className="flex flex-wrap gap-1 pt-0.5">
               {overview.focusSoundsToPractice.map((sound) => (
-                <Badge key={sound} variant="orange">
+                <Badge key={sound} variant="orange" className="text-[11px] h-5 py-0 px-1.5">
                   {sound}
                 </Badge>
               ))}
@@ -119,38 +103,36 @@ export default function StudentProgressPage() {
         </Card>
       </section>
 
-      <Card variant="peach" className="py-7">
-        <CardContent className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
-          <div className="flex flex-col gap-3">
-            <Badge variant="orange">In Progress</Badge>
-            <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold text-foreground">
-                Chapter {activeItem.chapter.number}: {activeItem.chapter.title}{" "}
-                {activeItem.chapter.accentWord}
-              </h2>
-              <p className="font-body text-sm text-muted-foreground">
-                {activeItem.progress.completedCount} of{" "}
-                {activeItem.progress.totalCount} exercises practiced
-              </p>
+      {/* Active chapter progress */}
+      <Card variant="peach" className="py-5">
+        <CardContent className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-xs font-semibold text-brand-orange">
+              <span>Chapter {activeItem.chapter.number}</span>
+              <span>·</span>
+              <span>In Progress</span>
             </div>
-            <div className="flex max-w-md flex-col gap-1.5">
+
+            <h2 className="text-lg font-bold text-foreground font-heading">
+              {activeItem.chapter.title} {activeItem.chapter.accentWord}
+            </h2>
+
+            <div className="flex max-w-sm flex-col gap-1">
               <Progress
                 value={activeItem.progress.percentage}
                 aria-label="Chapter completion"
+                className="h-1.5"
               />
-              <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-                <span>Chapter completion</span>
-                <span className="font-semibold text-foreground">
-                  {activeItem.progress.percentage}% Completed
-                </span>
-              </div>
+              <span className="text-xs text-muted-foreground">
+                {activeItem.progress.completedCount} of {activeItem.progress.totalCount} exercises ({activeItem.progress.percentage}%)
+              </span>
             </div>
           </div>
 
-          <Button asChild variant="orange" size="lg" className="shrink-0">
+          <Button asChild size="sm" className="shrink-0">
             <Link href={`/student/practice/${nextExercise.id}`}>
               Continue
-              <Play data-icon="inline-end" aria-hidden="true" />
+              <Play data-icon="inline-end" aria-hidden="true" className="size-3" />
             </Link>
           </Button>
         </CardContent>

@@ -21,7 +21,7 @@ const badgeVariants = cva(
           "border-brand-orange/25 bg-surface-tint-orange text-brand-orange",
         coral: "border-cta-coral/20 bg-surface-tint-coral text-cta-coral",
         green: "border-success/25 bg-surface-tint-green text-success",
-        blue: "border-info-blue/30 bg-surface-sky text-[#0284c7]",
+        blue: "border-info-blue/30 bg-surface-sky text-info-blue-deep",
       },
     },
     defaultVariants: {

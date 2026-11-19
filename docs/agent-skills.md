@@ -52,6 +52,6 @@
 | supabase-postgres-best-practices | No | — | Schema phase (Milestone 5) |
 | react-state-management | No | — | Waiting on Zustand conventions |
 | webapp-testing | No | — | Test stack undecided |
-| unslop | No | — | Wait for stable UI screens |
+| unslop | Yes | 2026-11-19 | Installed in `.agents/skills/unslop` (reviewed, CC BY 4.0) |
 | shadcn | Yes | 2026-11-18 | Installed in `.agents/skills/` after adopting shadcn/ui |
 

@@ -17,34 +17,34 @@ export function PageHeader({
 }: PageHeaderProps) {
   if (align === "center") {
     return (
-      <header className="mx-auto flex max-w-2xl flex-col items-center gap-2.5 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+      <header className="mx-auto flex max-w-xl flex-col items-center gap-1.5 text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl font-heading">
           {title}{" "}
           {accentTitle ? (
             <span className="text-accent-pink">{accentTitle}</span>
           ) : null}
         </h1>
         {description ? (
-          <p className="font-body text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="font-body text-xs sm:text-sm text-muted-foreground">
             {description}
           </p>
         ) : null}
-        {action ? <div className="pt-2">{action}</div> : null}
+        {action ? <div className="pt-1">{action}</div> : null}
       </header>
     );
   }
 
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl font-heading">
           {title}{" "}
           {accentTitle ? (
             <span className="text-accent-pink">{accentTitle}</span>
           ) : null}
         </h1>
         {description ? (
-          <p className="max-w-2xl font-body text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+          <p className="max-w-xl font-body text-xs sm:text-sm text-muted-foreground">
             {description}
           </p>
         ) : null}

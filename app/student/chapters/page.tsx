@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout";
-import { ChaptersCatalog } from "@/features/chapters";
+import { ChaptersCatalog } from "@/features/curriculum";
 import { getAllChapters } from "@/lib/mock-data/curriculum";
 
 export const metadata: Metadata = {
@@ -11,12 +11,11 @@ export default function StudentChaptersPage() {
   const chapters = getAllChapters();
 
   return (
-    <div className="flex flex-col gap-8 animate-fade-up">
+    <div className="flex flex-col gap-6 animate-fade-up">
       <PageHeader
         align="center"
-        title="Pronunciation"
-        accentTitle="Chapters & Levels"
-        description="Structured read-aloud practice organized into Basic, Medium, and Advanced levels for clear spoken English."
+        title="Curriculum Chapters"
+        description="Structured read-aloud practice organized by difficulty level."
       />
 
       <ChaptersCatalog chapters={chapters} />

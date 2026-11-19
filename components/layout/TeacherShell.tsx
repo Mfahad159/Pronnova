@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "cn";
 import {
   ArrowLeftRight,
   BookOpenCheck,
@@ -13,9 +12,10 @@ import type { ReactNode } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BrandLogo } from "./BrandLogo";
+import { cn } from "@/lib/utils";
+import { SiteHeader, type SiteNavItem } from "./SiteHeader";
 
-const TEACHER_NAV_ITEMS = [
+const TEACHER_NAV_ITEMS: readonly SiteNavItem[] = [
   { href: "/teacher", label: "Overview", icon: LayoutDashboard, exact: true },
   {
     href: "/teacher/chapters",
@@ -29,7 +29,7 @@ const TEACHER_NAV_ITEMS = [
     icon: Users,
     exact: false,
   },
-] as const;
+];
 
 function isNavItemActive(pathname: string, href: string, exact: boolean): boolean {
   if (exact) return pathname === href;
@@ -41,34 +41,32 @@ export function TeacherShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 border-b border-input bg-card/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <BrandLogo href="/teacher" size="sm" />
-            <Badge variant="green" className="hidden sm:inline-flex">
-              Teacher Portal
-            </Badge>
-          </div>
+      <SiteHeader
+        homeHref="/teacher"
+        nav={TEACHER_NAV_ITEMS}
+        containerClassName="max-w-7xl"
+        showMobileMenu={false}
+      >
+        <Badge variant="green" className="hidden sm:inline-flex">
+          Teacher Portal
+        </Badge>
 
-          <div className="flex items-center gap-2.5">
-            <div className="hidden items-center gap-2 rounded-full border border-success/25 bg-surface-mint/60 py-1 pl-1.5 pr-3 sm:flex">
-              <Avatar size="sm">
-                <AvatarFallback className="bg-success text-[11px] font-bold text-white">
-                  MS
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-xs font-semibold text-foreground">Ms. Sara</span>
-            </div>
-
-            <Button asChild variant="outline" size="xs">
-              <Link href="/">
-                <ArrowLeftRight data-icon="inline-start" aria-hidden="true" />
-                Switch Portal
-              </Link>
-            </Button>
-          </div>
+        <div className="hidden items-center gap-2 rounded-full border border-success/25 bg-surface-mint/60 py-1 pl-1.5 pr-3 sm:flex">
+          <Avatar size="sm">
+            <AvatarFallback className="bg-success text-[11px] font-bold text-white">
+              MS
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-xs font-semibold text-foreground">Ms. Sara</span>
         </div>
-      </header>
+
+        <Button asChild variant="outline" size="xs">
+          <Link href="/">
+            <ArrowLeftRight data-icon="inline-start" aria-hidden="true" />
+            Switch Portal
+          </Link>
+        </Button>
+      </SiteHeader>
 
       <nav
         aria-label="Teacher mobile navigation"
@@ -76,7 +74,7 @@ export function TeacherShell({ children }: { children: ReactNode }) {
       >
         <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto">
           {TEACHER_NAV_ITEMS.map(({ href, label, icon: Icon, exact }) => {
-            const active = isNavItemActive(pathname, href, exact);
+            const active = isNavItemActive(pathname, href, Boolean(exact));
             return (
               <Button
                 key={href}
@@ -86,7 +84,7 @@ export function TeacherShell({ children }: { children: ReactNode }) {
                 className={cn(active && "bg-surface-tint-coral text-primary")}
               >
                 <Link href={href} aria-current={active ? "page" : undefined}>
-                  <Icon data-icon="inline-start" aria-hidden="true" />
+                  {Icon && <Icon data-icon="inline-start" aria-hidden="true" />}
                   {label}
                 </Link>
               </Button>
@@ -103,7 +101,7 @@ export function TeacherShell({ children }: { children: ReactNode }) {
           >
             <ul className="flex flex-col gap-1">
               {TEACHER_NAV_ITEMS.map(({ href, label, icon: Icon, exact }) => {
-                const active = isNavItemActive(pathname, href, exact);
+                const active = isNavItemActive(pathname, href, Boolean(exact));
                 return (
                   <li key={href}>
                     <Link
@@ -116,7 +114,7 @@ export function TeacherShell({ children }: { children: ReactNode }) {
                           : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                       )}
                     >
-                      <Icon className="size-4 shrink-0" aria-hidden="true" />
+                      {Icon && <Icon className="size-4 shrink-0" aria-hidden="true" />}
                       <span>{label}</span>
                     </Link>
                   </li>

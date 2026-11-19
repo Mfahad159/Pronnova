@@ -1,4 +1,45 @@
 :root {
+  /* Radii & Base Dimensions */
+  --radius: 1rem;
+  --radius-card: 24px;
+  --radius-card-sm: 16px;
+  --radius-pill: 9999px;
+
+  /* Theme Tokens & shadcn mappings */
+  --background: #fffbf7;
+  --foreground: #100e0e;
+  --card: #ffffff;
+  --card-foreground: #100e0e;
+  --popover: #ffffff;
+  --popover-foreground: #100e0e;
+  --primary: #ff594b;
+  --primary-foreground: #ffffff;
+  --secondary: #ffeedf;
+  --secondary-foreground: #100e0e;
+  --muted: #f7f2ec;
+  --muted-foreground: #5b5b5b;
+  --accent: #ffe8c6;
+  --accent-foreground: #100e0e;
+  --destructive: #ea4335;
+  --border: rgba(255, 141, 40, 0.24);
+  --input: #ebebeb;
+  --ring: #ff8d28;
+
+  --chart-1: #ff8d28;
+  --chart-2: #22ad5a;
+  --chart-3: #2db8ff;
+  --chart-4: #ff594b;
+  --chart-5: #ffb000;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #100e0e;
+  --sidebar-primary: #ff594b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 89, 75, 0.1);
+  --sidebar-accent-foreground: #ff594b;
+  --sidebar-border: rgba(255, 141, 40, 0.24);
+  --sidebar-ring: #ff8d28;
+
   /* Canvas & Surface Palette (Figma Reference) */
   --color-canvas: #fffbf7;
   --color-surface: #ffffff;
@@ -18,6 +59,7 @@
   --color-cta-coral-deep: #ea4335;
   --color-accent-pink: #ff7b7c;
   --color-info-blue: #2db8ff;
+  --color-info-blue-deep: #0284c7;
   --color-success: #22ad5a;
   --color-success-deep: #198a47;
   --color-success-bar: #6abc45;
@@ -31,11 +73,6 @@
   /* Borders */
   --color-border-warm: rgba(255, 141, 40, 0.28);
   --color-border-subtle: #ebebeb;
-
-  /* Radii */
-  --radius-card: 24px;
-  --radius-card-sm: 16px;
-  --radius-pill: 9999px;
 
   /* Shadows */
   --shadow-card: 0px 1px 20px rgba(0, 0, 0, 0.05);
@@ -61,6 +98,7 @@
   --color-cta-coral-deep: var(--color-cta-coral-deep);
   --color-accent-pink: var(--color-accent-pink);
   --color-info-blue: var(--color-info-blue);
+  --color-info-blue-deep: var(--color-info-blue-deep);
   --color-success: var(--color-success);
   --color-success-deep: var(--color-success-deep);
   --color-success-bar: var(--color-success-bar);
@@ -81,5 +119,6 @@
   --shadow-glow-orange: var(--shadow-glow-orange);
 
   --font-sans: var(--font-quicksand), "Quicksand", system-ui, sans-serif;
+  --font-heading: var(--font-quicksand), "Quicksand", system-ui, sans-serif;
   --font-body: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
 }

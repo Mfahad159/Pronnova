@@ -1,0 +1,122 @@
+[
+  {
+    "route": "/",
+    "viewport": "360x800",
+    "file": "landing-360px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student",
+    "viewport": "360x800",
+    "file": "student-360px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/teacher",
+    "viewport": "360x800",
+    "file": "teacher-360px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student/chapters",
+    "viewport": "360x800",
+    "file": "student-chapters-360px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student/practice/ex-1-1",
+    "viewport": "360x800",
+    "file": "practice-ex-1-1-360px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/",
+    "viewport": "768x1024",
+    "file": "landing-768px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student",
+    "viewport": "768x1024",
+    "file": "student-768px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/teacher",
+    "viewport": "768x1024",
+    "file": "teacher-768px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student/chapters",
+    "viewport": "768x1024",
+    "file": "student-chapters-768px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student/practice/ex-1-1",
+    "viewport": "768x1024",
+    "file": "practice-ex-1-1-768px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/",
+    "viewport": "1280x800",
+    "file": "landing-1280px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student",
+    "viewport": "1280x800",
+    "file": "student-1280px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/teacher",
+    "viewport": "1280x800",
+    "file": "teacher-1280px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student/chapters",
+    "viewport": "1280x800",
+    "file": "student-chapters-1280px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  },
+  {
+    "route": "/student/practice/ex-1-1",
+    "viewport": "1280x800",
+    "file": "practice-ex-1-1-1280px.png",
+    "errors": [],
+    "consoleWarningsOrErrors": [],
+    "status": "OK"
+  }
+]
