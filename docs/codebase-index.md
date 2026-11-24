@@ -16,7 +16,9 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`) | ✅ |
 | `playwright.config.ts`, `tests/e2e/` | Browser tests (`npm run test:e2e`), route smoke test | ✅ |
 | `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed, bucket and that the browser key is blocked | ✅ |
-| `scripts/db.mjs` | `npm run db:push / db:seed / db:status` via the Supabase CLI (needs `SUPABASE_DB_URL`) | ✅ |
+| `scripts/db.mjs` | `npm run db:push / db:seed / db:status / db:verify` via the Supabase CLI (needs `SUPABASE_DB_URL`) | ✅ |
+| `supabase/config.toml` | Supabase CLI config (from `supabase init`); `[db.seed]` points at `seed.sql` | ✅ |
+| `supabase/checks/access.sql` | Read-only security check used by `db:verify` | ✅ |
 | `next.config.ts` | `cacheComponents`, `partialPrefetching`, Tailwind loader | ✅ |
 | `components.json` | shadcn/ui config | ✅ |
 | `eslint.config.mjs` | Lint rules; ignores `.agents/`, `archive/`, `Pronnova_mds/` | ✅ |

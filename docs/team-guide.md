@@ -54,6 +54,7 @@ Needs: Node.js 22+ (Supabase dropped Node 20), npm, and a free Supabase project.
 npm run db:check
 ```
    Every table should show ✓ and the `recordings` bucket should exist.
+   Prefer the terminal? Put `SUPABASE_DB_URL` in `.env.local` and run `npm run db:push`, then `npm run db:seed` instead of steps 3–4 (details: `database.md`).
 
 ### Run the app
 ```powershell

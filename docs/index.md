@@ -22,7 +22,7 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 ## Status (2026-11-24)
 - Docs set up. Stack **confirmed** (`decisions/001-stack.md`): Next.js on Vercel, Supabase, Azure + own Python engine in parallel, Gemini, browser voice. No login in FYP-1 (`decisions/002`).
 - **App scaffolded** (Phase 0): app shell, design tokens, all routes (some placeholders), `POST /api/attempts` with the mock scorer, Speech Engine adapters (azure = stub). Sample data only, no database yet. Lint + build pass.
-- **Phase 1 code done:** schema + seed + server queries; all pages read from Supabase. Waiting for the team's Supabase project to run the DB checks.
+- **Phase 1 done:** schema + seed applied to the team's Supabase project; all pages read from it; security check passes. Next: Phase 2 on the team's "continue".
 - Plan: `../specs/fyp1-implementation-plan.md`. One phase at a time, on the team's "continue".
 
 ## Open conflicts (decided here, please confirm)

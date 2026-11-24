@@ -18,7 +18,11 @@ import type { AttemptSummary } from "@/types";
 function MiniWave({ seed }: { seed: string }) {
   let h = 0;
   for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  const bars = Array.from({ length: 18 }, (_, i) => 20 + ((h >> (i % 24)) % 70));
+  // Small pseudo-random sequence (LCG), always 20–90% tall. Unsigned math so heights never go negative.
+  const bars = Array.from({ length: 18 }, () => {
+    h = (Math.imul(h, 1664525) + 1013904223) >>> 0;
+    return 20 + (h % 71);
+  });
   return (
     <div className="flex h-6 items-center gap-[3px]" aria-hidden>
       {bars.map((v, i) => (

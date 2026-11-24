@@ -12,7 +12,8 @@
     "db:check": "node --env-file=.env.local scripts/db-check.mjs",
     "db:push": "node --env-file=.env.local scripts/db.mjs push",
     "db:seed": "node --env-file=.env.local scripts/db.mjs seed",
-    "db:status": "node --env-file=.env.local scripts/db.mjs status"
+    "db:status": "node --env-file=.env.local scripts/db.mjs status",
+    "db:verify": "node --env-file=.env.local scripts/db.mjs verify"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.119.2",

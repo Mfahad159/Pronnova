@@ -97,16 +97,19 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 | You want to | Use |
 |---|---|
 | Run the app | `SUPABASE_URL` + `SUPABASE_SECRET_KEY` in `.env.local` (API only; cannot create tables) |
-| Create/alter tables from the terminal | Also `SUPABASE_DB_URL` in `.env.local`: dashboard → **Connect** → Session pooler URI with your DB password. Then `npm run db:push`, `npm run db:seed`, `npm run db:status` |
+| Create/alter tables from the terminal | Also `SUPABASE_DB_URL` in `.env.local`: dashboard → **Connect** → Session pooler URI with your DB password (special characters in the password must be URL-encoded, e.g. `@` → `%40`). Then `npm run db:push`, `npm run db:seed`, `npm run db:status`, `npm run db:verify` |
 | No terminal access | Paste SQL files in the dashboard SQL Editor |
 
 If a migration was run in the SQL Editor and you later switch to `npm run db:push`, first mark it as already applied so it isn't run twice:
 `npx supabase migration repair --status applied 0001 --remote="<your SUPABASE_DB_URL>"`.
 
+### Check security
+`npm run db:verify` runs `supabase/checks/access.sql` (read-only). Expected: RLS on every table, 0 browser grants, 0 policies, server can write, bucket not public.
+
 ### Reset demo data
-Run `supabase/seed.sql` again (SQL Editor or `npm run db:seed`). It **deletes all app data** and reloads the demo set — never run it on real student data.
+Run `supabase/seed.sql` again in the SQL Editor. (`npm run db:seed` only re-runs the seed when the file has changed, because the CLI remembers seeds it already ran.) It **deletes all app data** and reloads the demo set — never run it on real student data.
 
 ## 5. Migration log
 | File | Date | What | Why |
 |---|---|---|---|
-| `0001_init.sql` | 2026-11-24 | All 14 tables, checks, indexes, server-only access, `recordings` bucket | Phase 1: implement the SRS ER diagram |
+| `0001_init.sql` | 2026-11-24 | All 14 tables, checks, indexes, server-only access, `recordings` bucket | Phase 1: implement the SRS ER diagram. Applied with `npm run db:push`; seeded with `npm run db:seed` |

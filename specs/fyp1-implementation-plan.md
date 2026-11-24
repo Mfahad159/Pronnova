@@ -35,13 +35,13 @@ Tasks
 10. ❓ Test tools: suggest **Vitest** (unit tests for `lib/` and API routes) + **Playwright** (browser tests). Install only after approval.
 
 Exit checks
-- [ ] Fresh DB + `migrations` + `seed` gives a working app with no code edits
-- [ ] No page imports `lib/mock-data.ts` (file deleted or kept only for tests)
-- [ ] Service key not in the browser bundle (search `.next/static` for it)
-- [ ] Bad chapter id → 404 page; DB down → friendly error page
-- [ ] Team guide: Supabase setup + how to reset the seed
+- [x] Fresh DB + `migrations` + `seed` gives a working app with no code edits
+- [x] No page imports `lib/mock-data.ts` (file deleted or kept only for tests)
+- [x] Service key not in the browser bundle (search `.next/static` for it)
+- [x] Bad chapter id → 404 page; DB down → friendly error page
+- [x] Team guide: Supabase setup + how to reset the seed
 
-**Phase 1 result (2026-11-24):** tasks 1–6, 8–10 done. Task 7 (generated DB types) deferred: needs the Supabase CLI logged in; queries map rows to `types/index.ts` by hand for now. Env names changed to `SUPABASE_URL` + `SUPABASE_SECRET_KEY` (Supabase's new key system). Verified without a DB: lint, types, 14 unit tests, build, browser (setup message + 404), no Supabase code or key in the browser bundle. **Still to verify with the team's project:** `npm run db:check`, pages showing seeded data, Playwright smoke test.
+**Phase 1 result (2026-11-24):** tasks 1–6, 8–10 done. Task 7 (generated DB types) deferred: needs the Supabase CLI logged in; queries map rows to `types/index.ts` by hand for now. Env names changed to `SUPABASE_URL` + `SUPABASE_SECRET_KEY` (Supabase's new key system). Verified without a DB: lint, types, 14 unit tests, build, browser (setup message + 404), no Supabase code or key in the browser bundle. **Verified on the team's project (2026-11-24):** migration + seed applied with `npm run db:push` / `db:seed`; `db:check` all ✓ (14 tables, seeded rows, private bucket); `db:verify` RLS on 14/14 tables, 0 browser grants, 0 policies; pages show seeded data; API scores a real item; Playwright 20/20 (desktop + phone).
 
 Engine track: record the first 20–30 test clips into `engine/eval/` and pick the ASR + aligner (decision record).
 
@@ -164,8 +164,8 @@ Engine track: write up the Azure vs own-engine comparison for the FYP-1 report.
 | Phase | Status |
 |---|---|
 | 0 Base project | ✅ Done (2026-11-24) |
-| 1 Data | 🔶 Code done 2026-11-24 — DB checks wait for the team's Supabase project |
-| 2 Content | — |
+| 1 Data | ✅ Done 2026-11-24 — migration + seed applied, all checks pass |
+| 2 Content | ⏳ Waiting for "continue" |
 | 3 Record + Attempt | — |
 | 4 Feedback + Azure | — |
 | 5 QA + Release | — |
