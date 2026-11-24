@@ -74,6 +74,9 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 | Why is the recordings bucket private, 1 MB max, audio only? | Recordings are personal data (SRS 3.3.4). Private + short-lived signed links; size/type limits block misuse. 15 s of compressed audio is far below 1 MB. |
 | Why no login yet? | University rule for FYP-1 (ADR-002). `profiles` already has `role` and `email`, so FYP-2 adds Supabase Auth without redesigning tables. |
 | Why save materials through a database function (`create_material`)? | A material is a lesson + its items + maybe an assignment. Three separate inserts could half-fail and leave a lesson with no items. A Postgres function runs as **one transaction**: all saved or nothing (UC-10). Only `service_role` may call it. |
+| How is an attempt saved so nothing is lost? | Order: (1) upload audio to `recordings/{student}/{attempt}.webm`, (2) insert `attempts` row as `pending`, (3) score, (4) `complete_attempt()` saves results. If (3) fails the row becomes `failed` with its audio kept, and Retry re-scores it (SRS 3.3.7). |
+| Can a double click or a retry count errors twice? | No. The browser makes the attempt id, so sending twice hits the same row; `complete_attempt()` locks the row and does nothing if it's already `scored`. |
+| How are error counts updated? | Inside `complete_attempt()`: for each word (and sound) of the attempt, `error_stats.attempts += 1` and `errors += 1` if wrong, with an upsert. `error_rate` recalculates itself (generated column). |
 | How do level locks work? Is there a progress table? | No extra table: the stage is computed from the student's best scores (`attempts`). Rule and reasons: ADR-004; code: `lib/progress.ts`. |
 | Why a separate `settings` table? | SRS thresholds may be tuned during testing; changing a row is safer than changing code. |
 
@@ -107,7 +110,7 @@ If a migration was run in the SQL Editor and you later switch to `npm run db:pus
 `npx supabase migration repair --status applied 0001 --remote="<your SUPABASE_DB_URL>"`.
 
 ### Check security
-`npm run db:verify` runs `supabase/checks/access.sql` (read-only). Expected: RLS on every table, 0 browser grants, 0 policies, server can write, bucket not public, browser cannot call `create_material`.
+`npm run db:verify` runs `supabase/checks/access.sql` (read-only). Expected: RLS on every table, 0 browser grants, 0 policies, server can write, bucket not public, browser cannot call `create_material` or `complete_attempt`.
 
 New database function? Add `revoke all on function ... from public, anon, authenticated;` and `grant execute ... to service_role;` (see `0002_materials.sql`), and add it to the check.
 
@@ -119,3 +122,4 @@ Run `supabase/seed.sql` again in the SQL Editor. (`npm run db:seed` only re-runs
 |---|---|---|---|
 | `0001_init.sql` | 2026-11-24 | All 14 tables, checks, indexes, server-only access, `recordings` bucket | Phase 1: implement the SRS ER diagram. Applied with `npm run db:push`; seeded with `npm run db:seed` |
 | `0002_materials.sql` | 2026-11-24 | `lessons.visibility`; `create_material()` function (server-only) | Phase 2: save UC-10 material atomically; ADR-004 visibility. Applied with `npm run db:push` |
+| `0003_attempt_results.sql` | 2026-11-24 | `complete_attempt()` function (server-only) | Phase 3: save word/sound results, update error stats and mark the attempt scored in one transaction; refuses to run twice. Applied with `npm run db:push` |

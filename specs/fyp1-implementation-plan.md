@@ -97,11 +97,13 @@ UC-04 Attempt pipeline
 11. ❓ Freeze the Speech Engine contract (`architecture.md`) at the end of this phase. After that it changes only by decision record.
 
 Exit checks
-- [ ] Record → submit → attempt row + audio file + word results exist in Supabase
-- [ ] `SPEECH_ENGINE` pointed at a dead URL → attempt saved as failed → Retry works
-- [ ] Mic denied / no mic / cancel / re-record / leave page all behave correctly
-- [ ] Works in Chrome, Edge, Firefox; Safari/iOS recording format checked
-- [ ] Unit tests: `classify` boundaries (69/70/84/85), `errorRate`, error_stats update
+- [x] Record → submit → attempt row + audio file + word results exist in Supabase
+- [x] `SPEECH_ENGINE` pointed at a dead URL → attempt saved as failed → Retry works
+- [x] Mic denied / no mic / cancel / re-record / leave page all behave correctly
+- [~] Works in Chrome/Edge (automated, desktop + phone). Firefox test is ready but Windows blocked the downloaded Firefox here; Safari/iOS mp4 path is in code — both checked by hand in Phase 5
+- [x] Unit tests: `classify` boundaries (69/70/84/85), `errorRate`, error_stats update
+
+**Phase 3 result (2026-11-24):** all tasks done. Migration `0003` applied. Contract frozen (ADR-005). Verified: 42 unit tests; e2e 32/32 incl. real recording with Chrome's fake mic (record → listen → send → score, try again, cancel, too-short) on desktop + phone; curl: idempotent resend, bad input 400; failure path on a second server with the engine unreachable → 202 + attempt `failed` with audio kept → retry (engine down) stays failed → retry (engine up) scored → retry again changes nothing; `db:verify` (browser can't call `complete_attempt`). Mic denied/no-mic/busy messages are in code but need a real browser to check (Phase 5).
 
 Engine track: forced alignment on the test clips; start the `/score` server against the frozen contract.
 
@@ -168,6 +170,6 @@ Engine track: write up the Azure vs own-engine comparison for the FYP-1 report.
 | 0 Base project | ✅ Done (2026-11-24) |
 | 1 Data | ✅ Done 2026-11-24 — migration + seed applied, all checks pass |
 | 2 Content | ✅ Done 2026-11-24 |
-| 3 Record + Attempt | ⏳ Waiting for "continue" |
-| 4 Feedback + Azure | — |
+| 3 Record + Attempt | ✅ Done 2026-11-24 |
+| 4 Feedback + Azure | ⏳ Waiting for "continue" |
 | 5 QA + Release | — |

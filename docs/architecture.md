@@ -30,7 +30,11 @@ Speech Engine (behind one interface, swappable)
 - Store `model_version` and `scoring_version` on every attempt so results stay comparable when the engine changes.
 - Server components by default; `"use client"` only for recording and interactive widgets.
 
+## Saving an attempt (UC-04)
+`POST /api/attempts` → `server/services/attempts.ts`: upload audio → insert `pending` → score with the selected engine → `complete_attempt()` (results + error stats, one transaction). Scoring failure → `failed` + audio kept → `POST /api/attempts/[attemptId]/retry`. The browser-made attempt id makes resends idempotent.
+
 ## Speech Engine contract
+**Frozen** (ADR-005).
 Input: audio (webm/opus or wav, ≤ 15 s), reference text, optional reference phonemes.
 
 ```json

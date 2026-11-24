@@ -13,7 +13,7 @@ Read this first. Then open only what your task needs.
 | [stack-options.md](stack-options.md) | Free-tier comparison + recommendation | Choosing or changing a service |
 | [design.md](design.md) | Layout, style, reference image, asset use | Building UI |
 | [agent-skills.md](agent-skills.md) | Approved AI skills + UI component sources | Before installing a skill or copying UI blocks |
-| [decisions/](decisions/) | Decision records: 001 stack, 002 no login in FYP-1, 003 test tools, 004 lesson access (unlock + visibility) | You want to know why something was chosen |
+| [decisions/](decisions/) | Decision records: 001 stack, 002 no login in FYP-1, 003 test tools, 004 lesson access (unlock + visibility), 005 speech contract frozen | You want to know why something was chosen |
 | [../specs/README.md](../specs/README.md) | Feature specs | Before building a feature |
 | [../AGENTS.md](../AGENTS.md) | Rules for AI agents | Always (agents) |
 
@@ -23,7 +23,8 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 - Docs set up. Stack **confirmed** (`decisions/001-stack.md`): Next.js on Vercel, Supabase, Azure + own Python engine in parallel, Gemini, browser voice. No login in FYP-1 (`decisions/002`).
 - **App scaffolded** (Phase 0): app shell, design tokens, all routes (some placeholders), `POST /api/attempts` with the mock scorer, Speech Engine adapters (azure = stub). Sample data only, no database yet. Lint + build pass.
 - **Phase 1 done:** schema + seed applied; pages read from Supabase; security check passes.
-- **Phase 2 done:** teachers upload material (UC-10); students see chapters with their stage, locked levels, homework and Continue (UC-03). Next: Phase 3 on the team's "continue".
+- **Phase 2 done:** teachers upload material (UC-10); students see chapters with their stage, locked levels, homework and Continue (UC-03). 
+- **Phase 3 done:** students record, listen back and send; attempts are saved safely (failed ones keep their audio and can be retried), results and error counts saved together. Next: Phase 4 on the team's "continue".
 - Plan: `../specs/fyp1-implementation-plan.md`. One phase at a time, on the team's "continue".
 
 ## Open conflicts (decided here, please confirm)
@@ -40,4 +41,5 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 10 | Supabase renamed keys (secret `sb_secret_…`) and no longer auto-exposes new tables | Env is `SUPABASE_URL` + `SUPABASE_SECRET_KEY`; migration grants tables to `service_role` only |
 | 11 | SRS 3.2.2 "show a lesson only when assigned" vs UC-03 self-selected practice; SRS never says when a level unlocks | ADR-004: built-in lessons open to all (levels unlock at ≥70% on every item of the previous level); teacher material only for assignees |
 | 12 | Not-found inside a streamed (Suspense) page returns HTTP 200 with the 404 screen | Accepted for now; review in Phase 5 |
+| 13 | Plan asks for Firefox + Safari checks; Windows blocked the downloaded Firefox and Safari can't run here | Firefox e2e is opt-in (`E2E_FIREFOX=1`); both checked by hand in Phase 5 |
 | 8 | Reference design is a green, adult audio-tool dashboard | Keep its layout; use Pronnova's coral/orange brand and friendlier tone (design.md) |

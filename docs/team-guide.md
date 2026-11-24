@@ -18,17 +18,18 @@ Simple rule: **pages are thin**. A page loads data and puts feature components o
 
 ### A student practises a sentence (UC-03 → 04 → 05 → 06)
 1. Student opens **Chapters**, picks a chapter, a level (Basic/Medium/Advanced), then an item.
-2. The **practice page** shows the text. Student taps **Record**. Browser asks for the mic once.
-3. Student reads aloud, taps **Stop** (auto-stops at 15 s). They can listen back or cancel.
-4. Tap **Submit** → the browser sends the audio to `POST /api/attempts`.
-5. The server:
+2. The **practice page** shows the text. Student taps the **microphone**. The browser asks for the mic the first time.
+3. Student reads aloud and taps **Stop** (auto-stops at 15 s), or **Cancel** to throw it away. Too short or silent recordings are caught right away with a clear message.
+4. Student listens back, then taps **Send** (or **Record again**). The browser sends the audio plus its own attempt id to `POST /api/attempts` — sending twice is safe.
+5. The server (`server/services/attempts.ts`):
    - saves the audio in the private `recordings` bucket,
    - creates an `attempts` row with status **pending** (so nothing is lost),
    - sends audio + reference text to the **Speech Engine**,
    - saves word and sound results, the score, and the class (Excellent ≥85 / Good 70–84 / Average <70),
-   - updates the student's error counts (`error_stats`).
+   - updates the student's error counts (`error_stats`) — results and counts are saved together by the DB function `complete_attempt()`.
 6. The page shows score, class, wrong words and sounds. Student can hear the correct word and **try again**.
-7. If scoring fails, the attempt stays **failed** with its audio. A **Retry** button calls `/api/attempts/[id]/retry`.
+7. If scoring fails, the attempt stays **failed** with its audio. **Try checking again** calls `/api/attempts/[attemptId]/retry`.
+   (Phase 3 shows the score and coloured words; tips, playback of the correct word and the full feedback view come in Phase 4.)
 
 ### A teacher uploads material (UC-10)
 1. Teacher opens **Materials → Upload material**, enters title, instructions, chapter, level, class (or "Don't assign yet") and due date.
@@ -84,6 +85,8 @@ npm run build
 
 ### Good to know: this Next.js version
 - **Cache Components is on.** A page that reads URL params (like `[chapterId]`) or loads live data must do it inside a `<Suspense>` block, or the build fails. Copy the pattern in `app/student/chapters/[chapterId]/page.tsx`.
+- New Tailwind classes not showing in `npm run dev`? Stop the dev server, delete the `.next/dev` folder, start again (stale dev cache).
+- Browser tests use Chrome's fake microphone. `E2E_MUTATE=1 npm run test:e2e` also runs the tests that save data; `E2E_FIREFOX=1` adds Firefox.
 - Next.js ships its own docs in `node_modules/next/dist/docs/`. They match our installed version, so check there before relying on older tutorials.
 
 ### Environment variables (`.env.local`, never commit it)

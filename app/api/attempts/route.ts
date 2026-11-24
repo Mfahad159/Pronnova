@@ -1,15 +1,13 @@
+import { RECORDING, recordingProblem } from "@/lib/audio";
 import { getCurrentStudent } from "@/server/db/demo-user";
-import { getItem } from "@/server/db/queries/curriculum";
+import { getItem, isUuid } from "@/server/db/queries/curriculum";
 import { getItemAccess } from "@/server/db/queries/learning";
-import { classify } from "@/lib/scoring";
-import { getSpeechEngine, SpeechEngineError } from "@/server/speech";
-
-const MAX_AUDIO_BYTES = 4 * 1024 * 1024; // Vercel Hobby request body limit is 4.5 MB
+import { submitAttempt } from "@/server/services/attempts";
 
 /**
- * POST /api/attempts — form data: `audio` (file), `itemId`.
- * Scaffold version: scores and returns. Phase 3 adds: save audio to Supabase Storage and an
- * `attempts` row with status "pending" BEFORE scoring, so a failed score is never lost (SRS 3.3.7).
+ * POST /api/attempts — UC-04/05. Multipart form:
+ *   attemptId (uuid made by the browser — makes double submits safe), itemId, durationMs, audio (file).
+ * Responses: 200 scored · 202 saved but scoring failed (retry later) · 4xx bad input · 503 not saved.
  */
 export async function POST(request: Request) {
   let form: FormData;
@@ -19,18 +17,24 @@ export async function POST(request: Request) {
     return Response.json({ error: "Expected multipart form data." }, { status: 400 });
   }
 
+  const attemptId = String(form.get("attemptId") ?? "");
+  const itemId = String(form.get("itemId") ?? "");
+  const durationMs = Number(form.get("durationMs"));
   const audio = form.get("audio");
-  const itemId = form.get("itemId");
+
+  if (!isUuid(attemptId)) return Response.json({ error: "Missing attempt id." }, { status: 400 });
   if (!(audio instanceof Blob) || audio.size === 0) {
     return Response.json({ error: "Recording is missing or empty. Please record again." }, { status: 400 });
   }
-  if (audio.size > MAX_AUDIO_BYTES) {
-    return Response.json({ error: "Recording is too long. Keep it under 15 seconds." }, { status: 413 });
+  if (audio.size > RECORDING.maxBytes) {
+    return Response.json({ error: "The recording is too large. Keep it under 15 seconds." }, { status: 413 });
   }
-  const item = typeof itemId === "string" ? await getItem(itemId) : null;
-  if (!item) {
-    return Response.json({ error: "Unknown exercise." }, { status: 404 });
-  }
+  const problem = recordingProblem({ bytes: audio.size, durationMs: Number.isFinite(durationMs) ? durationMs : 0, mime: audio.type });
+  if (problem) return Response.json({ error: problem }, { status: 400 });
+
+  const item = isUuid(itemId) ? await getItem(itemId) : null;
+  if (!item) return Response.json({ error: "Unknown exercise." }, { status: 404 });
+
   // Same rule as the practice page (ADR-004): no attempts on locked or unassigned items.
   const student = await getCurrentStudent();
   const access = await getItemAccess(student.id, item.id);
@@ -39,20 +43,22 @@ export async function POST(request: Request) {
     return Response.json({ error: "This level is locked. Finish the earlier level first." }, { status: 403 });
   }
 
-  const engine = getSpeechEngine();
   try {
-    const result = await engine.score({ audio, referenceText: item.text });
-    return Response.json({
+    const outcome = await submitAttempt({
+      attemptId,
+      studentId: student.id,
       itemId: item.id,
-      engine: engine.name,
-      ...result,
-      classification: classify(result.score),
+      referenceText: item.text,
+      audio,
+      mime: audio.type,
+      durationMs,
     });
+    if (outcome.kind === "conflict") return Response.json({ error: "Attempt id already used." }, { status: 409 });
+    const r = outcome.result;
+    return Response.json(r, { status: r.status === "scored" ? 200 : 202 });
   } catch (err) {
-    if (err instanceof SpeechEngineError) {
-      return Response.json({ error: err.message, retryable: err.retryable }, { status: 503 });
-    }
-    console.error("attempt scoring failed", err);
-    return Response.json({ error: "Scoring failed. Your attempt can be retried.", retryable: true }, { status: 500 });
+    // Upload or the first insert failed: nothing was stored, so the browser keeps the audio and can resend.
+    console.error("attempt not saved", err);
+    return Response.json({ error: "We couldn't save your recording. Check your connection and try again.", saved: false }, { status: 503 });
   }
 }

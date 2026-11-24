@@ -63,3 +63,15 @@ export interface AttemptSummary {
   createdAt: string;
   status: AttemptStatus;
 }
+
+/** What the practice page gets back after submitting or retrying an attempt. */
+export interface AttemptResult {
+  attemptId: string;
+  status: AttemptStatus;
+  score: number | null;
+  classification: Classification | null;
+  recognizedText: string | null;
+  error: string | null;
+  words: WordResult[];
+  phonemes: PhonemeResult[];
+}

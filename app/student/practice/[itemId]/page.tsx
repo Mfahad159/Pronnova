@@ -1,16 +1,18 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Lock, Mic } from "lucide-react";
+import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { levelLabel } from "@/features/curriculum/level";
 import { getCurrentStudent } from "@/server/db/demo-user";
 import { getItem } from "@/server/db/queries/curriculum";
-import { getItemAccess } from "@/server/db/queries/learning";
+import { getStudentLearning } from "@/server/db/queries/learning";
+import { PracticeRecorder } from "@/features/practice/practice-recorder";
+import { itemAccess, openItemsInOrder } from "@/lib/progress";
 
-// UC-04/05/06. Recording + scoring UI arrives in Phase 3 (specs/fyp1-implementation-plan.md).
+// UC-04 Attempt + UC-05 Record (Phase 3). Full feedback (UC-06) arrives in Phase 4.
 export default function PracticePage(props: PageProps<"/student/practice/[itemId]">) {
   return (
     <Suspense fallback={<PageSkeleton variant="panel" />}>
@@ -22,7 +24,8 @@ export default function PracticePage(props: PageProps<"/student/practice/[itemId
 async function PracticeContent({ params }: { params: PageProps<"/student/practice/[itemId]">["params"] }) {
   const { itemId } = await params;
   const student = await getCurrentStudent();
-  const [item, access] = await Promise.all([getItem(itemId), getItemAccess(student.id, itemId)]);
+  const [item, learning] = await Promise.all([getItem(itemId), getStudentLearning(student.id)]);
+  const access = itemAccess(learning.view, itemId);
   // Hidden = teacher material not assigned to this student: same as "doesn't exist".
   if (!item || access === "hidden") notFound();
 
@@ -46,6 +49,11 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
     );
   }
 
+  // "Next exercise" = the next item the student can open, in course order.
+  const open = openItemsInOrder(learning.view);
+  const idx = open.findIndex((i) => i.id === item.id);
+  const next = idx >= 0 ? open[idx + 1] : undefined;
+
   return (
     <>
       <TopBar
@@ -63,10 +71,7 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
         <div className="flex flex-col items-center gap-8 rounded-3xl border bg-card px-6 py-12 text-center">
           <p className="text-sm font-medium tracking-wide text-muted-foreground uppercase">{item.itemType}</p>
           <p className="max-w-2xl font-heading text-3xl font-semibold text-balance md:text-4xl">{item.text}</p>
-          <Button size="lg" className="size-20 rounded-full [&_svg]:size-8" disabled aria-label="Record (coming in Phase 3)">
-            <Mic />
-          </Button>
-          <p className="text-sm text-muted-foreground">Read it out loud, clearly and at a normal speed. Recording is coming in Phase 3.</p>
+          <PracticeRecorder itemId={item.id} nextHref={next ? `/student/practice/${next.id}` : null} />
         </div>
       </PageBody>
     </>
