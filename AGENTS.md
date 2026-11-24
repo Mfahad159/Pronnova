@@ -23,7 +23,7 @@ Do not scan the whole repo. If the index is wrong or missing something, fix the 
 1. **Spec first.** Check the SRS use case (UC-xx) and any file in `specs/` before building a feature.
 2. **Small changes.** Build only the asked scope. No unrelated refactors.
 3. **No new dependencies without asking.** Stack choices live in `docs/stack-options.md` and `docs/decisions/`.
-4. **Secrets stay on the server.** Never commit `.env*`. Never call Supabase with the service key from the browser.
+4. **Secrets stay on the server.** Never commit any `.env*` file or `*.docx` (all git-ignored). Scan staged files for keys before every commit. Never call Supabase with the service key from the browser.
 5. **Keep docs in sync.** When you add, move or rename a file, route, API or table, update `docs/codebase-index.md`. When behaviour or setup changes, update `docs/team-guide.md`.
 6. **Flag conflicts.** If SRS, docs, code or design disagree, make a sensible call, write it in `docs/index.md` → "Open conflicts", and tell the user.
 7. **Honest reporting.** Don't say tests pass unless you ran them.

@@ -16,7 +16,7 @@ Read this first. Then open only what your task needs.
 | [../specs/README.md](../specs/README.md) | Feature specs | Before building a feature |
 | [../AGENTS.md](../AGENTS.md) | Rules for AI agents | Always (agents) |
 
-Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx`, `../Pronnova_mds/` (first doc draft, now replaced by this folder). Old prototype for ideas only: `D:\FYP_1\pronnova` (do not edit).
+Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (local only, git-ignored), `../Pronnova_mds/` (first doc draft, now replaced by this folder). Old prototype for ideas only: `D:\FYP_1\pronnova` (do not edit).
 
 ## Status (2026-11-24)
 - Docs set up. Stack **confirmed** (`decisions/001-stack.md`): Next.js on Vercel, Supabase, Azure + own Python engine in parallel, Gemini, browser voice. No login in FYP-1 (`decisions/002`).

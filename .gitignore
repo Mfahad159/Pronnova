@@ -46,4 +46,10 @@ next-env.d.ts
 # test output
 /test-results/
 /playwright-report/
-!.env.example
+
+# Private project files — never commit
+*.docx
+*.doc
+.env
+.env.*
+*.env

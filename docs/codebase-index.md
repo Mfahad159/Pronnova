@@ -12,7 +12,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `AGENTS.md` | Rules for AI agents (top block is written by Next.js) | ✅ |
 | `docs/`, `specs/` | Docs (start at `docs/index.md`) and feature specs | ✅ |
 | `docs/srs.md`, `docs/srs/` | SRS as Markdown + its 21 diagrams | ✅ |
-| `.env.example` | All env variables with notes. Copy to `.env.local` | ✅ |
+| `.env.local` | Your keys (git-ignored, never committed). Variable list: `team-guide.md` → Environment variables | local only |
 | `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`) | ✅ |
 | `playwright.config.ts`, `tests/e2e/` | Browser tests (`npm run test:e2e`), route smoke test | ✅ |
 | `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed and bucket in your Supabase project | ✅ |
@@ -22,7 +22,8 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `.agents/skills/` + `skills-lock.json` | Agent skills (see `docs/agent-skills.md`); `.claude/skills/` links to them | ✅ |
 | `.claude/launch.json` | Dev server config for the Claude preview pane | ✅ |
 | `archive/` | Old files moved out of `public/` (git-ignored) | ✅ |
-| `Pronnova_SRS_Updated_28_oct.docx`, `Pronnova_mds/` | Original inputs (read-only) | ✅ |
+| `Pronnova_SRS_Updated_28_oct.docx` | Original SRS (git-ignored: `*.docx` never committed; Markdown copy is `docs/srs.md`) | local only |
+| `Pronnova_mds/` | First doc draft (read-only) | ✅ |
 
 ## App code
 | Folder / file | Holds | |

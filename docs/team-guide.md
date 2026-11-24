@@ -43,9 +43,9 @@ Needs: Node.js 22+ (Supabase dropped Node 20), npm, and a free Supabase project.
 
 ### One-time database setup
 1. Create a project at supabase.com (free plan).
-2. Copy `.env.example` to `.env.local` and fill in:
+2. Create a file named `.env.local` in the project root (it is git-ignored) with the variables from the table below. Get the values from the Supabase dashboard, or privately from a teammate. At minimum:
    - `SUPABASE_URL` — Project Settings → Data API (looks like `https://abcd.supabase.co`)
-   - `SUPABASE_SECRET_KEY` — Project Settings → API Keys → **Secret** key (`sb_secret_…`). Never put it in `.env.example`, chat or screenshots.
+   - `SUPABASE_SECRET_KEY` — Project Settings → API Keys → **Secret** key (`sb_secret_…`). Never put it in any committed file, chat or screenshots.
 3. Supabase dashboard → **SQL Editor** → paste all of `supabase/migrations/0001_init.sql` → Run.
 4. Same place → paste `supabase/seed.sql` → Run. (Run the seed again any time to reset demo data — it **wipes** all app data first.)
 5. Check it:
@@ -58,9 +58,6 @@ npm run db:check
 ### Run the app
 ```powershell
 npm install
-```
-```powershell
-copy .env.example .env.local
 ```
 ```powershell
 npm run dev
@@ -83,6 +80,7 @@ npm run build
 - Next.js ships its own docs in `node_modules/next/dist/docs/`. They match our installed version, so check there before relying on older tutorials.
 
 ### Environment variables (`.env.local`, never commit it)
+All `.env*` files and `*.docx` files are git-ignored on purpose. Don't force-add them.
 | Name | Needed for | Where to get it |
 |---|---|---|
 | `SUPABASE_URL` | DB + storage (server only) | Supabase → Project Settings → Data API |
