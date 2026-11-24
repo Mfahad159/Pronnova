@@ -3,6 +3,8 @@ import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { ChapterCard } from "@/features/curriculum/chapter-card";
 import { listChapters } from "@/server/db/queries/curriculum";
+import { getStudentLearning } from "@/server/db/queries/learning";
+import { getCurrentStudent } from "@/server/db/demo-user";
 
 export const metadata = { title: "Chapters" };
 
@@ -16,7 +18,9 @@ export default function ChaptersPage() {
 }
 
 async function Chapters() {
-  const chapters = await listChapters();
+  const student = await getCurrentStudent();
+  const [chapters, learning] = await Promise.all([listChapters(), getStudentLearning(student.id)]);
+  const progressById = new Map(learning.view.map((c) => [c.id, c]));
   return (
     <>
       <TopBar title="Chapters" subtitle="Work through them in order. Each has Basic, Medium and Advanced levels." />
@@ -26,7 +30,7 @@ async function Chapters() {
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {chapters.map((c) => (
-              <ChapterCard key={c.id} chapter={c} />
+              <ChapterCard key={c.id} chapter={c} progress={progressById.get(c.id)} />
             ))}
           </div>
         )}

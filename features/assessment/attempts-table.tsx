@@ -14,15 +14,21 @@ import { ScorePill } from "@/features/assessment/score-pill";
 import { levelLabel } from "@/features/curriculum/level";
 import type { AttemptSummary } from "@/types";
 
-/** Decorative bars derived from the id, so server and client render the same thing. */
-function MiniWave({ seed }: { seed: string }) {
+/** Decorative bar heights derived from the id, so server and client render the same thing. */
+function waveBars(seed: string): number[] {
   let h = 0;
   for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   // Small pseudo-random sequence (LCG), always 20–90% tall. Unsigned math so heights never go negative.
-  const bars = Array.from({ length: 18 }, () => {
+  const out: number[] = [];
+  for (let i = 0; i < 18; i++) {
     h = (Math.imul(h, 1664525) + 1013904223) >>> 0;
-    return 20 + (h % 71);
-  });
+    out.push(20 + (h % 71));
+  }
+  return out;
+}
+
+function MiniWave({ seed }: { seed: string }) {
+  const bars = waveBars(seed);
   return (
     <div className="flex h-6 items-center gap-[3px]" aria-hidden>
       {bars.map((v, i) => (

@@ -1,4 +1,6 @@
+import { getCurrentStudent } from "@/server/db/demo-user";
 import { getItem } from "@/server/db/queries/curriculum";
+import { getItemAccess } from "@/server/db/queries/learning";
 import { classify } from "@/lib/scoring";
 import { getSpeechEngine, SpeechEngineError } from "@/server/speech";
 
@@ -28,6 +30,13 @@ export async function POST(request: Request) {
   const item = typeof itemId === "string" ? await getItem(itemId) : null;
   if (!item) {
     return Response.json({ error: "Unknown exercise." }, { status: 404 });
+  }
+  // Same rule as the practice page (ADR-004): no attempts on locked or unassigned items.
+  const student = await getCurrentStudent();
+  const access = await getItemAccess(student.id, item.id);
+  if (access === "hidden") return Response.json({ error: "Unknown exercise." }, { status: 404 });
+  if (access === "locked") {
+    return Response.json({ error: "This level is locked. Finish the earlier level first." }, { status: 403 });
   }
 
   const engine = getSpeechEngine();

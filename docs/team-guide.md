@@ -31,9 +31,15 @@ Simple rule: **pages are thin**. A page loads data and puts feature components o
 7. If scoring fails, the attempt stays **failed** with its audio. A **Retry** button calls `/api/attempts/[id]/retry`.
 
 ### A teacher uploads material (UC-10)
-1. Teacher opens **Upload material**, enters title, instructions, due date.
-2. Adds words/phrases/sentences, picks chapter + level, optionally a class.
-3. `POST /api/materials` saves a lesson and its items. Students see it under that chapter.
+1. Teacher opens **Materials → Upload material**, enters title, instructions, chapter, level, class (or "Don't assign yet") and due date.
+2. Types items one per line. The form removes duplicates, guesses each type (word/phrase/sentence/paragraph) and lets the teacher change it.
+3. The Server Action `saveMaterial` (`features/materials/actions.ts`) checks everything again, then calls the DB function `create_material()` — lesson, items and assignment are saved together or not at all.
+4. Assigned students see it in **Homework** on their home page and inside that chapter/level, even if the level is locked for them. Unassigned material is invisible to students.
+
+### How a student moves through chapters (UC-03)
+- Every chapter starts at **Basic**. **Medium** opens when every Basic item has a best score of 70% or more; **Advanced** the same after Medium (ADR-004).
+- **Continue** on the home page opens the last item they tried, or the next one they haven't mastered.
+- The rules are in `lib/progress.ts`; the server enforces them on the practice page and the attempts API.
 
 ### Who is logged in? (FYP-1)
 No login in FYP-1 (see `decisions/002-fyp1-no-auth.md`). The landing page lets you enter as a **demo student** or **demo teacher**. Real sign-up/sign-in comes in FYP-2.
@@ -110,6 +116,8 @@ Only variables starting with `NEXT_PUBLIC_` reach the browser. Everything else s
 | Change demo data | `supabase/seed.sql`, then re-run it in the SQL Editor |
 | Read something new from the DB | Add a function in `server/db/queries/`, call it from a page inside `<Suspense>` |
 | Change score cut-offs (85/70) | `lib/scoring.ts` (later also the `settings` table) |
+| Change when levels unlock | `PASS_SCORE` / `chapterView` in `lib/progress.ts` (+ update ADR-004) |
+| Change upload limits (items, sentence length) | `MATERIAL_LIMITS` in `lib/materials.ts` |
 | Swap or fix the speech scorer | `server/speech/<engine>.ts`. Keep the contract in `architecture.md` |
 | Work on our own scoring model | `engine/` (Python). Test it with `engine/eval/` clips |
 | Change what Gemini is asked | `server/services/suggestions` 🕓 |

@@ -38,7 +38,7 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 | `classes` | A teacher's class + `join_code` | UC-01 alt 1A, UC-08 | Join code is 4–12 capital letters/digits so it's easy to read out in class. |
 | `enrollments` | Which student is in which class | UC-08, UC-12 | Primary key is (class, student): a student can't be added to the same class twice. |
 | `chapters` | Ordered chapters with grade tag | 3.2.2, UC-03, UC-11 | `order_no` is unique → chapters always have one clear sequence. |
-| `lessons` | A lesson inside a chapter at a level | 3.2.2, UC-09, UC-10 | `level` is basic/medium/advanced (SRS names). (chapter, level, order_no) unique → no two lessons fight for the same spot. |
+| `lessons` | A lesson inside a chapter at a level | 3.2.2, UC-09, UC-10 | `level` is basic/medium/advanced (SRS names). (chapter, level, order_no) unique → no two lessons fight for the same spot. `visibility` = public (built-in) or assigned (teacher material, only for assignees — ADR-004). |
 | `lesson_items` | The words/phrases/sentences/paragraphs to read | 3.2.2, UC-03 | `item_type` limited to the four SRS types. Text 1–600 chars (SRS: sentences ≈15 words, paragraphs later). `variants` holds UK/US forms (both accepted, SRS 2.4). |
 | `assignments` | Lesson given to a class **or** one student, with deadline | 3.2.9, UC-08 | Check: exactly one of class/student is set — an assignment can't target both or nobody. |
 | `attempts` | One recording attempt and its result | 3.2.3–3.2.5, UC-04 | `status` pending → scored/failed. Row is saved **before** scoring, so a failed score never loses the attempt (SRS 3.3.7). A `scored` row must have a score and classification (check). Stores `model_version`/`scoring_version` so results stay comparable when the speech engine changes. |
@@ -57,6 +57,7 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 | `lesson_items.order_no` | Keep items in the order the teacher typed them. |
 | `attempts.duration_ms`, `error_message`, `scored_at` | Show recording length, explain failures, measure the 10 s feedback target (SRS 3.3.3). |
 | `word_results.position` | Word order for feedback display. |
+| `lessons.visibility` (0002) | Teacher material must be hidden from students it isn't assigned to (ADR-004). |
 | `error_stats.unit_type` | The ER diagram's "unit (word / phoneme)" split into type + value, so the word "the" and a sound "θ" never clash. |
 
 ## 3. Design decisions you may be asked about
@@ -72,6 +73,8 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 | Why `numeric(5,2)` for scores? | Exact decimals (no floating-point surprises like 84.99999 being "Good"), range 0–100. |
 | Why is the recordings bucket private, 1 MB max, audio only? | Recordings are personal data (SRS 3.3.4). Private + short-lived signed links; size/type limits block misuse. 15 s of compressed audio is far below 1 MB. |
 | Why no login yet? | University rule for FYP-1 (ADR-002). `profiles` already has `role` and `email`, so FYP-2 adds Supabase Auth without redesigning tables. |
+| Why save materials through a database function (`create_material`)? | A material is a lesson + its items + maybe an assignment. Three separate inserts could half-fail and leave a lesson with no items. A Postgres function runs as **one transaction**: all saved or nothing (UC-10). Only `service_role` may call it. |
+| How do level locks work? Is there a progress table? | No extra table: the stage is computed from the student's best scores (`attempts`). Rule and reasons: ADR-004; code: `lib/progress.ts`. |
 | Why a separate `settings` table? | SRS thresholds may be tuned during testing; changing a row is safer than changing code. |
 
 ## 4. How to change the database
@@ -104,7 +107,9 @@ If a migration was run in the SQL Editor and you later switch to `npm run db:pus
 `npx supabase migration repair --status applied 0001 --remote="<your SUPABASE_DB_URL>"`.
 
 ### Check security
-`npm run db:verify` runs `supabase/checks/access.sql` (read-only). Expected: RLS on every table, 0 browser grants, 0 policies, server can write, bucket not public.
+`npm run db:verify` runs `supabase/checks/access.sql` (read-only). Expected: RLS on every table, 0 browser grants, 0 policies, server can write, bucket not public, browser cannot call `create_material`.
+
+New database function? Add `revoke all on function ... from public, anon, authenticated;` and `grant execute ... to service_role;` (see `0002_materials.sql`), and add it to the check.
 
 ### Reset demo data
 Run `supabase/seed.sql` again in the SQL Editor. (`npm run db:seed` only re-runs the seed when the file has changed, because the CLI remembers seeds it already ran.) It **deletes all app data** and reloads the demo set — never run it on real student data.
@@ -113,3 +118,4 @@ Run `supabase/seed.sql` again in the SQL Editor. (`npm run db:seed` only re-runs
 | File | Date | What | Why |
 |---|---|---|---|
 | `0001_init.sql` | 2026-11-24 | All 14 tables, checks, indexes, server-only access, `recordings` bucket | Phase 1: implement the SRS ER diagram. Applied with `npm run db:push`; seeded with `npm run db:seed` |
+| `0002_materials.sql` | 2026-11-24 | `lessons.visibility`; `create_material()` function (server-only) | Phase 2: save UC-10 material atomically; ADR-004 visibility. Applied with `npm run db:push` |

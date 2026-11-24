@@ -8,9 +8,12 @@ import { ComingSoon } from "@/components/layout/coming-soon";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { AttemptsTable } from "@/features/assessment/attempts-table";
 import { ChapterCard } from "@/features/curriculum/chapter-card";
+import { HomeworkList } from "@/features/curriculum/homework-list";
+import { continueItem } from "@/lib/progress";
 import { getCurrentStudent } from "@/server/db/demo-user";
 import { listStudentAttempts } from "@/server/db/queries/attempts";
 import { listChapters } from "@/server/db/queries/curriculum";
+import { getStudentLearning } from "@/server/db/queries/learning";
 
 export const metadata = { title: "Home" };
 
@@ -24,9 +27,15 @@ export default function StudentHomePage() {
 
 async function StudentHome() {
   const student = await getCurrentStudent();
-  const [chapters, attempts] = await Promise.all([listChapters(), listStudentAttempts(student.id, 10)]);
-  // Phase 2 replaces this with the full "Continue" rule (UC-03 alt 1A).
-  const practiceHref = attempts[0] ? `/student/practice/${attempts[0].itemId}` : "/student/chapters";
+  const [chapters, attempts, learning] = await Promise.all([
+    listChapters(),
+    listStudentAttempts(student.id, 10),
+    getStudentLearning(student.id),
+  ]);
+  // UC-03 alt 1A: resume where the student stopped (rule in lib/progress.ts).
+  const next = continueItem(learning.view, learning.lastItemId);
+  const practiceHref = next ? `/student/practice/${next.id}` : "/student/chapters";
+  const progressById = new Map(learning.view.map((c) => [c.id, c]));
 
   return (
     <>
@@ -36,7 +45,7 @@ async function StudentHome() {
         action={
           <Button asChild size="lg">
             <Link href={practiceHref}>
-              <Mic /> {attempts[0] ? "Continue practice" : "Start practice"}
+              <Mic /> {!next ? "All done — review chapters" : learning.lastItemId ? "Continue practice" : "Start practice"}
             </Link>
           </Button>
         }
@@ -50,6 +59,17 @@ async function StudentHome() {
           </TabsList>
 
           <TabsContent value="learn" className="space-y-8 pt-4">
+            {next ? (
+              <p className="text-sm text-muted-foreground">
+                Next up: <span className="font-medium text-foreground">“{next.text}”</span> · {next.lessonTitle}
+              </p>
+            ) : null}
+            <section className="space-y-3" aria-labelledby="homework-heading">
+              <h2 id="homework-heading" className="font-heading text-lg font-semibold">
+                Homework
+              </h2>
+              <HomeworkList homework={learning.homework} />
+            </section>
             <section className="space-y-3">
               <div className="flex items-baseline justify-between">
                 <h2 className="font-heading text-lg font-semibold">Chapters</h2>
@@ -62,7 +82,7 @@ async function StudentHome() {
               ) : (
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                   {chapters.slice(0, 4).map((c) => (
-                    <ChapterCard key={c.id} chapter={c} />
+                    <ChapterCard key={c.id} chapter={c} progress={progressById.get(c.id)} />
                   ))}
                 </div>
               )}

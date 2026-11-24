@@ -66,10 +66,12 @@ UC-03 (student)
 10. ❓ SRS 3.2.2 says a lesson shows "only when assigned", but UC-03 also allows self-selected practice. Suggested default: built-in chapters are open to all; teacher material shows only to the class it's assigned to.
 
 Exit checks
-- [ ] Teacher saves material → it appears for the student in the right chapter/level (or in Homework)
-- [ ] Every validation error shows a clear message; nothing half-saved on failure
-- [ ] Locked/empty levels behave as UC-03 says; Continue opens the right item
-- [ ] Unit tests: item-type detection, unlock rule
+- [x] Teacher saves material → it appears for the student in the right chapter/level (or in Homework)
+- [x] Every validation error shows a clear message; nothing half-saved on failure
+- [x] Locked/empty levels behave as UC-03 says; Continue opens the right item
+- [x] Unit tests: item-type detection, unlock rule
+
+**Phase 2 result (2026-11-24):** all tasks done. ❓ decisions taken as the defaults → ADR-004 (unlock at ≥70% on every item of the previous level; teacher material only for assignees). Migration `0002` applied. Verified: 36 unit tests, lint, types, build, 26 e2e (desktop + phone), `db:verify` (browser can't call `create_material`), and by hand: empty-submit errors; save + assign → student sees it in Homework and in the chapter; save without class → hidden from students; locked item → locked screen + API 403; hidden item → not-found + API 404; phone width OK. Known: not-found inside Suspense returns HTTP 200 (streaming) — review in Phase 5.
 
 Engine track: ASR working on the test clips (transcript only).
 
@@ -165,7 +167,7 @@ Engine track: write up the Azure vs own-engine comparison for the FYP-1 report.
 |---|---|
 | 0 Base project | ✅ Done (2026-11-24) |
 | 1 Data | ✅ Done 2026-11-24 — migration + seed applied, all checks pass |
-| 2 Content | ⏳ Waiting for "continue" |
-| 3 Record + Attempt | — |
+| 2 Content | ✅ Done 2026-11-24 |
+| 3 Record + Attempt | ⏳ Waiting for "continue" |
 | 4 Feedback + Azure | — |
 | 5 QA + Release | — |

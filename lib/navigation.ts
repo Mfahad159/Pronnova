@@ -28,7 +28,7 @@ export const navByRole: Record<Role, NavGroup[]> = {
       label: "Teach",
       items: [
         { title: "Dashboard", href: "/teacher", icon: "home" },
-        { title: "Upload material", href: "/teacher/materials/new", icon: "upload" },
+        { title: "Materials", href: "/teacher/materials", icon: "file" },
         { title: "Chapters", href: "/teacher/chapters", icon: "layers" },
         { title: "Students", href: "/teacher/students", icon: "users" },
       ],
