@@ -85,6 +85,7 @@ All `.env*` files and `*.docx` files are git-ignored on purpose. Don't force-add
 |---|---|---|
 | `SUPABASE_URL` | DB + storage (server only) | Supabase → Project Settings → Data API |
 | `SUPABASE_SECRET_KEY` | Server-side DB access (secret!) | Supabase → Project Settings → API Keys → Secret |
+| `SUPABASE_DB_URL` | Optional: create/alter tables from the terminal (`npm run db:push`) | Supabase → Connect → Session pooler URI + DB password |
 | `SPEECH_ENGINE` | Which scorer: `mock`, `azure`, `python` | Your choice. Start with `mock` |
 | `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | `azure` engine | Azure portal → Speech resource |
 | `SPEECH_ENGINE_URL` | `python` engine | URL of the Python service |
@@ -111,7 +112,7 @@ Only variables starting with `NEXT_PUBLIC_` reach the browser. Everything else s
 | Swap or fix the speech scorer | `server/speech/<engine>.ts`. Keep the contract in `architecture.md` |
 | Work on our own scoring model | `engine/` (Python). Test it with `engine/eval/` clips |
 | Change what Gemini is asked | `server/services/suggestions` 🕓 |
-| Add a table or column | New numbered file in `supabase/migrations/` (never edit an applied one), run it in the SQL Editor, update `architecture.md` |
+| Add a table or column | Follow `docs/database.md` → "How to change the database" (new numbered migration, apply, update queries + docs, log it) |
 | Add demo data | `supabase/seed.sql` |
 | Add a UI block from shadcn/21st.dev | `components/ui/` — see `agent-skills.md` |
 

@@ -10,6 +10,16 @@ if (!url || !key) {
 }
 const db = createClient(url, key, { auth: { persistSession: false } });
 
+// 1. Connection: listing buckets needs a valid URL + secret key, and works before any table exists.
+const { data: buckets, error: connErr } = await db.storage.listBuckets();
+if (connErr) {
+  console.error(`✗ connection: ${connErr.message} (check SUPABASE_URL and SUPABASE_SECRET_KEY)`);
+  process.exit(1);
+}
+console.log(`✓ connected to ${new URL(url).hostname.split(".")[0]} with the secret key (${buckets.length} storage buckets)`);
+
+// 2. Tables from supabase/migrations/0001_init.sql, with row counts from the seed.
+
 const tables = ["profiles", "classes", "enrollments", "chapters", "lessons", "lesson_items", "assignments",
   "attempts", "word_results", "phoneme_results", "error_stats", "teacher_evaluations", "suggestions", "settings"];
 let ok = true;

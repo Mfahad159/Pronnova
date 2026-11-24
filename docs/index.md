@@ -8,6 +8,7 @@ Read this first. Then open only what your task needs.
 | [team-guide.md](team-guide.md) | Plain-English guide: structure, main flows, run locally, where to change things | New to the project, or onboarding a teammate |
 | [srs.md](srs.md) | Full SRS in Markdown (use cases, requirements, 21 diagrams in `srs/`) | You need exact requirement wording or a use case flow — search it, don't read it all |
 | [project-context.md](project-context.md) | What Pronnova is, users, scope, use cases | You need the "why" |
+| [database.md](database.md) | Every table and why it exists, design decisions (viva Q&A), how to change the schema, migration log | Touching the database or defending its design |
 | [architecture.md](architecture.md) | Parts of the system and how they talk | Changing data flow or adding a service |
 | [stack-options.md](stack-options.md) | Free-tier comparison + recommendation | Choosing or changing a service |
 | [design.md](design.md) | Layout, style, reference image, asset use | Building UI |

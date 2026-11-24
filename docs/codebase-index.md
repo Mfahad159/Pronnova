@@ -15,7 +15,8 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `.env.local` | Your keys (git-ignored, never committed). Variable list: `team-guide.md` → Environment variables | local only |
 | `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`) | ✅ |
 | `playwright.config.ts`, `tests/e2e/` | Browser tests (`npm run test:e2e`), route smoke test | ✅ |
-| `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed and bucket in your Supabase project | ✅ |
+| `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed, bucket and that the browser key is blocked | ✅ |
+| `scripts/db.mjs` | `npm run db:push / db:seed / db:status` via the Supabase CLI (needs `SUPABASE_DB_URL`) | ✅ |
 | `next.config.ts` | `cacheComponents`, `partialPrefetching`, Tailwind loader | ✅ |
 | `components.json` | shadcn/ui config | ✅ |
 | `eslint.config.mjs` | Lint rules; ignores `.agents/`, `archive/`, `Pronnova_mds/` | ✅ |
@@ -83,7 +84,7 @@ Both role areas share `components/layout/app-shell.tsx` via `app/student/layout.
 | `POST /api/materials` | Create lesson + items | 🕓 |
 
 ## Data tables
-See `architecture.md` → Data model. Schema: `supabase/migrations/0001_init.sql`. New changes = a new numbered file, never edit an applied one.
+Full explanation + how to change it: `database.md`. Columns list: `architecture.md` → Data model. Schema: `supabase/migrations/0001_init.sql`. New changes = a new numbered file, never edit an applied one.
 
 ## Assets in `public/`
 | Path | Used in |
