@@ -86,6 +86,7 @@ npm run build
 ### Good to know: this Next.js version
 - **Cache Components is on.** A page that reads URL params (like `[chapterId]`) or loads live data must do it inside a `<Suspense>` block, or the build fails. Copy the pattern in `app/student/chapters/[chapterId]/page.tsx`.
 - New Tailwind classes not showing in `npm run dev`? Stop the dev server, delete the `.next/dev` folder, start again (stale dev cache).
+- Test data piling up in the demo? `npm run db:clean-tests` removes it (it also runs by itself after `E2E_MUTATE=1` test runs).
 - Browser tests use Chrome's fake microphone. `E2E_MUTATE=1 npm run test:e2e` also runs the tests that save data; `E2E_FIREFOX=1` adds Firefox.
 - Next.js ships its own docs in `node_modules/next/dist/docs/`. They match our installed version, so check there before relying on older tutorials.
 

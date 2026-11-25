@@ -1,20 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarClock, ClipboardList, LineChart, Upload } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { CalendarDoodle, EarDoodle, IconBlob, TargetDoodle, UploadDoodle } from "@/components/icons/doodle";
+import { Marker } from "./doodles";
 import { Button } from "@/components/ui/button";
 import { Section } from "./section";
 
 // Teacher section (layout idea: the reference's teacher showcase — here it shows what teachers can do).
 const points = [
-  { icon: Upload, title: "Upload your own material", body: "Type words or sentences from your syllabus, one per line." },
-  { icon: CalendarClock, title: "Assign with a due date", body: "Send it to your class; students see it as homework." },
-  { icon: ClipboardList, title: "See every attempt", body: "Scores and wrong words for each student, without listening to every recording." },
-  { icon: LineChart, title: "Spot class-wide mistakes", body: "Find the words and sounds most of the class gets wrong." },
+  { icon: UploadDoodle, title: "Upload your own material", body: "Type words or sentences from your syllabus, one per line." },
+  { icon: CalendarDoodle, title: "Assign with a due date", body: "Send it to your class; students see it as homework." },
+  { icon: EarDoodle, title: "See every attempt", body: "Scores and wrong words for each student, without listening to every recording." },
+  { icon: TargetDoodle, title: "Spot class-wide mistakes", body: "Find the words and sounds most of the class gets wrong." },
 ];
 
 export function ForTeachers() {
   return (
-    <Section id="for-teachers" eyebrow="For teachers" title="Every student heard, without the extra hours">
+    <Section id="for-teachers" eyebrow="For teachers" title={<>Every student <Marker>heard</Marker>, without the extra hours</>}>
       <div className="grid items-center gap-10 md:grid-cols-2">
         <Image
           src="/avatar/avatar_sitting_and_speaking.jpg"
@@ -28,9 +30,9 @@ export function ForTeachers() {
           <ul className="grid gap-5 sm:grid-cols-2">
             {points.map(({ icon: Icon, title, body }) => (
               <li key={title}>
-                <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Icon className="size-5" aria-hidden />
-                </span>
+                <IconBlob>
+                  <Icon className="size-7" />
+                </IconBlob>
                 <h3 className="mt-3 font-semibold">{title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{body}</p>
               </li>

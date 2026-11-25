@@ -7,9 +7,11 @@ export const metadata = { title: "Chapters" };
 export default function TeacherChaptersPage() {
   return (
     <>
-      <TopBar title="Organize chapters" subtitle="Arrange lessons into chapters and set their order." />
+      <TopBar title="Organise chapters" subtitle="Put lessons into chapters and choose their order." />
       <PageBody>
-        <ComingSoon what="Chapter organizer" milestone="FYP-2" />
+        <ComingSoon title="Organising chapters is coming">
+          You&apos;ll be able to move lessons between chapters and change their order. For now, add new material from Materials.
+        </ComingSoon>
       </PageBody>
     </>
   );

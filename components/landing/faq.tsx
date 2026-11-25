@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { Marker } from "./doodles";
 import { Section } from "./section";
 
 // FAQ as native <details> (keyboard + screen-reader friendly, no JavaScript). Answers follow the SRS.
@@ -31,7 +32,7 @@ const faqs = [
 
 export function Faq() {
   return (
-    <Section id="faq" eyebrow="Questions" title="Good to know" className="bg-card">
+    <Section id="faq" eyebrow="Questions" title={<>Good to <Marker>know</Marker></>} className="bg-card">
       <div className="mx-auto max-w-3xl divide-y rounded-3xl border bg-background">
         {faqs.map((f) => (
           <details key={f.q} className="group px-5 py-1 md:px-6">

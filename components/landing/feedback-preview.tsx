@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Marker, Sparkles } from "./doodles";
 import { Section } from "./section";
 
 // A "product screenshot" built from real UI pieces (layout idea: feature row with a product image).
@@ -17,7 +18,7 @@ export function FeedbackPreview() {
     <Section
       id="feedback"
       eyebrow="Feedback"
-      title="Not just “right” or “wrong”"
+      title={<>Not just “right” or <Marker>“wrong”</Marker></>}
       intro="Pronnova lines up what you said with the text and checks each sound, so you know exactly what to practise."
     >
       <div className="grid items-center gap-8 md:grid-cols-[1.1fr_0.9fr]">
@@ -46,7 +47,8 @@ export function FeedbackPreview() {
             </p>
           </div>
         </div>
-        <div className="mx-auto max-w-sm">
+        <div className="relative mx-auto max-w-sm">
+          <Sparkles className="absolute -top-6 -left-4 z-10" />
           <Image
             src="/avatar/avatar_speaking.png"
             alt="The Pronnova guide speaking clearly"

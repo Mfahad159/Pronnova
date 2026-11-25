@@ -3,17 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
-  BookOpen,
-  FileText,
-  HelpCircle,
-  Home,
-  Layers,
-  Mic,
-  Settings,
-  Upload,
-  Users,
-} from "lucide-react";
+  BookDoodle,
+  ChaptersDoodle,
+  HomeDoodle,
+  MicDoodle,
+  ProgressDoodle,
+  SparkleDoodle,
+  StudentsDoodle,
+  UploadDoodle,
+} from "@/components/icons/doodle";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -25,16 +23,16 @@ import {
 import type { NavGroup, NavItem } from "@/lib/navigation";
 
 const icons: Record<NavItem["icon"], React.ComponentType<{ className?: string }>> = {
-  home: Home,
-  book: BookOpen,
-  mic: Mic,
-  chart: BarChart3,
-  upload: Upload,
-  layers: Layers,
-  users: Users,
-  file: FileText,
-  help: HelpCircle,
-  settings: Settings,
+  home: HomeDoodle,
+  book: ChaptersDoodle,
+  mic: MicDoodle,
+  chart: ProgressDoodle,
+  upload: UploadDoodle,
+  layers: ChaptersDoodle,
+  users: StudentsDoodle,
+  file: BookDoodle,
+  help: SparkleDoodle,
+  settings: SparkleDoodle,
 };
 
 /** Rendered without an active state while the pathname is unknown (Suspense fallback). */
@@ -65,7 +63,7 @@ function NavGroups({ groups, activeHref }: { groups: NavGroup[]; activeHref: str
             const active = item.href === activeHref;
             return (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={active} tooltip={item.title} size="lg" className="h-10">
+                <SidebarMenuButton asChild isActive={active} tooltip={item.title} size="lg" className="h-11 text-[0.95rem] [&_svg]:size-6!">
                   <Link href={item.href} aria-current={active ? "page" : undefined}>
                     <Icon />
                     <span>{item.title}</span>

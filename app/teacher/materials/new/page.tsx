@@ -22,7 +22,7 @@ async function UploadMaterial() {
   const [chapters, classes] = await Promise.all([listChapters(), listTeacherClasses(teacher.id)]);
   return (
     <>
-      <TopBar title="Upload practice material" subtitle="Add words, phrases or sentences, then assign them to a class." />
+      <TopBar title="Upload material" subtitle="Add words, phrases or sentences for your class to practise." />
       <PageBody>
         <MaterialForm
           chapters={chapters.map((c) => ({ id: c.id, label: `${c.orderNo}. ${c.title}` }))}

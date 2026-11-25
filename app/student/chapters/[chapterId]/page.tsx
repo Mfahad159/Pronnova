@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, ChevronRight, Lock } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { CheckDoodle, LockDoodle } from "@/components/icons/doodle";
 import { Badge } from "@/components/ui/badge";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
@@ -59,7 +60,7 @@ function LevelSection({ lv, previous }: { lv: LevelView; previous: LevelView["le
         </h2>
         {!lv.unlocked ? (
           <Badge variant="outline" className="gap-1">
-            <Lock className="size-3" /> Locked
+            <LockDoodle className="size-4" /> Locked
           </Badge>
         ) : lv.total > 0 ? (
           <span className="text-sm text-muted-foreground">
@@ -70,12 +71,12 @@ function LevelSection({ lv, previous }: { lv: LevelView; previous: LevelView["le
 
       {!lv.unlocked && previous ? (
         <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-          This level is locked. Score {PASS_SCORE}% or more on every {levelLabel[previous]} exercise to unlock it.
+          🔒 Get {PASS_SCORE}% or more on every {levelLabel[previous]} exercise to open {levelLabel[lv.level]}.
         </p>
       ) : null}
 
       {empty ? (
-        <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">No exercises in this level yet.</p>
+        <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">Nothing here yet — your teacher may add exercises soon.</p>
       ) : (
         <ul className="divide-y overflow-hidden rounded-xl border bg-card">
           {lv.items.map((item) => (
@@ -91,26 +92,35 @@ function LevelSection({ lv, previous }: { lv: LevelView; previous: LevelView["le
 }
 
 function ItemRow({ item, open }: { item: ItemView; open: boolean }) {
-  const content = (
-    <>
-      {item.status === "mastered" ? (
-        <CheckCircle2 className="size-5 shrink-0 text-score-excellent" aria-label="Done" />
-      ) : open ? (
-        <span className="size-5 shrink-0 rounded-full border-2 border-muted-foreground/30" aria-hidden />
-      ) : (
-        <Lock className="size-4 shrink-0 text-muted-foreground" aria-label="Locked" />
-      )}
-      <span className="min-w-0 flex-1 font-medium">{item.text}</span>
+  // Phones: badges sit under the text so long sentences keep the full width.
+  const tags = (
+    <span className="flex flex-wrap items-center gap-1.5">
       {item.homework ? <Badge className="bg-primary/10 text-primary">Homework</Badge> : null}
       {item.best != null ? (
-        <span className={cn("text-xs tabular-nums", item.status === "mastered" ? "text-score-excellent" : "text-score-good")}>
+        <span className={cn("text-xs font-medium tabular-nums", item.status === "mastered" ? "text-score-excellent" : "text-score-good")}>
           Best {Math.round(item.best)}%
         </span>
       ) : null}
       <Badge variant="secondary" className="capitalize">
         {item.itemType}
       </Badge>
-      {open ? <ChevronRight className="size-4 text-muted-foreground" /> : null}
+    </span>
+  );
+  const content = (
+    <>
+      {item.status === "mastered" ? (
+        <CheckDoodle className="size-6 text-score-excellent" title="Done" />
+      ) : open ? (
+        <span className="mx-0.5 size-5 shrink-0 rounded-full border-2 border-muted-foreground/30" aria-hidden />
+      ) : (
+        <LockDoodle className="size-6 text-muted-foreground" title="Locked" />
+      )}
+      <span className="min-w-0 flex-1">
+        <span className="block font-medium break-words">{item.text}</span>
+        <span className="mt-1 block sm:hidden">{tags}</span>
+      </span>
+      <span className="hidden sm:block">{tags}</span>
+      {open ? <ChevronRight className="size-4 shrink-0 text-muted-foreground" /> : null}
     </>
   );
   return (

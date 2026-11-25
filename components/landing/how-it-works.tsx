@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { DashedPath, Marker } from "./doodles";
 import { Section } from "./section";
 
 // Alternating image / text rows (layout idea: "you will get" feature rows), with numbered steps.
@@ -13,7 +14,7 @@ const steps = [
   },
   {
     title: "Read it out loud",
-    body: "Tap the microphone and read the text clearly. Listen back to yourself, then send it. If it was too quiet or too short, we'll tell you right away.",
+    body: "Tap the mic and read the text clearly. Listen back, then tap “Check my reading”. If it was too quiet or too short, we’ll tell you right away.",
     image: "/objects/img1.jpg",
     alt: "A girl reading a book into a microphone",
     tint: "bg-tint-mint",
@@ -29,7 +30,8 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <Section id="how-it-works" eyebrow="How it works" title="Three steps, a few minutes a day" className="bg-card">
+    <Section id="how-it-works" eyebrow="How it works" title={<>Three steps, a few <Marker>minutes</Marker> a day</>} className="relative overflow-hidden bg-card">
+      <DashedPath className="pointer-events-none absolute top-10 -left-10 hidden w-80 md:block" />
       <ol className="space-y-12 md:space-y-20">
         {steps.map((s, i) => (
           <li key={s.title} className="grid items-center gap-6 md:grid-cols-2 md:gap-12">

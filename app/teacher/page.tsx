@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { AttemptsTable } from "@/features/assessment/attempts-table";
+import { SparkleDoodle } from "@/components/icons/doodle";
 import { getCurrentTeacher } from "@/server/db/demo-user";
 import { getTeacherStats, listClassAttempts } from "@/server/db/queries/attempts";
 
@@ -60,25 +61,31 @@ async function TeacherHome() {
             <h2 className="font-heading text-lg font-semibold">Latest attempts</h2>
             <AttemptsTable attempts={attempts} showStudent />
           </div>
-          <Card className="bg-secondary">
-            <CardContent className="space-y-3">
+          {/* Compact tip: small illustration + one useful sentence (no big empty panel). */}
+          <Card className="bg-secondary xl:self-start">
+            <CardContent className="flex items-center gap-4 xl:flex-col xl:text-center">
               <Image
                 src="/avatar/avatar_standing_beside_dice.png"
                 alt=""
                 width={1197}
                 height={1792}
-                sizes="280px"
-                className="mx-auto h-48 w-auto"
+                sizes="120px"
+                className="h-28 w-auto shrink-0 xl:h-36"
               />
-              <p className="text-sm">
-                {stats.mostMissedWord ? (
-                  <>
-                    Tip: your class often misses <strong>“{stats.mostMissedWord}”</strong>. Practise it together in the next lesson.
-                  </>
-                ) : (
-                  "Tips about common mistakes appear here once students start practising."
-                )}
-              </p>
+              <div className="text-sm">
+                <p className="inline-flex items-center gap-1.5 font-semibold text-primary">
+                  <SparkleDoodle className="size-4" /> Teaching tip
+                </p>
+                <p className="mt-1">
+                  {stats.mostMissedWord ? (
+                    <>
+                      Your class often misses <strong>“{stats.mostMissedWord}”</strong>. Practise it together in your next lesson.
+                    </>
+                  ) : (
+                    "Once students start practising, the word your class finds hardest will show up here."
+                  )}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </section>

@@ -5,12 +5,12 @@ import { expect, test } from "@playwright/test";
 const routes: [path: string, heading: RegExp][] = [
   ["/", /say it out loud/i],
   ["/onboarding", /how will you use pronnova/i],
-  ["/student", /welcome back/i],
+  ["/student", /^hi /i],
   ["/student/chapters", /^chapters$/i],
   ["/student/progress", /your progress/i],
   ["/teacher", /hello/i],
-  ["/teacher/materials/new", /upload practice material/i],
-  ["/teacher/chapters", /organize chapters/i],
+  ["/teacher/materials/new", /^upload material$/i],
+  ["/teacher/chapters", /organise chapters/i],
   ["/teacher/students", /^students$/i],
 ];
 
@@ -36,7 +36,7 @@ test("landing Get started → onboarding → choose student or teacher", async (
   await page.getByRole("main").getByRole("link", { name: "Get started" }).first().click(); // hero button
   await expect(page).toHaveURL(/\/onboarding$/);
   await page.getByRole("link", { name: /i'm a student/i }).click();
-  await expect(page.getByRole("heading", { level: 1, name: /welcome back/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /^hi /i })).toBeVisible();
   await page.goto("/onboarding");
   await page.getByRole("link", { name: /i'm a teacher/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: /hello/i })).toBeVisible();

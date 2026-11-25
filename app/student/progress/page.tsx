@@ -7,9 +7,11 @@ export const metadata = { title: "Progress" };
 export default function ProgressPage() {
   return (
     <>
-      <TopBar title="Your progress" subtitle="Scores over time and the words you keep missing." />
+      <TopBar title="Your progress" subtitle="See how you're improving." />
       <PageBody>
-        <ComingSoon what="Progress and suggestions" milestone="FYP-2" />
+        <ComingSoon title="Your progress page is coming">
+          You&apos;ll see your scores over time, the words and sounds you keep missing, and tips made just for you.
+        </ComingSoon>
       </PageBody>
     </>
   );
