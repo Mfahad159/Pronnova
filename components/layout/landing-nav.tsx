@@ -10,32 +10,38 @@ const links = [
   { href: "/teacher", label: "For teachers" },
 ];
 
-/** Top bar for the public landing page. Sits over the hero image with a light frosted background. */
+/**
+ * Floating, centred navbar for the public landing page: only as wide as its content (w-fit),
+ * with space on every side, frosted so the hero photo shows through.
+ */
 export function LandingNav() {
   return (
-    <header className="sticky top-0 z-30 border-b border-white/60 bg-background/70 backdrop-blur-md">
-      <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 md:px-6">
+    <header className="sticky top-4 z-30 mx-4 mt-4 flex justify-center">
+      <nav
+        aria-label="Main"
+        className="flex h-14 w-fit max-w-full items-center gap-2 rounded-full border border-white/70 bg-background/75 py-2 pr-2 pl-4 shadow-lg shadow-foreground/5 backdrop-blur-md sm:gap-4"
+      >
         <BrandLogo />
-        <ul className="ml-auto hidden items-center gap-1 md:flex">
+        <ul className="hidden items-center gap-1 md:flex">
           {links.map((l) => (
             <li key={l.href}>
               <Link
                 href={l.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="rounded-full px-3 py-2 text-sm font-medium text-foreground/80 outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 {l.label}
               </Link>
             </li>
           ))}
         </ul>
-        <Button asChild size="lg" className="ml-auto h-10 px-4 md:ml-2">
+        <Button asChild size="lg" className="h-10 rounded-full px-4">
           <Link href="/student">Start practising</Link>
         </Button>
 
         {/* Phone: links move into a slide-in menu */}
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label="Open menu">
+            <Button variant="ghost" size="icon-lg" className="rounded-full md:hidden" aria-label="Open menu">
               <Menu />
             </Button>
           </SheetTrigger>

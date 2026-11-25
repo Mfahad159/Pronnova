@@ -38,7 +38,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense) | ✅ |
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
-| `components/layout/landing-nav.tsx` | Landing page navbar (links + Start practising; slide-in menu on phones) | ✅ |
+| `components/layout/landing-nav.tsx` | Landing navbar: centred floating pill (w-fit, margin all round, sticky), links + Start practising; slide-in menu on phones | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
