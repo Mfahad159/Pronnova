@@ -18,6 +18,7 @@ Reference: [`design/reference-dashboard.png`](design/reference-dashboard.png) (a
   - Buttons use a darker coral `#D63C2F` so white text passes WCAG AA contrast.
   - Score colors (text-safe on white): excellent `#157A3E`, good `#9A6412`, average `#D93025`.
   - All tokens live at the top of `app/globals.css` (`:root` + `.dark`). Use them as Tailwind classes (`bg-primary`, `text-score-good`, `bg-tint-peach`). Never hard-code colors in components.
+- **Logo & favicon (2026-11-25):** new mark in indigo `#5B4BF5` → cyan `#14C8E0` (`public/icons/pronnova-mark.svg`, favicons in `public/`). The UI still uses the coral palette — see `index.md` open conflict 14.
 - **Font:** Plus Jakarta Sans (friendly, very readable), set in `app/layout.tsx`.
 - **Tone:** warmer and friendlier — users are Class 6–10 students. Larger tap targets (≥ 44 px), bigger practice text, short clear messages.
 - **Practice page is not a table.** One big card: the sentence, a large round **Record** button, live waveform, then the result with each word colored by score.

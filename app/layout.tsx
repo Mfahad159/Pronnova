@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,7 +17,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: { default: "Pronnova", template: "%s · Pronnova" },
   description: "Practice English pronunciation and get instant word-by-word feedback.",
-  icons: { icon: "/icons/logo.svg" },
+  // Brand icon set (public/): ICO for old browsers, SVG for modern ones (adapts to dark mode), PNG fallbacks.
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#5B4BF5", // logo indigo; matches site.webmanifest
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
