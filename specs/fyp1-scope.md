@@ -28,7 +28,7 @@ What FYP-1 must deliver and how we know each use case is done. Confirm with the 
 | UC-12 | Monitor Student Progress | Teacher | Class + per-student progress, save teacher evaluations | 🟡 Dashboard numbers + latest attempts; per-student view + evaluation not |
 | UC-13 | View Reports | Teacher | Student/class report compilation | ⬜ Not started |
 
-13 use cases; 30% ≈ 4. The FYP-1 set below is 5 of 13 (38%).
+13 use cases; 30% ≈ 4. **Confirmed by the team (2026-11-26): the FYP-1 set is UC-03, 04, 05, 06, 10 — 5 of 13 (38%).**
 
 ## Out of scope for FYP-1
 UC-01/02 (auth), UC-07 (progress + Gemini), UC-08/09, UC-11/12/13. Build the tables they need, not the screens.
