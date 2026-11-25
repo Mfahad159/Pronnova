@@ -27,29 +27,33 @@ const isScrolled = () => window.scrollY > 24;
 /**
  * Landing navbar.
  * At the top of the page: full-width bar — logo left, links centred, outlined pill right.
- * After scrolling: a floating rounded pill, only as wide as its content (w-fit), with space on every side.
+ * After scrolling: a floating rounded pill about as wide as its content, with space on every side.
+ * The change is a smooth max-width + colour transition (no jump in height, so no flicker).
  */
 export function LandingNav() {
   const scrolled = useSyncExternalStore(subscribe, isScrolled, () => false);
 
   return (
+    // Same header height in both states (no layout shift → no flicker). Only colours, max-width and
+    // padding animate, which the browser can transition smoothly.
     <header
       className={cn(
-        "sticky top-0 z-30 transition-[padding,background-color] duration-300 motion-reduce:transition-none",
-        scrolled ? "px-4 pt-3" : "bg-background/85 backdrop-blur-md",
+        "sticky top-0 z-30 flex h-[4.5rem] flex-col px-3 transition-colors duration-500 ease-out motion-reduce:transition-none",
+        scrolled ? "bg-transparent" : "bg-background/85 backdrop-blur-md",
       )}
     >
       <nav
         aria-label="Main"
         className={cn(
-          "mx-auto flex items-center transition-[height,padding,background-color,border-color] duration-300 motion-reduce:transition-none",
+          "mx-auto flex w-full items-center justify-between gap-2 rounded-full border transition-[max-width,height,margin,padding,background-color,border-color] duration-500 ease-out motion-reduce:transition-none sm:gap-4",
           scrolled
-            ? "h-14 w-fit max-w-full gap-2 rounded-full border border-foreground/10 bg-background/85 py-2 pr-2 pl-4 backdrop-blur-md sm:gap-4"
-            : "h-[4.5rem] w-full max-w-6xl justify-between gap-4 border border-transparent px-4 md:px-6",
+            ? // pill: shrinks to roughly its content width (links only show from lg up)
+              "mt-2 h-14 max-w-[21rem] border-foreground/10 bg-background/85 pr-2 pl-4 backdrop-blur-md lg:max-w-[48rem]"
+            : "mt-0 h-[4.5rem] max-w-6xl border-transparent bg-transparent px-1 md:px-3",
         )}
       >
         <BrandLogo />
-        <ul className={cn("hidden items-center gap-1 lg:flex", !scrolled && "flex-1 justify-center")}>
+        <ul className="hidden flex-1 items-center justify-center gap-1 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
               <Link
