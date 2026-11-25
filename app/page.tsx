@@ -10,6 +10,7 @@ import { FinalCta } from "@/components/landing/final-cta";
 import { ForTeachers } from "@/components/landing/for-teachers";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { Levels } from "@/components/landing/levels";
+import { PhotoCollage } from "@/components/landing/photo-collage";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { Sparkles, Sticker } from "@/components/landing/doodles";
 import { SoundBars } from "@/components/landing/section";
@@ -68,6 +69,7 @@ export default function Home() {
         </div>
       </div>
 
+        <PhotoCollage />
         <Benefits />
         <HowItWorks />
         <FeedbackPreview />

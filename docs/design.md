@@ -23,6 +23,15 @@ Reference: [`design/reference-dashboard.png`](design/reference-dashboard.png) (a
 - **Icons (2026-11-25):** our own doodle set in `components/icons/doodle.tsx` (18 icons: mic, book, star, trophy, progress, teacher, upload, calendar, ear, globe, lock, sparkle, home, chapters, students, check, speak, target). Hand-drawn line style inspired by kids' learning sites — **never copy another site's icon files**. Colour comes from the text colour; wrap in `IconBlob` for the soft sticker look. Keep Lucide only for small UI arrows/chevrons/menu.
 - **Playful details:** `components/landing/doodles.tsx` — `Marker` (one underlined word per heading), `Sparkles`, `Sticker` (one per page), `DashedPath`. Use sparingly.
 - **Writing style:** short, kind, action-first. Buttons say what happens ("Check my reading", "Continue reading", "Upload material"). After a score, add one encouraging line. UK spelling (practise = verb, practice = noun; organise). Never show internal file names, phases or tech words to users.
+- **Photos (2026-11-25):** `public/photos/` — free licences, credit kept on the page under the collage.
+  | File | Source | Photographer |
+  |---|---|---|
+  | `boy-in-classroom-pakistan.jpg` | [Unsplash DreH1YbP1js](https://unsplash.com/photos/DreH1YbP1js) | Assad Tanoli |
+  | `class-listening-to-teacher.jpg` | [Pexels 12714642](https://www.pexels.com/photo/12714642/) | Pexels contributor |
+  | `girls-studying-hijab.jpg` | [Pexels 448877](https://www.pexels.com/photo/448877/) | Akela Photography |
+  | `children-walking-to-school.jpg` | [Pexels 31692715](https://www.pexels.com/photo/31692715/) | clickbyabbas |
+  | `smiling-schoolboys-kp.jpg` | [Pexels 18627614](https://www.pexels.com/photo/18627614/) | Zeeshan Khan |
+  Only use free-licence photos (Unsplash License / Pexels License — not Unsplash+). They show real children: never edit them into ads or use them to suggest those children use Pronnova.
 - **Font:** Google Sans Flex for everything (body and headings), variable weight, loaded with `next/font/google` in `app/layout.tsx` and wired to `--font-sans` / `--font-heading` in `app/globals.css`. To change the font, edit those two places only.
 - **Flat UI — no shadows or depth (2026-11-25):** no `shadow-*`, no press-down/scale effects on buttons. Separate things with borders (`border`, `ring-1 ring-foreground/10`) and tinted backgrounds; show hover with colour (e.g. `hover:border-primary/40`, `hover:bg-muted`). Toast shadows are switched off in `app/globals.css`.
 - **Tone:** warmer and friendlier — users are Class 6–10 students. Larger tap targets (≥ 44 px), bigger practice text, short clear messages.
