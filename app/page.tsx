@@ -25,7 +25,7 @@ export default function Home() {
         {/* Hero background: full-bleed photo with a white overlay so the text stays readable. */}
         <div className="absolute inset-0 -z-10" aria-hidden>
           <Image
-            src="/hero/hero-hillside.jpg"
+            src="/hero/hero-hillside-reading.jpg"
             alt=""
             fill
             priority

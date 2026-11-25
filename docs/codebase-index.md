@@ -109,7 +109,7 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 | `icons/pronnova-mark.svg` (+ `-on-dark`) | Brand mark (coral→orange sound columns) in `brand-logo.tsx` |
 | `favicon.ico`, `favicon.svg`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Browser/tab and iPhone icons, linked in `app/layout.tsx` metadata |
 | `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#FF594B`) |
-| `hero/hero-hillside.jpg` | Landing hero background (two students on a hillside, 1376×768) |
+| `hero/hero-hillside-reading.jpg` | Landing hero background (four students reading on a hillside, 1376×768) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Unused now (was the landing hero) |
 | `avatar/avatar_standing_beside_dice.png` | Teacher dashboard tip card |
 | `avatar/avatar_speaking.png` | `coming-soon.tsx` |
