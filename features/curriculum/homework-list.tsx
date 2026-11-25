@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarClock, ChevronRight } from "lucide-react";
+import { CalendarBlank, CaretRight } from "@phosphor-icons/react/ssr";
 import { Badge } from "@/components/ui/badge";
 import { levelLabel } from "@/features/curriculum/level";
 import type { HomeworkEntry } from "@/server/db/queries/learning";
@@ -19,7 +19,7 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
         const body = (
           <>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <CalendarClock className="size-4" />
+              <CalendarBlank className="size-4" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate font-medium">{h.title}</span>
@@ -35,7 +35,7 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
                 {dateFmt.format(new Date(h.deadline))}
               </Badge>
             ) : null}
-            {h.firstItemId ? <ChevronRight className="size-4 text-muted-foreground" /> : null}
+            {h.firstItemId ? <CaretRight className="size-4 text-muted-foreground" /> : null}
           </>
         );
         return (

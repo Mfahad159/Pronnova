@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Play, RotateCcw } from "lucide-react";
+import { ArrowCounterClockwise, Play } from "@phosphor-icons/react/ssr";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -105,7 +105,7 @@ export function AttemptsTable({
                 {showStudent ? null : (
                   <Button variant="ghost" size="icon" asChild>
                     <Link href={`/student/practice/${a.itemId}`} aria-label={`Try again: ${a.text}`}>
-                      <RotateCcw />
+                      <ArrowCounterClockwise />
                     </Link>
                   </Button>
                 )}

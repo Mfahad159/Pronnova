@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Mic, MicOff, RotateCcw, Send, Square, X } from "lucide-react";
+import {
+  ArrowCounterClockwise,
+  ArrowRight,
+  CircleNotch,
+  Microphone,
+  MicrophoneSlash,
+  PaperPlaneTilt,
+  Stop,
+  X,
+} from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { LiveWaveform } from "@/features/voice/live-waveform";
@@ -96,12 +105,12 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
             {isRecording ? (
               <>
                 <span className="absolute inset-0 animate-ping rounded-full bg-destructive/30 motion-reduce:hidden" />
-                <Square className="relative size-8 fill-current" />
+                <Stop className="relative size-8" weight="fill" />
               </>
             ) : phase === "requesting" ? (
-              <Loader2 className="size-9 animate-spin" />
+              <CircleNotch className="size-9 animate-spin" />
             ) : (
-              <Mic className="size-10" />
+              <Microphone className="size-10" />
             )}
           </button>
           {isRecording ? (
@@ -125,7 +134,7 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
       {/* Problem that needs a new recording or a settings change */}
       {phase === "error" && error ? (
         <div role="alert" className="flex max-w-md items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-left text-sm">
-          <MicOff className="mt-0.5 size-5 shrink-0 text-destructive" />
+          <MicrophoneSlash className="mt-0.5 size-5 shrink-0 text-destructive" />
           <p>{error.message}</p>
         </div>
       ) : null}
@@ -142,11 +151,11 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
           ) : null}
           <div className="flex flex-wrap justify-center gap-3">
             <Button size="lg" className="h-11 px-5" onClick={submit} disabled={phase === "submitting"}>
-              {phase === "submitting" ? <Loader2 className="animate-spin" /> : <Send />}
+              {phase === "submitting" ? <CircleNotch className="animate-spin" /> : <PaperPlaneTilt />}
               {phase === "submitting" ? "Checking…" : "Send"}
             </Button>
             <Button size="lg" variant="outline" className="h-11 px-5" onClick={recordAgain} disabled={phase === "submitting"}>
-              <RotateCcw /> Record again
+              <ArrowCounterClockwise /> Record again
             </Button>
           </div>
         </div>
@@ -159,7 +168,7 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
           <p className="text-sm text-muted-foreground">{result.error ?? "Please try again in a moment."}</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button onClick={retry}>
-              <RotateCcw /> Try checking again
+              <ArrowCounterClockwise /> Try checking again
             </Button>
             <Button variant="outline" onClick={recordAgain}>
               Record again
@@ -185,7 +194,7 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button size="lg" variant="outline" className="h-11 px-5" onClick={recordAgain}>
-              <RotateCcw /> Try again
+              <ArrowCounterClockwise /> Try again
             </Button>
             {nextHref ? (
               <Button asChild size="lg" className="h-11 px-5">

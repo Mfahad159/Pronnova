@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { CircleNotch } from "@phosphor-icons/react/ssr";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -169,7 +169,7 @@ export function MaterialForm({ chapters, classes }: { chapters: Option[]; classe
 
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" size="lg" disabled={pending} className="h-10 px-4">
-          {pending ? <Loader2 className="animate-spin" /> : null}
+          {pending ? <CircleNotch className="animate-spin" /> : null}
           {pending ? "Saving…" : classId ? "Save and assign" : "Save material"}
         </Button>
         <p role="status" aria-live="polite" className={cn("text-sm", message && "text-destructive")}>

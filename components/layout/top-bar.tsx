@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { MagnifyingGlass } from "@phosphor-icons/react/ssr";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -20,7 +20,7 @@ export function TopBar({
         {subtitle ? <p className="truncate text-sm text-muted-foreground">{subtitle}</p> : null}
       </div>
       <div className="relative hidden w-64 lg:block">
-        <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+        <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input type="search" placeholder="Search lessons…" aria-label="Search lessons" className="h-9 pl-8" />
       </div>
       {action}

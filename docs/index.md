@@ -44,3 +44,4 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 13 | Plan asks for Firefox + Safari checks; Windows blocked the downloaded Firefox and Safari can't run here | Firefox e2e is opt-in (`E2E_FIREFOX=1`); both checked by hand in Phase 5 |
 | 14 | New logo/favicon came indigo→cyan; the app UI is coral/orange | Resolved: logo + favicons recoloured to coral→orange (same shapes), UI stays coral |
 | 8 | Reference design is a green, adult audio-tool dashboard | Keep its layout; use Pronnova's coral/orange brand and friendlier tone (design.md) |
+| 15 | New landing brief mentions Grade 1 / Easy level while SRS specifies Class 6–10 / Basic–Medium–Advanced | Kept SRS scope (`Class 6–10` and `Basic (Easy) / Medium / Advanced`) on the landing page while preserving the brief's kid-friendly sample words (`Apple`, `Cat`, `Butterfly`, `Elephant`) as illustrative demo flashcards |

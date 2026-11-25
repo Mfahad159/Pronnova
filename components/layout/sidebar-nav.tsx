@@ -3,17 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
   BookOpen,
+  ChartBar,
   FileText,
-  HelpCircle,
-  Home,
-  Layers,
-  Mic,
-  Settings,
-  Upload,
-  Users,
-} from "lucide-react";
+  Gear,
+  House,
+  Microphone,
+  Question,
+  Stack,
+  UploadSimple,
+  UsersThree,
+} from "@phosphor-icons/react/ssr";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -25,16 +25,16 @@ import {
 import type { NavGroup, NavItem } from "@/lib/navigation";
 
 const icons: Record<NavItem["icon"], React.ComponentType<{ className?: string }>> = {
-  home: Home,
+  home: House,
   book: BookOpen,
-  mic: Mic,
-  chart: BarChart3,
-  upload: Upload,
-  layers: Layers,
-  users: Users,
+  mic: Microphone,
+  chart: ChartBar,
+  upload: UploadSimple,
+  layers: Stack,
+  users: UsersThree,
   file: FileText,
-  help: HelpCircle,
-  settings: Settings,
+  help: Question,
+  settings: Gear,
 };
 
 /** Rendered without an active state while the pathname is unknown (Suspense fallback). */

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, ChevronRight, Lock } from "lucide-react";
+import { CaretRight, CheckCircle, Lock } from "@phosphor-icons/react/ssr";
 import { Badge } from "@/components/ui/badge";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
@@ -94,7 +94,7 @@ function ItemRow({ item, open }: { item: ItemView; open: boolean }) {
   const content = (
     <>
       {item.status === "mastered" ? (
-        <CheckCircle2 className="size-5 shrink-0 text-score-excellent" aria-label="Done" />
+        <CheckCircle className="size-5 shrink-0 text-score-excellent" weight="duotone" aria-label="Done" />
       ) : open ? (
         <span className="size-5 shrink-0 rounded-full border-2 border-muted-foreground/30" aria-hidden />
       ) : (
@@ -110,7 +110,7 @@ function ItemRow({ item, open }: { item: ItemView; open: boolean }) {
       <Badge variant="secondary" className="capitalize">
         {item.itemType}
       </Badge>
-      {open ? <ChevronRight className="size-4 text-muted-foreground" /> : null}
+      {open ? <CaretRight className="size-4 text-muted-foreground" /> : null}
     </>
   );
   return (

@@ -39,8 +39,8 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense) | ✅ |
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
-| `components/layout/landing-nav.tsx` | Landing navbar (client): full-width bar at the top (logo left, section links centred, outlined Get started right); after scrolling becomes a floating rounded pill (w-fit, margin all round); slide-in menu below lg | ✅ |
-| `components/landing/` | Landing sections (Mindora-style UI): `hero-card` (rounded image card + tags + CTA), `value-cards`, `practise-cards` (#practise), `photo-collage`, `journey-cards` (#journey), `feedback-slider` (#feedback, client, example results), `sound-guides` (#guides), `faq` (#faq), `final-cta`, `site-footer`; shared `pill-link.tsx` (pill + round arrow) and `section.tsx` | ✅ |
+| `components/layout/landing-nav.tsx` | Landing navbar (client): floating white rounded bar (`Home`, `How It Works`, `Student Experience`, `Pronunciation`, `For Teachers`, `About`, `Try the Demo` `KiddyButton`); slide-in menu below lg | ✅ |
+| `components/landing/` | Guided 11-section interactive landing tour: `hero-card` (#top), `interactive-demo` (#demo, real `useRecorder` + `LiveWaveform` + Web Speech playback + clearly labelled demo assessment), `how-it-works` (#how-it-works, 4-step interactive cycle), `learning-buddy` (#buddy, Piko prompt switcher), `learning-journey` (#journey, Basic/Medium/Advanced sample words), `assessment-showcase` (#assessment, speech recognition vs assessment panel), `teacher-preview` (#teachers, Class Overview / Student Progress switcher), `classroom-workflow` (#classroom, 5-step teacher-student loop), `young-learners` (#learners, 6 principles + interactive flashcards), `faq` (#faq, exclusive native accordion), `final-cta`, `site-footer`, `illustrations` (2D SVG flashcards), `kiddy-button` | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
@@ -54,6 +54,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `lib/audio.ts` | Recording rules shared by browser + server: limits, allowed formats, `recordingProblem`, `wordUnit` | ✅ |
 | `lib/materials.ts` | UC-10 rules: item-type detection, line parsing, validation, Pakistan-time dates | ✅ |
 | `lib/navigation.ts` | Sidebar menu per role | ✅ |
+| `lib/speech-tts.ts` | Client Web Speech synthesis helper (`speakReference`) for landing pronunciation previews | ✅ |
 | `lib/utils.ts` | `cn()` class helper | ✅ |
 | `types/index.ts` | Shared types (Profile, Chapter, Lesson, LessonItem, results, AttemptSummary) | ✅ |
 | `server/speech/` | Speech Engine: `types.ts` (contract), `index.ts` (`getSpeechEngine()`), `mock.ts`, `azure.ts` (stub), `python.ts` | ✅ |
@@ -76,7 +77,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 ## Routes
 | Route | File | UC | |
 |---|---|---|---|
-| `/` | `app/page.tsx` | Landing: hero card → value cards → What you can practise → photo collage → journey (students/teachers) → example feedback → sound guides → FAQ → CTA → footer | ✅ |
+| `/` | `app/page.tsx` | Guided 11-section interactive tour: Hero → Interactive Demo (`Apple` mic/TTS) → How Pronnova Works → Learning Buddy (`Piko`) → Learning Journey (`Basic`/`Medium`/`Advanced`) → Pronunciation Assessment → Teacher Dashboard preview → Classroom Workflow → Young Learners flashcards → FAQ → Final CTA & Footer | ✅ |
 | `/onboarding` | `app/onboarding/page.tsx` | Choose **Student** or **Teacher** (picture cards). FYP-1 opens the demo user; FYP-2 → sign up / sign in | ✅ |
 | `/student` | `app/student/page.tsx` | Home: Continue, homework, chapter cards with stage, recent attempts (UC-03) | ✅ |
 | `/student/chapters` | `app/student/chapters/page.tsx` | UC-03 chapters + stage | ✅ |
@@ -110,7 +111,8 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 | `favicon.ico`, `favicon.svg`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Browser/tab and iPhone icons, linked in `app/layout.tsx` metadata |
 | `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#FF594B`) |
 | `photos/*.jpg` | 8 free-licence classroom photos for the landing collage (sources in `design.md`) |
-| `hero/hero-hillside-reading.jpg` | Landing hero background (four students reading on a hillside, 1376×768) |
+| `hero/pronnova-swing-crew.png`, `hero/piko-portrait.png` | Landing hero swing crew + consistent Piko learning buddy portrait (Gemini-generated in Pronnova coral/orange palette) |
+| `hero/hero-hillside-reading.jpg` | Previous landing hero background (unused now) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Unused now (was the landing hero) |
 | `avatar/avatar_standing_beside_dice.png` | Teacher dashboard tip card |
 | `avatar/avatar_speaking.png` | `coming-soon.tsx` |

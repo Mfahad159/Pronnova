@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
+import { SignOut } from "@phosphor-icons/react/ssr";
 import {
   Sidebar,
   SidebarContent,
@@ -41,7 +41,7 @@ export function AppShell({ role, children }: { role: Role; children: React.React
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Switch role">
                 <Link href="/onboarding">
-                  <LogOut />
+                  <SignOut />
                   <span>Switch role</span>
                 </Link>
               </SidebarMenuButton>

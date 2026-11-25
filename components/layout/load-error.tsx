@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { RotateCcw } from "lucide-react";
+import { ArrowCounterClockwise } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 
 /** Shared body for app/student/error.tsx and app/teacher/error.tsx. */
@@ -20,7 +20,7 @@ export function LoadError({ error, reset }: { error: Error & { digest?: string }
       </p>
       {error.digest ? <p className="text-xs text-muted-foreground">Error code: {error.digest}</p> : null}
       <Button onClick={reset} size="lg">
-        <RotateCcw /> Try again
+        <ArrowCounterClockwise /> Try again
       </Button>
     </div>
   );

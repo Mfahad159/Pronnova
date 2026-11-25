@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Upload } from "lucide-react";
+import { UploadSimple } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
@@ -39,7 +39,7 @@ async function TeacherHome() {
         action={
           <Button asChild size="lg">
             <Link href="/teacher/materials/new">
-              <Upload /> Upload material
+              <UploadSimple /> Upload material
             </Link>
           </Button>
         }

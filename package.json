@@ -16,12 +16,13 @@
     "db:verify": "node --env-file=.env.local scripts/db.mjs verify"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "2.119.2",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
-    "lucide-react": "^1.79.0",
     "next": "16.4.6",
     "next-themes": "^0.4.6",
+    "pronnova": ".",
     "radix-ui": "^1.8.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",

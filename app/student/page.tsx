@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Mic } from "lucide-react";
+import { Microphone } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
@@ -45,7 +45,7 @@ async function StudentHome() {
         action={
           <Button asChild size="lg">
             <Link href={practiceHref}>
-              <Mic /> {!next ? "All done — review chapters" : learning.lastItemId ? "Continue practice" : "Start practice"}
+              <Microphone /> {!next ? "All done — review chapters" : learning.lastItemId ? "Continue practice" : "Start practice"}
             </Link>
           </Button>
         }

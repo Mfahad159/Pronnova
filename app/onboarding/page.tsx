@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react/ssr";
 import { LandingNav } from "@/components/layout/landing-nav";
 
 export const metadata = { title: "Get started" };

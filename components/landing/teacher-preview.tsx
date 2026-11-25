@@ -1,0 +1,177 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { BookOpenText, Check, Info, UsersThree } from "@phosphor-icons/react/ssr";
+import { ScorePill } from "@/features/assessment/score-pill";
+import { cn } from "@/lib/utils";
+
+const sampleStudents = [
+  { name: "Ayesha Khan", progress: "14 / 15 items", score: 89, focus: "Ready for Advanced" },
+  { name: "Bilal Ahmed", progress: "11 / 15 items", score: 74, focus: "/θ/ words (three, thin)" },
+  { name: "Hina Tariq", progress: "15 / 15 items", score: 92, focus: "Completed Chapter 1" },
+  { name: "Hamza Raza", progress: "8 / 15 items", score: 66, focus: "V vs W words (van, wet)" },
+] as const;
+
+const sampleDifficultyCounts = [
+  { level: "Basic", sampleWords: "Cat, Window, Kitchen", completion: 86 },
+  { level: "Medium", sampleWords: "Butterfly, Sharp pencil", completion: 68 },
+  { level: "Advanced", sampleWords: "Elephant, 15-word sentences", completion: 44 },
+] as const;
+
+/**
+ * SECTION 07 — TEACHER DASHBOARD: "Designed for Teachers"
+ * Split layout with structured classroom benefits on the left and an interactive
+ * Class Overview / Student Progress dashboard preview (clearly labelled sample data) on the right.
+ */
+export function TeacherPreview() {
+  const [tab, setTab] = useState<"overview" | "students">("overview");
+
+  return (
+    <section id="teachers" aria-labelledby="teachers-title" className="scroll-mt-24 py-14 md:py-20">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 md:grid-cols-[0.88fr_1.12fr] md:px-6">
+        {/* Left: Structured benefits */}
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full bg-tint-sky px-3.5 py-1 text-xs font-semibold tracking-wide text-foreground uppercase">
+            Teacher Workspace
+          </p>
+          <h2 id="teachers-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
+            Designed for Teachers
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            Give every learner in a busy Pakistani classroom speaking practice—and review attempts, difficulty levels, and tricky words in one calm dashboard.
+          </p>
+
+          <ul className="mt-6 space-y-3">
+            {[
+              "Manage Basic, Medium, and Advanced exercises for your class.",
+              "Upload custom words or sentences from your syllabus and assign due dates.",
+              "Spot which students need extra support and which words the class misses most.",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3 text-sm text-foreground">
+                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Check className="size-3.5" weight="bold" aria-hidden />
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+
+          <Link
+            href="/onboarding"
+            className="mt-7 inline-flex h-11 items-center rounded-xl border-2 border-foreground/20 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            Open Teacher Area →
+          </Link>
+        </div>
+
+        {/* Right: Structured Teacher Dashboard Preview */}
+        <div className="overflow-hidden rounded-2xl border-2 border-foreground/12 bg-card">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/50 px-5 py-4">
+            <div className="flex items-center gap-2">
+              <Info className="size-4 text-primary" weight="duotone" aria-hidden />
+              <span className="text-xs font-semibold text-muted-foreground">
+                Sample Classroom Preview (Fictional Data)
+              </span>
+            </div>
+
+            {/* Functional tab switcher */}
+            <div role="tablist" aria-label="Teacher preview mode" className="inline-flex rounded-xl border border-border bg-card p-1">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === "overview"}
+                onClick={() => setTab("overview")}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50",
+                  tab === "overview" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <BookOpenText className="size-3.5" weight="duotone" aria-hidden />
+                Class Overview
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === "students"}
+                onClick={() => setTab("students")}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50",
+                  tab === "students" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <UsersThree className="size-3.5" weight="duotone" aria-hidden />
+                Student Progress
+              </button>
+            </div>
+          </div>
+
+          {tab === "overview" ? (
+            <div className="space-y-6 p-6">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-xl border border-border bg-background p-4">
+                  <p className="text-xs text-muted-foreground">Sample Students</p>
+                  <p className="mt-1 font-heading text-2xl font-bold tabular-nums text-foreground">28</p>
+                </div>
+                <div className="rounded-xl border border-border bg-background p-4">
+                  <p className="text-xs text-muted-foreground">Weekly Attempts</p>
+                  <p className="mt-1 font-heading text-2xl font-bold tabular-nums text-foreground">146</p>
+                </div>
+                <div className="rounded-xl border border-border bg-background p-4">
+                  <p className="text-xs text-muted-foreground">Class Avg (Demo)</p>
+                  <p className="mt-1 font-heading text-2xl font-bold tabular-nums text-score-good">79%</p>
+                </div>
+              </div>
+
+              <div className="space-y-3 rounded-xl border border-border bg-background p-4">
+                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Exercise Difficulty Completion (Sample)
+                </p>
+                {sampleDifficultyCounts.map((d) => (
+                  <div key={d.level} className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-foreground">
+                        {d.level} <span className="font-normal text-muted-foreground">· {d.sampleWords}</span>
+                      </span>
+                      <span className="font-semibold tabular-nums text-foreground">{d.completion}%</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                      <div style={{ width: `${d.completion}%` }} className="h-full rounded-full bg-primary" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-6">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-xs text-muted-foreground">
+                      <th className="pb-2.5 font-semibold">Student (Sample)</th>
+                      <th className="pb-2.5 font-semibold">Completed</th>
+                      <th className="pb-2.5 font-semibold">Latest Score</th>
+                      <th className="pb-2.5 font-semibold">Needs Practice</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {sampleStudents.map((st) => (
+                      <tr key={st.name}>
+                        <td className="py-3 font-medium text-foreground">{st.name}</td>
+                        <td className="py-3 text-xs text-muted-foreground tabular-nums">{st.progress}</td>
+                        <td className="py-3">
+                          <ScorePill score={st.score} />
+                        </td>
+                        <td className="py-3 text-xs text-muted-foreground">{st.focus}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}

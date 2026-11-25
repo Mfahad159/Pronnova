@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Lock } from "lucide-react";
+import { Lock } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";

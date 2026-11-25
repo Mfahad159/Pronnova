@@ -1,20 +1,27 @@
 import { expect, test } from "@playwright/test";
 
-test("landing sections are reachable and the FAQ opens", async ({ page, isMobile }) => {
+test("landing sections are reachable, interactive tabs work, and the FAQ opens", async ({ page, isMobile }) => {
   await page.goto("/");
-  for (const id of ["practise", "journey", "feedback", "guides", "faq"]) {
+  for (const id of ["top", "demo", "how-it-works", "buddy", "journey", "assessment", "teachers", "classroom", "learners", "faq"]) {
     await expect(page.locator(`#${id}`)).toBeAttached();
   }
+
   if (!isMobile) {
-    await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "FAQ" }).click();
+    await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "About" }).click();
     await expect(page).toHaveURL(/#faq$/);
   }
-  const q = page.getByText("Who can hear my recordings?");
+
+  // Interactive Teacher Preview toggle
+  await page.getByRole("tab", { name: "Student Progress" }).click();
+  await expect(page.getByText("Ayesha Khan")).toBeVisible();
+
+  // Interactive FAQ exclusive accordion
+  const q = page.getByText("Does Pronnova support different English accents?");
   await q.scrollIntoViewIfNeeded();
   await q.click();
-  await expect(page.locator("#faq").getByText(/only you and your teacher/i)).toBeVisible();
-  // One main call to action, repeated: every "Get started" goes to onboarding.
-  const hrefs = await page.getByRole("link", { name: /^get started/i }).evaluateAll((els) => els.map((e) => e.getAttribute("href")));
-  expect(hrefs.length).toBeGreaterThanOrEqual(3);
-  expect(new Set(hrefs)).toEqual(new Set(["/onboarding"]));
+  await expect(page.locator("#faq").getByText(/Both British and American English/i)).toBeVisible();
+
+  // Final CTA routes to Student and Teacher experiences without login
+  await expect(page.getByRole("link", { name: "Explore Student Experience" })).toHaveAttribute("href", "/student");
+  await expect(page.getByRole("link", { name: "Explore Teacher Experience" })).toHaveAttribute("href", "/teacher");
 });

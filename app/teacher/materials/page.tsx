@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { CalendarClock, FileText, Upload } from "lucide-react";
+import { CalendarBlank, FileText, UploadSimple } from "@phosphor-icons/react/ssr";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
@@ -34,7 +34,7 @@ async function Materials() {
         action={
           <Button asChild size="lg">
             <Link href="/teacher/materials/new">
-              <Upload /> Upload material
+              <UploadSimple /> Upload material
             </Link>
           </Button>
         }
@@ -66,7 +66,7 @@ async function Materials() {
                   ) : (
                     m.assignedTo.map((a, i) => (
                       <Badge key={i} variant="secondary" className="gap-1">
-                        <CalendarClock className="size-3" />
+                        <CalendarBlank className="size-3" />
                         {a.className}
                         {a.deadline ? ` · due ${dateFmt.format(new Date(a.deadline))}` : ""}
                       </Badge>
