@@ -24,7 +24,7 @@ export function HeroCard() {
         {/* Top edge darker too: the top-right line sits on bright clouds. */}
         <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-2/5 bg-gradient-to-b from-black/55 to-transparent" />
 
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div>
           <p className="flex items-center gap-3 text-sm font-medium">
             <span className="flex -space-x-2">
               {faces.map((f) => (
@@ -35,18 +35,20 @@ export function HeroCard() {
             </span>
             For Class 6–10 in Pakistan
           </p>
-          <p className="max-w-xs text-sm text-white/90 md:text-right md:text-base">
+        </div>
+
+        <div className="my-10">
+          <h1 id="hero-title" className="max-w-2xl font-heading text-4xl leading-[1.08] font-semibold tracking-tight md:text-6xl">
+            Say It Out Loud
+            <br />
+            See Every Word
+            <br />
+            Speak With Confidence
+          </h1>
+          <p className="mt-5 max-w-md text-base text-white/90 md:text-lg">
             Pronnova checks every word and sound you read aloud, and keeps a list of the ones to practise.
           </p>
         </div>
-
-        <h1 id="hero-title" className="my-10 max-w-2xl font-heading text-4xl leading-[1.08] font-semibold tracking-tight md:text-6xl">
-          Say It Out Loud
-          <br />
-          See Every Word
-          <br />
-          Speak With Confidence
-        </h1>
 
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <ul className="flex max-w-md flex-wrap gap-2" aria-label="What Pronnova gives you">
