@@ -1,9 +1,8 @@
 import Image from "next/image";
 import { PillLink } from "./pill-link";
 
-// Hero (reference layout): one big rounded image card with a white headline on the left,
-// an audience badge top-left, a short line top-right, topic tags bottom-left and the CTA bottom-right.
-const tags = ["Word Scores", "Sound Tips", "UK & US Accepted", "Homework", "Progress"];
+// Hero (reference layout): one big rounded image card — audience badge top-left, white headline
+// with a short line under it, and the "Get Started Today" pill bottom-left.
 const faces = ["/photos/girls-reading-together.jpg", "/photos/boy-in-classroom-pakistan.jpg", "/photos/student-reading-library.jpg"];
 
 export function HeroCard() {
@@ -21,7 +20,7 @@ export function HeroCard() {
         {/* Dark wash from the left so white text stays readable on the light sky. */}
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-black/70 via-black/40 to-black/5" />
         <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-black/50 to-transparent" />
-        {/* Top edge darker too: the top-right line sits on bright clouds. */}
+        {/* Top edge darker too: the badge sits on bright clouds. */}
         <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-2/5 bg-gradient-to-b from-black/55 to-transparent" />
 
         <div>
@@ -50,18 +49,10 @@ export function HeroCard() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <ul className="flex max-w-md flex-wrap gap-2" aria-label="What Pronnova gives you">
-            {tags.map((t) => (
-              <li key={t} className="rounded-full border border-white/50 bg-white/10 px-3 py-1.5 text-xs font-medium backdrop-blur-sm">
-                {t}
-              </li>
-            ))}
-          </ul>
-          <PillLink href="/onboarding" tone="light">
-            Get Started Today
-          </PillLink>
-        </div>
+        {/* CTA bottom-left, where the topic tags used to be. */}
+        <PillLink href="/onboarding" tone="light">
+          Get Started Today
+        </PillLink>
       </div>
     </section>
   );
