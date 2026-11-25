@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Google_Sans_Flex } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { PageLoader } from "@/components/brand/page-loader";
 import "./globals.css";
 
 // Default font everywhere (body + headings): Google Sans Flex, variable weight, self-hosted by next/font.
@@ -38,8 +39,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${googleSansFlex.variable} ${geistMono.variable} h-full antialiased`}>
+    // suppressHydrationWarning: PageLoader's inline script may set data-loader on <html> before React loads.
+    <html lang="en" suppressHydrationWarning className={`${googleSansFlex.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
+        <PageLoader />
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster />
       </body>

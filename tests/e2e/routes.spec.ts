@@ -52,3 +52,15 @@ test("recordings API hides unknown or audio-less attempts", async ({ request }) 
   expect((await request.get("/api/recordings/not-a-uuid")).status()).toBe(404);
   expect((await request.get("/api/recordings/00000000-0000-4000-8000-0000000000ff")).status()).toBe(404);
 });
+
+test("page loader: shows on the first visit, fades out after load, not again on reload", async ({ page }) => {
+  await page.goto("/");
+  const loader = page.locator(".pn-loader");
+  await expect(loader).toHaveCount(1);
+  await expect(loader).toHaveCount(0, { timeout: 8_000 }); // gone once the page has loaded
+  await expect(page.getByRole("link", { name: "Explore Student Experience" })).toBeVisible();
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-loader", "skip");
+  await expect(page.locator(".pn-loader")).toBeHidden();
+});

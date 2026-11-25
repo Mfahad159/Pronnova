@@ -1,0 +1,114 @@
+/* Page loader (components/brand/page-loader.tsx). Plain CSS so the bite runs before JS loads.
+   Global file with pn-loader- prefixes: next.config.ts treats every *.css as plain CSS (no CSS modules). */
+
+.pn-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--background);
+  opacity: 1;
+  transition: opacity 450ms cubic-bezier(0.4, 0, 1, 1); /* ease-in */
+}
+
+/* Later page loads in the same visit: hidden before first paint (inline script sets the flag). */
+html[data-loader="skip"] .pn-loader {
+  display: none;
+}
+
+.pn-loader[data-phase="leaving"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pn-loader-mark {
+  width: clamp(88px, 22vw, 132px);
+  height: auto;
+  overflow: visible;
+  animation: pn-mark-in 400ms cubic-bezier(0.4, 0, 1, 1) backwards; /* not "both": leaving scale must win */
+  transition: transform 450ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+.pn-loader[data-phase="leaving"] .pn-loader-mark {
+  transform: scale(0.92);
+}
+
+/* Jaws: state 1 = the logo as is; state 2 = upper teeth down, lower teeth up, so the teeth
+   merge and the space inside the logo disappears. Ease-in on every segment. */
+.pn-loader-upper,
+.pn-loader-lower,
+.pn-loader-ends {
+  transform-box: fill-box;
+  animation-duration: 1100ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  animation-delay: 250ms;
+  animation-fill-mode: both;
+}
+
+.pn-loader-upper {
+  animation-name: pn-bite-upper;
+}
+.pn-loader-lower {
+  animation-name: pn-bite-lower;
+}
+.pn-loader-ends {
+  transform-origin: center;
+  animation-name: pn-bite-ends;
+}
+
+@keyframes pn-bite-upper {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45%,
+  62% {
+    transform: translateY(16px);
+  }
+}
+
+@keyframes pn-bite-lower {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45%,
+  62% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes pn-bite-ends {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  45%,
+  62% {
+    transform: scaleY(0.72);
+  }
+}
+
+@keyframes pn-mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pn-loader-upper,
+  .pn-loader-lower,
+  .pn-loader-ends {
+    animation: none;
+  }
+  .pn-loader-mark {
+    animation-duration: 1ms;
+  }
+}
