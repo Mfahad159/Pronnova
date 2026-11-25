@@ -5,8 +5,8 @@ const columns = [
   {
     title: "Learn",
     links: [
-      { href: "/#how-it-works", label: "How it works" },
-      { href: "/#levels", label: "Levels" },
+      { href: "/#journey", label: "How it works" },
+      { href: "/#practise", label: "What you can practise" },
       { href: "/student/chapters", label: "Chapters" },
     ],
   },
@@ -22,7 +22,7 @@ const columns = [
     title: "Help",
     links: [
       { href: "/#faq", label: "Questions" },
-      { href: "/#for-teachers", label: "For teachers" },
+      { href: "/#guides", label: "Sound guides" },
     ],
   },
 ];

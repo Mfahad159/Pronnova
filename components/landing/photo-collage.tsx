@@ -1,7 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, MonitorSmartphone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MonitorSmartphone } from "lucide-react";
+import { PillLink } from "./pill-link";
 import { cn } from "@/lib/utils";
 import { SoundBars } from "./section";
 
@@ -157,11 +156,9 @@ function CenterText() {
       <p className="mt-3 text-muted-foreground">
         Practice that fits a real school day — in class, at home, or on the way.
       </p>
-      <Button asChild size="lg" className="group mt-6 h-11 rounded-full px-5">
-        <Link href="/onboarding">
-          Get started <ArrowRight className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
-        </Link>
-      </Button>
+      <PillLink href="/onboarding" className="mx-auto mt-6">
+        Get started
+      </PillLink>
     </div>
   );
 }

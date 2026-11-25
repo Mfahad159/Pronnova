@@ -1,7 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { PillLink } from "./pill-link";
 
 // Closing call to action (layout idea: the reference repeats one main CTA at the end of the page).
 export function FinalCta() {
@@ -14,11 +12,9 @@ export function FinalCta() {
               Ready to hear the difference?
             </h2>
             <p className="mt-3 text-lg text-muted-foreground">Pick student or teacher and try it now. No sign-in needed in this demo.</p>
-            <Button asChild size="lg" className="group mt-6 h-12 rounded-full px-6 text-base">
-              <Link href="/onboarding">
-                Get started <ArrowRight className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
-              </Link>
-            </Button>
+            <PillLink href="/onboarding" className="mt-6">
+              Get started
+            </PillLink>
           </div>
           <Image
             src="/objects/img4.jpg"
