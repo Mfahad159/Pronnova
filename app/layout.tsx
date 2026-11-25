@@ -39,8 +39,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // suppressHydrationWarning: PageLoader's inline script may set data-loader on <html> before React loads.
-    <html lang="en" suppressHydrationWarning className={`${googleSansFlex.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${googleSansFlex.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
         <PageLoader />
         <TooltipProvider>{children}</TooltipProvider>

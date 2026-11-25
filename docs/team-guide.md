@@ -90,7 +90,7 @@ npm run build
 - New Tailwind classes not showing in `npm run dev`? Stop the dev server, delete the `.next/dev` folder, start again (stale dev cache).
 - `npm run db:…` fails with `spawn UNKNOWN`? Windows (Smart App Control / Application Control) is blocking `supabase.exe`. Don't try to get around it: run the SQL in the Supabase dashboard's SQL Editor instead (steps 3–4 above).
 - Building a new screen? Use the pieces in `components/brand/` (`KiddyButton`, `Panel`, `PikoSays`, `WordPicture`, …), not plain shadcn buttons/cards — the landing page is the design base (ADR-007). A unit test checks this.
-- The logo loader shows once per browser tab visit (`sessionStorage` key `pronnova:loader-seen`). To see it again: open a new tab, or run `sessionStorage.clear()` in the browser console and reload. It waits for the page to load, finishes the current bite, then fades; it never stays longer than 8 s.
+- The logo loader shows on every full page load (opening the site, refresh), not when moving between pages inside the app. It waits for the page to load, finishes the current bite, then fades; it never stays longer than 8 s.
 - CSS modules (`*.module.css`) don't work here: `next.config.ts` sends every `.css` file through Tailwind as plain CSS. Use Tailwind classes, or a plain `.css` file with prefixed class names (like `components/brand/page-loader.css`).
 - Teacher uploads are for Class 1: sentences can have up to 8 words; above 6 the form shows a warning.
 - Browser tests use Chrome's fake microphone. `E2E_MUTATE=1 npm run test:e2e` also runs the tests that save data; `E2E_FIREFOX=1` adds Firefox.

@@ -12,20 +12,17 @@ const LOWER =
 const ENDS =
   "M6.77,36.2 C10.55,42.41 10.55,57.59 6.77,63.8 C2.99,57.59 2.99,42.41 6.77,36.2Z M93.23,36.2 C97.01,42.41 97.01,57.59 93.23,63.8 C89.45,57.59 89.45,42.41 93.23,36.2Z";
 
-const SEEN_KEY = "pronnova:loader-seen";
 const MAX_WAIT_MS = 8000; // never block the site longer than this (e.g. a stuck image)
 const BITE_MS = 1100; // one open → closed → open cycle; keep in sync with page-loader.css
 const FADE_MS = 450; // overlay fade-out; keep in sync with page-loader.css
 
-/** Runs before the page paints: on later loads in the same visit, hide the loader straight away. */
-const skipScript = `try{if(sessionStorage.getItem("${SEEN_KEY}"))document.documentElement.dataset.loader="skip"}catch(e){}`;
-
 type Phase = "loading" | "leaving" | "gone";
 
 /**
- * First-visit page loader: the Pronnova mark "bites" (jaws close so the teeth merge, then open)
+ * Page loader: the Pronnova mark "bites" (jaws close so the teeth merge, then open)
  * until the page has fully loaded, then the overlay fades out at the end of a bite.
- * - Shows once per visit (sessionStorage); client-side navigation never shows it again.
+ * - Shows on every full page load (opening the site, refresh). In-app navigation keeps the root
+ *   layout mounted, so moving between pages does not show it again.
  * - The bite is a CSS animation, so it runs from the first paint, before JavaScript loads.
  * - Respects prefers-reduced-motion (no bite, just the logo and a fade).
  */
@@ -35,20 +32,12 @@ export function PageLoader() {
 
   const leave = useCallback(() => {
     setPhase((p) => (p === "loading" ? "leaving" : p));
-    try {
-      sessionStorage.setItem(SEEN_KEY, "1");
-    } catch {
-      // Private mode / blocked storage: the loader may show again next visit. Harmless.
-    }
   }, []);
 
   useEffect(() => {
-    if (document.documentElement.dataset.loader === "skip") {
-      // Already seen this visit: it was hidden by CSS before paint. Unmount it and stop.
-      const id = window.setTimeout(() => setPhase("gone"), 0);
-      return () => window.clearTimeout(id);
-    }
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     let cycleFallback = 0;
     const markReady = () => {
       ready.current = true;
@@ -77,40 +66,45 @@ export function PageLoader() {
   if (phase === "gone") return null;
 
   return (
-    <>
-      <script dangerouslySetInnerHTML={{ __html: skipScript }} />
-      <div
-        className="pn-loader"
-        data-phase={phase}
-        role="status"
-        aria-live="polite"
-        aria-label={phase === "loading" ? "Loading Pronnova" : undefined}
-        onTransitionEnd={(e) => {
-          if (e.target === e.currentTarget && phase === "leaving") setPhase("gone");
-        }}
-      >
-        <svg viewBox="0 0 100 100" className="pn-loader-mark" aria-hidden>
-          <defs>
-            {/* One gradient across the whole mark, so moving parts keep the logo's colours. */}
-            <linearGradient id="pronnova-loader-g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="100">
-              <stop offset="0" stopColor="#FF594B" />
-              <stop offset="1" stopColor="#FF8D28" />
-            </linearGradient>
-          </defs>
-          <g fill="url(#pronnova-loader-g)">
-            {/* Each bite ends with the jaws open again — the natural moment to fade out. */}
-            <path
-              d={UPPER}
-              className="pn-loader-upper"
-              onAnimationIteration={() => {
-                if (ready.current) leave();
-              }}
-            />
-            <path d={LOWER} className="pn-loader-lower" />
-            <path d={ENDS} className="pn-loader-ends" />
-          </g>
-        </svg>
-      </div>
-    </>
+    <div
+      className="pn-loader"
+      data-phase={phase}
+      role="status"
+      aria-live="polite"
+      aria-label={phase === "loading" ? "Loading Pronnova" : undefined}
+      onTransitionEnd={(e) => {
+        if (e.target === e.currentTarget && phase === "leaving")
+          setPhase("gone");
+      }}
+    >
+      <svg viewBox="0 0 100 100" className="pn-loader-mark" aria-hidden>
+        <defs>
+          {/* One gradient across the whole mark, so moving parts keep the logo's colours. */}
+          <linearGradient
+            id="pronnova-loader-g"
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2="100"
+            y2="100"
+          >
+            <stop offset="0" stopColor="#FF594B" />
+            <stop offset="1" stopColor="#FF8D28" />
+          </linearGradient>
+        </defs>
+        <g fill="url(#pronnova-loader-g)">
+          {/* Each bite ends with the jaws open again — the natural moment to fade out. */}
+          <path
+            d={UPPER}
+            className="pn-loader-upper"
+            onAnimationIteration={() => {
+              if (ready.current) leave();
+            }}
+          />
+          <path d={LOWER} className="pn-loader-lower" />
+          <path d={ENDS} className="pn-loader-ends" />
+        </g>
+      </svg>
+    </div>
   );
 }
