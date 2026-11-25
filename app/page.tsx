@@ -35,6 +35,8 @@ export default function Home() {
           {/* White overlay: strongest behind the text (left), clear on the right so the two students show.
               Phones get an even wash because the text covers most of the width there. */}
           <div className="absolute inset-0 bg-background/70 md:bg-transparent md:bg-gradient-to-r md:from-background/90 md:via-background/60 md:to-transparent" />
+          {/* Bottom fade: the grass melts into the page colour instead of ending in a hard edge. */}
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-background/70 to-background md:h-56" />
         </div>
 
         <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-6xl items-center px-4 py-12 md:px-6 md:py-20">
