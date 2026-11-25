@@ -39,7 +39,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense) | ✅ |
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
-| `components/layout/landing-nav.tsx` | Landing navbar (reference layout): logo left, section links centred (Practise, How it works, Feedback, Sound guides, FAQ), outlined Get started pill right; sticky; slide-in menu below lg | ✅ |
+| `components/layout/landing-nav.tsx` | Landing navbar (client): full-width bar at the top (logo left, section links centred, outlined Get started right); after scrolling becomes a floating rounded pill (w-fit, margin all round); slide-in menu below lg | ✅ |
 | `components/landing/` | Landing sections (Mindora-style UI): `hero-card` (rounded image card + tags + CTA), `value-cards`, `practise-cards` (#practise), `photo-collage`, `journey-cards` (#journey), `feedback-slider` (#feedback, client, example results), `sound-guides` (#guides), `faq` (#faq), `final-cta`, `site-footer`; shared `pill-link.tsx` (pill + round arrow) and `section.tsx` | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
