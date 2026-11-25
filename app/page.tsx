@@ -47,7 +47,7 @@ function RoleLink({ href, icon, title, note }: { href: string; icon: React.React
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-2xl border bg-card/90 p-4 shadow-sm outline-none backdrop-blur-sm transition-colors hover:border-primary/40 hover:bg-card focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-5"
+      className="group flex items-center gap-3 rounded-2xl border bg-card/90 p-4 outline-none backdrop-blur-sm transition-colors hover:border-primary/40 hover:bg-card focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-5"
     >
       <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">{icon}</span>
       <span className="flex-1">

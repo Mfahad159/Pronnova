@@ -89,7 +89,7 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
             aria-pressed={isRecording}
             aria-label={isRecording ? "Stop recording" : "Start recording"}
             className={cn(
-              "relative flex size-24 items-center justify-center rounded-full text-primary-foreground shadow-lg outline-none transition-transform focus-visible:ring-4 focus-visible:ring-ring/50 active:scale-95 disabled:opacity-60",
+              "relative flex size-24 items-center justify-center rounded-full text-primary-foreground outline-none focus-visible:ring-4 focus-visible:ring-ring/50 disabled:opacity-60",
               isRecording ? "bg-destructive" : "bg-primary hover:bg-primary/90",
             )}
           >

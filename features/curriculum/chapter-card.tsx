@@ -26,7 +26,7 @@ export function ChapterCard({ chapter, progress }: { chapter: Chapter; progress?
     <Link
       href={`/student/chapters/${chapter.id}`}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl border outline-none transition-shadow hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50",
+        "group flex flex-col overflow-hidden rounded-2xl border outline-none transition-colors hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring/50",
         tints[chapter.tint],
       )}
     >

@@ -19,7 +19,7 @@ export function LandingNav() {
     <header className="sticky top-4 z-30 mx-4 mt-4 flex justify-center">
       <nav
         aria-label="Main"
-        className="flex h-14 w-fit max-w-full items-center gap-2 rounded-full border border-white/70 bg-background/75 py-2 pr-2 pl-4 shadow-lg shadow-foreground/5 backdrop-blur-md sm:gap-4"
+        className="flex h-14 w-fit max-w-full items-center gap-2 rounded-full border border-white/70 bg-background/75 py-2 pr-2 pl-4 backdrop-blur-md sm:gap-4"
       >
         <BrandLogo />
         <ul className="hidden items-center gap-1 md:flex">

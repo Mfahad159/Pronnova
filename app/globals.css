@@ -154,3 +154,8 @@
     @apply font-sans;
   }
 }
+/* No shadows / depth anywhere (design decision 2026-11-25): flat UI, borders only.
+   Toasts (sonner) set their own box-shadow, so override it here. */
+[data-sonner-toast] {
+  box-shadow: none !important;
+}
