@@ -19,7 +19,7 @@ import { RECORDING } from "@/lib/audio";
 import { speakReference } from "@/lib/speech-tts";
 import { usePracticeStore } from "@/stores/practice-store";
 import { cn } from "@/lib/utils";
-import { AppleIllustration } from "./illustrations";
+import { AppleIllustration } from "@/components/brand/illustrations";
 
 const DEMO_STEPS = [
   { id: "listen", num: "1", label: "Listen" },

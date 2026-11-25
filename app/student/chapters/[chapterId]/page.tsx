@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CaretRight, CheckCircle, Lock } from "@phosphor-icons/react/ssr";
-import { Badge } from "@/components/ui/badge";
+import { CheckCircle, Lock, Star } from "@phosphor-icons/react/ssr";
+import { PikoSays } from "@/components/brand/piko";
+import { Panel, PanelHeader, levelBadge } from "@/components/brand/ui";
+import { WordPicture } from "@/components/brand/word-pictures";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { levelLabel } from "@/features/curriculum/level";
@@ -52,75 +54,117 @@ async function ChapterContent({ params }: { params: PageProps<"/student/chapters
 function LevelSection({ lv, previous }: { lv: LevelView; previous: LevelView["level"] | null }) {
   const empty = lv.items.length === 0 && lv.homework.length === 0;
   return (
-    <section className="space-y-3" aria-labelledby={`lv-${lv.level}`}>
-      <div className="flex flex-wrap items-center gap-2">
-        <h2 id={`lv-${lv.level}`} className="font-heading text-lg font-semibold">
-          {levelLabel[lv.level]}
-        </h2>
-        {!lv.unlocked ? (
-          <Badge variant="outline" className="gap-1">
-            <Lock className="size-3" /> Locked
-          </Badge>
-        ) : lv.total > 0 ? (
-          <span className="text-sm text-muted-foreground">
-            {lv.mastered}/{lv.total} done
-          </span>
-        ) : null}
-      </div>
+    <section aria-labelledby={`lv-${lv.level}`}>
+      <Panel className={cn(!lv.unlocked && "bg-muted/30")}>
+        <PanelHeader>
+          <div className="flex items-center gap-3">
+            <span className={cn("rounded-full px-3 py-1 text-xs font-bold", levelBadge[lv.level])} aria-hidden>
+              <Star className="mr-1 inline size-3.5 -translate-y-px" weight="fill" />
+              Level
+            </span>
+            <h2 id={`lv-${lv.level}`} className="font-heading text-xl font-bold">
+              {levelLabel[lv.level]}
+            </h2>
+          </div>
+          {!lv.unlocked ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border-2 border-foreground/12 bg-card px-3 py-1 text-xs font-bold text-muted-foreground">
+              <Lock className="size-3.5" weight="bold" /> Locked
+            </span>
+          ) : lv.total > 0 ? (
+            <span className="rounded-full bg-score-excellent/12 px-3 py-1 text-xs font-bold text-score-excellent">
+              {lv.mastered}/{lv.total} done
+            </span>
+          ) : null}
+        </PanelHeader>
 
-      {!lv.unlocked && previous ? (
-        <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-          This level is locked. Score {PASS_SCORE}% or more on every {levelLabel[previous]} exercise to unlock it.
-        </p>
-      ) : null}
+        <div className="space-y-4 p-5 sm:p-6">
+          {!lv.unlocked && previous ? (
+            <PikoSays
+              size="sm"
+              tone="cream"
+              message={`This level is locked. Score ${PASS_SCORE}% or more on every ${levelLabel[previous]} word to unlock it.`}
+            />
+          ) : null}
 
-      {empty ? (
-        <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">No exercises in this level yet.</p>
-      ) : (
-        <ul className="divide-y overflow-hidden rounded-xl border bg-card">
-          {lv.items.map((item) => (
-            <ItemRow key={item.id} item={item} open={lv.unlocked || item.homework} />
-          ))}
-          {lv.homework.map((item) => (
-            <ItemRow key={item.id} item={item} open />
-          ))}
-        </ul>
-      )}
+          {empty ? (
+            <p className="rounded-xl border-2 border-dashed border-foreground/15 p-5 text-center text-sm text-muted-foreground">
+              No words in this level yet.
+            </p>
+          ) : (
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {lv.items.map((item) => (
+                <ItemCard key={item.id} item={item} open={lv.unlocked || item.homework} />
+              ))}
+              {lv.homework.map((item) => (
+                <ItemCard key={item.id} item={item} open />
+              ))}
+            </ul>
+          )}
+        </div>
+      </Panel>
     </section>
   );
 }
 
-function ItemRow({ item, open }: { item: ItemView; open: boolean }) {
+/** Word card in the landing flashcard style: picture tile, big word, best score / lock. */
+function ItemCard({ item, open }: { item: ItemView; open: boolean }) {
+  const mastered = item.status === "mastered";
   const content = (
     <>
-      {item.status === "mastered" ? (
-        <CheckCircle className="size-5 shrink-0 text-score-excellent" weight="duotone" aria-label="Done" />
-      ) : open ? (
-        <span className="size-5 shrink-0 rounded-full border-2 border-muted-foreground/30" aria-hidden />
-      ) : (
-        <Lock className="size-4 shrink-0 text-muted-foreground" aria-label="Locked" />
-      )}
-      <span className="min-w-0 flex-1 font-medium">{item.text}</span>
-      {item.homework ? <Badge className="bg-primary/10 text-primary">Homework</Badge> : null}
+      <div className="flex w-full items-start justify-between gap-2">
+        {item.homework ? (
+          <span className="rounded-full bg-primary px-2 py-0.5 text-[0.7rem] font-bold text-primary-foreground">Homework</span>
+        ) : (
+          <span className="rounded-full bg-card px-2 py-0.5 text-[0.7rem] font-semibold capitalize text-muted-foreground">
+            {item.itemType}
+          </span>
+        )}
+        {mastered ? (
+          <CheckCircle className="size-6 shrink-0 text-score-excellent" weight="fill" aria-label="Done" />
+        ) : !open ? (
+          <Lock className="size-5 shrink-0 text-muted-foreground" weight="bold" aria-label="Locked" />
+        ) : null}
+      </div>
+      <WordPicture text={item.text} size={item.itemType === "word" ? "md" : "sm"} />
+      <span
+        className={cn(
+          "w-full font-heading font-bold break-words",
+          item.itemType === "word" ? "text-2xl" : "text-base leading-snug",
+        )}
+      >
+        {item.text}
+      </span>
       {item.best != null ? (
-        <span className={cn("text-xs tabular-nums", item.status === "mastered" ? "text-score-excellent" : "text-score-good")}>
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-0.5 text-xs font-bold tabular-nums",
+            mastered ? "bg-score-excellent/12 text-score-excellent" : "bg-score-good/12 text-score-good",
+          )}
+        >
           Best {Math.round(item.best)}%
         </span>
+      ) : open ? (
+        <span className="text-xs font-semibold text-primary">Tap to practise</span>
       ) : null}
-      <Badge variant="secondary" className="capitalize">
-        {item.itemType}
-      </Badge>
-      {open ? <CaretRight className="size-4 text-muted-foreground" /> : null}
     </>
   );
+  const base =
+    "flex h-full flex-col items-center gap-3 rounded-2xl border-2 p-4 text-center";
   return (
     <li>
       {open ? (
-        <Link href={`/student/practice/${item.id}`} className="flex items-center gap-3 px-4 py-3 outline-none hover:bg-muted focus-visible:bg-muted">
+        <Link
+          href={`/student/practice/${item.id}`}
+          className={cn(
+            base,
+            mastered ? "border-score-excellent/30 bg-tint-mint/60" : "border-primary/15 bg-tint-peach/60",
+            "outline-none transition-colors hover:border-primary/45 focus-visible:ring-3 focus-visible:ring-ring/50",
+          )}
+        >
           {content}
         </Link>
       ) : (
-        <div className="flex items-center gap-3 px-4 py-3 text-muted-foreground" aria-disabled="true">
+        <div className={cn(base, "border-foreground/10 bg-muted/50 opacity-70")} aria-disabled="true">
           {content}
         </div>
       )}

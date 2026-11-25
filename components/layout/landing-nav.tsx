@@ -5,7 +5,7 @@ import { List } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { BrandLogo } from "@/components/layout/brand-logo";
-import { KiddyButton } from "@/components/landing/kiddy-button";
+import { KiddyButton } from "@/components/brand/kiddy-button";
 
 const links = [
   { href: "/#top", label: "Home" },

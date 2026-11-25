@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   ArrowCounterClockwise,
   ArrowRight,
@@ -12,19 +11,29 @@ import {
   Stop,
   X,
 } from "@phosphor-icons/react/ssr";
-import { Button } from "@/components/ui/button";
+import { KiddyButton } from "@/components/brand/kiddy-button";
+import { PikoSays } from "@/components/brand/piko";
+import { InkButton, OutlineButton } from "@/components/brand/ui";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { LiveWaveform } from "@/features/voice/live-waveform";
 import { useRecorder } from "@/features/voice/use-recorder";
 import { RECORDING } from "@/lib/audio";
+import { classify } from "@/lib/scoring";
+import { ListenButton } from "@/features/practice/listen-button";
 import { cn } from "@/lib/utils";
 import { usePracticeStore } from "@/stores/practice-store";
 import type { AttemptResult } from "@/types";
 
 const secs = (ms: number) => `${Math.floor(ms / 1000)}.${Math.floor((ms % 1000) / 100)}s`;
 
-/** UC-05 (record) + UC-04 (submit). The full feedback view (UC-06) builds on the result in Phase 4. */
-export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHref: string | null }) {
+const cheer = {
+  excellent: "Super star! You said it really well! 🌟",
+  good: "Good job! Almost perfect — keep going!",
+  average: "Nice try! Listen again and have another go.",
+} as const;
+
+/** UC-05 (record) + UC-04 (submit) + UC-06 (feedback), styled like the landing demo's right column. */
+export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: string; itemText: string; nextHref: string | null }) {
   const { phase, error, elapsedMs, recording, result, set, reset } = usePracticeStore();
   const { start, stop, cancel, analyserRef } = useRecorder();
   const [status, setStatus] = useState("");
@@ -81,127 +90,178 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
 
   const isRecording = phase === "recording";
   const remaining = Math.max(0, RECORDING.maxMs - elapsedMs);
+  const score = result?.score ?? 0;
+  const wrongWords = result ? result.words.filter((w) => w.isError) : [];
+  const trickySounds = result
+    ? [...new Set(result.phonemes.filter((p) => p.isError).map((p) => p.expected || p.phoneme))].slice(0, 4)
+    : [];
 
   return (
-    <div className="flex w-full flex-col items-center gap-5">
+    <div className="flex w-full flex-col gap-5">
       <p role="status" aria-live="polite" className="sr-only">
         {status}
       </p>
 
-      {/* Record / stop */}
-      {phase === "idle" || phase === "requesting" || isRecording || phase === "error" ? (
-        <>
+      {/* Record / stop (landing demo mic card) */}
+      {phase === "idle" || phase === "requesting" || phase === "error" ? (
+        <div className="flex flex-col items-center rounded-2xl border border-border bg-background p-6 text-center sm:p-8">
           <button
             type="button"
-            onClick={isRecording ? stop : start}
+            onClick={start}
             disabled={phase === "requesting"}
-            aria-pressed={isRecording}
-            aria-label={isRecording ? "Stop recording" : "Start recording"}
-            className={cn(
-              "relative flex size-24 items-center justify-center rounded-full text-primary-foreground outline-none focus-visible:ring-4 focus-visible:ring-ring/50 disabled:opacity-60",
-              isRecording ? "bg-destructive" : "bg-primary hover:bg-primary/90",
-            )}
+            aria-pressed={false}
+            aria-label="Start recording"
+            className="flex size-20 items-center justify-center rounded-full bg-brand-coral text-white shadow-[0_5px_0_0_var(--primary)] outline-none transition-[transform,box-shadow,filter] duration-150 hover:translate-y-[3px] hover:shadow-[0_2px_0_0_var(--primary)] focus-visible:ring-3 focus-visible:ring-ring/60 active:translate-y-[3px] active:shadow-[0_2px_0_0_var(--primary)] disabled:opacity-60 motion-reduce:transition-none"
           >
-            {isRecording ? (
-              <>
-                <span className="absolute inset-0 animate-ping rounded-full bg-destructive/30 motion-reduce:hidden" />
-                <Stop className="relative size-8" weight="fill" />
-              </>
-            ) : phase === "requesting" ? (
-              <CircleNotch className="size-9 animate-spin" />
+            {phase === "requesting" ? (
+              <CircleNotch className="size-8 animate-spin" weight="bold" aria-hidden />
             ) : (
-              <Microphone className="size-10" />
+              <Microphone className="size-8" weight="duotone" aria-hidden />
             )}
           </button>
-          {isRecording ? (
-            <div className="flex flex-col items-center gap-2">
-              <LiveWaveform analyserRef={analyserRef} active={isRecording} />
-              <p className="text-sm tabular-nums text-muted-foreground">
-                Recording {secs(elapsedMs)} · stops by itself in {Math.ceil(remaining / 1000)}s
-              </p>
-              <Button variant="ghost" size="sm" onClick={cancel}>
-                <X /> Cancel
-              </Button>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              {phase === "requesting" ? "Allow the microphone when your browser asks." : "Tap the microphone, read the text aloud, then tap stop."}
-            </p>
-          )}
-        </>
+          <p className="mt-5 font-heading text-lg font-semibold text-foreground">
+            {phase === "requesting" ? "Allow the microphone" : "Tap the mic and say it"}
+          </p>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {phase === "requesting"
+              ? "Say yes when your browser asks."
+              : `Tap stop when you finish. It stops by itself after ${RECORDING.maxMs / 1000} seconds.`}
+          </p>
+        </div>
+      ) : null}
+
+      {isRecording ? (
+        <div className="flex flex-col items-center rounded-2xl border-2 border-primary/40 bg-secondary/40 p-6 text-center sm:p-8">
+          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+            <span className="size-2.5 animate-pulse rounded-full bg-primary" aria-hidden />
+            Listening… {secs(elapsedMs)} · {Math.ceil(remaining / 1000)}s left
+          </div>
+          <div className="mt-4 flex w-full justify-center">
+            <LiveWaveform analyserRef={analyserRef} active={isRecording} />
+          </div>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={stop}
+              aria-pressed
+              aria-label="Stop recording"
+              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 font-heading text-sm font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <Stop className="size-4" weight="fill" aria-hidden /> Stop
+            </button>
+            <button
+              type="button"
+              onClick={cancel}
+              className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-foreground/20 bg-card px-4 text-sm font-medium text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <X className="size-4" aria-hidden /> Cancel
+            </button>
+          </div>
+        </div>
       ) : null}
 
       {/* Problem that needs a new recording or a settings change */}
       {phase === "error" && error ? (
-        <div role="alert" className="flex max-w-md items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-left text-sm">
-          <MicrophoneSlash className="mt-0.5 size-5 shrink-0 text-destructive" />
-          <p>{error.message}</p>
+        <div role="alert" className="rounded-2xl border border-score-average/30 bg-score-average/5 p-5">
+          <div className="flex items-start gap-3">
+            <MicrophoneSlash className="mt-0.5 size-5 shrink-0 text-score-average" weight="duotone" aria-hidden />
+            <div>
+              <p className="font-heading text-base font-semibold text-foreground">Could not record</p>
+              <p className="mt-1 text-sm text-muted-foreground">{error.message}</p>
+            </div>
+          </div>
         </div>
       ) : null}
 
       {/* Listen back, then submit or re-record */}
       {(phase === "recorded" || phase === "submitting") && recording ? (
-        <div className="flex w-full max-w-md flex-col items-center gap-4">
-          <audio controls src={recording.url} className="w-full" aria-label="Your recording" />
-          <p className="text-sm text-muted-foreground">Listen to yourself. Happy with it? Send it to get your score.</p>
+        <div className="rounded-2xl border border-border bg-background p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-heading text-sm font-semibold text-foreground">Listen to yourself</p>
+            <span className="text-xs text-muted-foreground tabular-nums">{secs(recording.durationMs)}</span>
+          </div>
+          <audio controls src={recording.url} className="mt-3 w-full" aria-label="Your recording" />
           {error?.kind === "network" ? (
-            <p role="alert" className="text-sm text-destructive">
+            <p role="alert" className="mt-3 text-sm text-destructive">
               {error.message}
             </p>
           ) : null}
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button size="lg" className="h-11 px-5" onClick={submit} disabled={phase === "submitting"}>
-              {phase === "submitting" ? <CircleNotch className="animate-spin" /> : <PaperPlaneTilt />}
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <KiddyButton size="sm" onClick={submit} disabled={phase === "submitting"} aria-label="Send">
+              {phase === "submitting" ? <CircleNotch className="animate-spin" weight="bold" /> : <PaperPlaneTilt weight="fill" />}
               {phase === "submitting" ? "Checking…" : "Send"}
-            </Button>
-            <Button size="lg" variant="outline" className="h-11 px-5" onClick={recordAgain} disabled={phase === "submitting"}>
-              <ArrowCounterClockwise /> Record again
-            </Button>
+            </KiddyButton>
+            <OutlineButton onClick={recordAgain} disabled={phase === "submitting"}>
+              <ArrowCounterClockwise weight="bold" /> Record again
+            </OutlineButton>
           </div>
         </div>
       ) : null}
 
-      {/* Saved, but scoring failed */}
+      {/* Saved, but scoring failed (SRS 3.3.7) */}
       {phase === "failed" && result ? (
-        <div role="alert" className="flex max-w-md flex-col items-center gap-3 rounded-xl border bg-secondary p-5 text-center">
-          <p className="font-medium">Your recording is saved, but we couldn&apos;t check it yet.</p>
-          <p className="text-sm text-muted-foreground">{result.error ?? "Please try again in a moment."}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button onClick={retry}>
-              <ArrowCounterClockwise /> Try checking again
-            </Button>
-            <Button variant="outline" onClick={recordAgain}>
-              Record again
-            </Button>
-          </div>
+        <div role="alert">
+          <PikoSays size="sm" tone="cream" message="Your recording is saved, but I couldn't check it yet.">
+            <p className="w-full text-sm text-muted-foreground">{result.error ?? "Please try again in a moment."}</p>
+            <InkButton onClick={retry}>
+              <ArrowCounterClockwise weight="bold" /> Try checking again
+            </InkButton>
+            <OutlineButton onClick={recordAgain}>Record again</OutlineButton>
+          </PikoSays>
         </div>
       ) : null}
 
-      {/* Scored — short summary; full feedback (UC-06) comes in Phase 4 */}
+      {/* UC-06: score, class, coloured words, tricky sounds, listen, try again / next */}
       {phase === "scored" && result ? (
-        <div className="flex w-full max-w-xl flex-col items-center gap-4">
-          <ScorePill score={result.score ?? 0} className="px-4 py-2 text-base" />
-          <p className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-lg" aria-label="Your words">
+        <div className="rounded-2xl border-2 border-primary/25 bg-tint-cream/60 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <ScorePill score={score} className="px-3.5 py-1.5 text-sm" />
+            <span className="text-xs font-semibold text-muted-foreground">Your result</span>
+          </div>
+          <p className="mt-4 font-heading text-lg font-bold text-primary">{cheer[classify(score)]}</p>
+          <p className="mt-3 flex flex-wrap gap-x-2 gap-y-1.5 text-xl" aria-label="Your words">
             {result.words.map((w, i) => (
               <span
                 key={i}
-                className={cn("rounded-md px-1.5 py-0.5 font-medium", w.isError ? "bg-score-average/10 text-score-average" : "text-score-excellent")}
+                className={cn(
+                  "rounded-lg px-2 py-0.5 font-heading font-bold",
+                  w.isError ? "bg-score-average/10 text-score-average" : "bg-score-excellent/10 text-score-excellent",
+                )}
                 title={`${w.score}%`}
               >
                 {w.word}
               </span>
             ))}
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button size="lg" variant="outline" className="h-11 px-5" onClick={recordAgain}>
-              <ArrowCounterClockwise /> Try again
-            </Button>
+          {wrongWords.length > 0 || trickySounds.length > 0 ? (
+            <div className="mt-4 rounded-xl border border-border bg-card px-4 py-3 text-sm">
+              {wrongWords.length > 0 ? (
+                <p>
+                  <span className="font-semibold">Practise: </span>
+                  {wrongWords.map((w) => w.word).join(", ")}
+                </p>
+              ) : null}
+              {trickySounds.length > 0 ? (
+                <p className="mt-1 text-muted-foreground">
+                  Tricky sounds:{" "}
+                  {trickySounds.map((p) => (
+                    <span key={p} className="mr-1 inline-block rounded-md bg-secondary px-1.5 font-mono text-xs text-primary">
+                      /{p}/
+                    </span>
+                  ))}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <OutlineButton onClick={recordAgain}>
+              <ArrowCounterClockwise weight="bold" /> Try again
+            </OutlineButton>
+            <ListenButton text={itemText} label="Hear it again" />
             {nextHref ? (
-              <Button asChild size="lg" className="h-11 px-5">
-                <Link href={nextHref}>
-                  Next exercise <ArrowRight />
-                </Link>
-              </Button>
+              <KiddyButton size="sm" href={nextHref}>
+                Next word <ArrowRight weight="bold" />
+              </KiddyButton>
             ) : null}
           </div>
         </div>

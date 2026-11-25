@@ -4,8 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function PageSkeleton({ variant = "list" }: { variant?: "list" | "cards" | "panel" }) {
   return (
     <div aria-busy="true" aria-label="Loading">
-      <div className="flex items-center gap-3 border-b px-4 py-3 md:px-6">
-        <Skeleton className="size-7" />
+      <div className="mx-3 mt-3 flex min-h-16 items-center gap-3 rounded-2xl border border-foreground/10 bg-card px-4 py-2.5 sm:mx-5">
+        <Skeleton className="size-7 rounded-xl" />
         <div className="space-y-1.5">
           <Skeleton className="h-5 w-48" />
           <Skeleton className="h-4 w-64" />

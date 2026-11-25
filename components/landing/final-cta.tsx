@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { KiddyButton } from "./kiddy-button";
+import { KiddyButton } from "@/components/brand/kiddy-button";
 
 /**
  * SECTION 11A — FINAL CTA

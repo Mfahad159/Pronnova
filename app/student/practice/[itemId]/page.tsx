@@ -1,18 +1,23 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Lock } from "@phosphor-icons/react/ssr";
-import { Button } from "@/components/ui/button";
+import { KiddyButton } from "@/components/brand/kiddy-button";
+import { PikoSays } from "@/components/brand/piko";
+import { Panel, PanelHeader, PanelTitle, levelBadge } from "@/components/brand/ui";
+import { WordPicture } from "@/components/brand/word-pictures";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { levelLabel } from "@/features/curriculum/level";
+import { ListenButton } from "@/features/practice/listen-button";
+import { PracticeRecorder } from "@/features/practice/practice-recorder";
+import { PracticeSteps } from "@/features/practice/practice-steps";
+import { itemAccess, openItemsInOrder, PASS_SCORE } from "@/lib/progress";
+import { cn } from "@/lib/utils";
 import { getCurrentStudent } from "@/server/db/demo-user";
 import { getItem } from "@/server/db/queries/curriculum";
 import { getStudentLearning } from "@/server/db/queries/learning";
-import { PracticeRecorder } from "@/features/practice/practice-recorder";
-import { itemAccess, openItemsInOrder } from "@/lib/progress";
 
-// UC-04 Attempt + UC-05 Record (Phase 3). Full feedback (UC-06) arrives in Phase 4.
+// UC-04 Attempt + UC-05 Record + UC-06 Feedback, in the landing demo layout (ADR-007).
 export default function PracticePage(props: PageProps<"/student/practice/[itemId]">) {
   return (
     <Suspense fallback={<PageSkeleton variant="panel" />}>
@@ -34,25 +39,32 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
       <>
         <TopBar title="Practice" subtitle={`${item.chapterTitle} · ${levelLabel[item.level]}`} />
         <PageBody>
-          <div className="flex flex-col items-center gap-4 rounded-3xl border bg-card px-6 py-12 text-center" role="status">
-            <Lock className="size-8 text-muted-foreground" />
-            <p className="font-heading text-xl font-semibold">This level is locked</p>
-            <p className="max-w-md text-muted-foreground">
-              Finish the earlier level in {item.chapterTitle} with 70% or more on every exercise to open {levelLabel[item.level]}.
-            </p>
-            <Button asChild size="lg">
-              <Link href={`/student/chapters/${item.chapterId}`}>Back to {item.chapterTitle}</Link>
-            </Button>
+          <div role="status">
+            <PikoSays
+              tone="cream"
+              message={
+                <>
+                  This level is locked
+                  <span className="mt-1 block text-base font-medium text-muted-foreground">
+                    Finish the earlier level in {item.chapterTitle} with {PASS_SCORE}% or more on every word to open{" "}
+                    {levelLabel[item.level]}.
+                  </span>
+                </>
+              }
+            >
+              <KiddyButton href={`/student/chapters/${item.chapterId}`}>Back to {item.chapterTitle}</KiddyButton>
+            </PikoSays>
           </div>
         </PageBody>
       </>
     );
   }
 
-  // "Next exercise" = the next item the student can open, in course order.
+  // "Next word" = the next item the student can open, in course order.
   const open = openItemsInOrder(learning.view);
   const idx = open.findIndex((i) => i.id === item.id);
   const next = idx >= 0 ? open[idx + 1] : undefined;
+  const isWord = item.itemType === "word";
 
   return (
     <>
@@ -63,16 +75,45 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
             <Link href={`/student/chapters/${item.chapterId}`} className="hover:underline">
               {item.chapterTitle}
             </Link>{" "}
-            · {levelLabel[item.level]} · {item.lessonTitle}
+            · {item.lessonTitle}
           </>
         }
       />
       <PageBody>
-        <div className="flex flex-col items-center gap-8 rounded-3xl border bg-card px-6 py-12 text-center">
-          <p className="text-sm font-medium tracking-wide text-muted-foreground uppercase">{item.itemType}</p>
-          <p className="max-w-2xl font-heading text-3xl font-semibold text-balance md:text-4xl">{item.text}</p>
-          <PracticeRecorder itemId={item.id} nextHref={next ? `/student/practice/${next.id}` : null} />
-        </div>
+        <Panel>
+          <PanelHeader className="sm:px-8">
+            <div className="flex items-center gap-3">
+              <PanelTitle>Say it out loud</PanelTitle>
+              <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", levelBadge[item.level])}>
+                {levelLabel[item.level]}
+              </span>
+            </div>
+            <PracticeSteps />
+          </PanelHeader>
+
+          <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:p-10">
+            {/* Flashcard (landing demo left column). */}
+            <div className="flex flex-col items-center rounded-2xl border border-primary/15 bg-tint-peach/70 p-6 text-center sm:p-8">
+              <span className="rounded-lg bg-card px-3 py-1 text-xs font-semibold capitalize text-muted-foreground">
+                {item.itemType}
+              </span>
+              <WordPicture text={item.text} size="lg" className="mt-4" />
+              <p
+                className={cn(
+                  "mt-5 font-heading font-bold tracking-tight text-balance text-foreground",
+                  isWord ? "text-4xl sm:text-5xl" : "text-2xl sm:text-3xl",
+                )}
+              >
+                {item.text}
+              </p>
+              <p className="mt-3 max-w-xs text-sm text-muted-foreground">Listen first, then say it just like that.</p>
+              <ListenButton text={item.text} label={isWord ? `Listen to “${item.text}”` : "Listen"} className="mt-5" />
+            </div>
+
+            {/* Recorder + result (landing demo right column). */}
+            <PracticeRecorder itemId={item.id} itemText={item.text} nextHref={next ? `/student/practice/${next.id}` : null} />
+          </div>
+        </Panel>
       </PageBody>
     </>
   );

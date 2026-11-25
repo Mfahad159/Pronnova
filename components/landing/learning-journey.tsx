@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SpeakerHigh } from "@phosphor-icons/react/ssr";
 import { speakReference } from "@/lib/speech-tts";
 import { cn } from "@/lib/utils";
-import { ButterflyIllustration, CatIllustration, ElephantIllustration } from "./illustrations";
+import { ButterflyIllustration, CatIllustration, ElephantIllustration } from "@/components/brand/illustrations";
 
 interface SampleWord {
   word: string;

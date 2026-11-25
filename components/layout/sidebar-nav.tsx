@@ -65,7 +65,14 @@ function NavGroups({ groups, activeHref }: { groups: NavGroup[]; activeHref: str
             const active = item.href === activeHref;
             return (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={active} tooltip={item.title} size="lg" className="h-10">
+                <SidebarMenuButton
+                  asChild
+                  isActive={active}
+                  tooltip={item.title}
+                  size="lg"
+                  // Landing navbar link style: rounded-xl, secondary hover, coral active (ADR-007).
+                  className="h-11 rounded-xl font-medium text-foreground/80 hover:bg-secondary/70 hover:text-foreground data-[active=true]:bg-secondary data-[active=true]:font-semibold data-[active=true]:text-primary [&_svg]:size-5"
+                >
                   <Link href={item.href} aria-current={active ? "page" : undefined}>
                     <Icon />
                     <span>{item.title}</span>

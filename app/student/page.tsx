@@ -1,8 +1,11 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { Microphone } from "@phosphor-icons/react/ssr";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { KiddyButton } from "@/components/brand/kiddy-button";
+import { PikoSays } from "@/components/brand/piko";
+import { SectionHeading } from "@/components/brand/section-heading";
+import { Eyebrow, tabsListClass, tabsTriggerClass } from "@/components/brand/ui";
+import { WordPicture } from "@/components/brand/word-pictures";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { ComingSoon } from "@/components/layout/coming-soon";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
@@ -39,46 +42,57 @@ async function StudentHome() {
 
   return (
     <>
-      <TopBar
-        title={`Welcome back, ${student.name} 👋`}
-        subtitle="Pick up where you stopped, or try a new chapter."
-        action={
-          <Button asChild size="lg">
-            <Link href={practiceHref}>
-              <Microphone /> {!next ? "All done — review chapters" : learning.lastItemId ? "Continue practice" : "Start practice"}
-            </Link>
-          </Button>
-        }
-      />
+      <TopBar title={`Welcome back, ${student.name} 👋`} subtitle="Let's practise some English words today!" />
       <PageBody>
+        {/* Next up: Piko + word card + one big kiddy button (landing hero / learning buddy). */}
+        <PikoSays
+          message={
+            next ? (
+              <>
+                Let&apos;s say <span className="text-foreground">“{next.text}”</span> together!
+              </>
+            ) : (
+              "You finished everything! Want to practise again?"
+            )
+          }
+        >
+          {next ? (
+            <span className="inline-flex items-center gap-2.5 rounded-xl border-2 border-foreground/10 bg-card py-1.5 pr-3.5 pl-1.5">
+              <WordPicture text={next.text} size="sm" />
+              <span className="text-left">
+                <span className="block font-heading font-bold">{next.text}</span>
+                <span className="block text-xs text-muted-foreground">{next.lessonTitle}</span>
+              </span>
+            </span>
+          ) : null}
+          <KiddyButton href={practiceHref}>
+            <Microphone weight="fill" />
+            {!next ? "All done — review chapters" : learning.lastItemId ? "Continue practice" : "Start practice"}
+          </KiddyButton>
+        </PikoSays>
+
         <Tabs defaultValue="learn">
-          <TabsList>
-            <TabsTrigger value="learn">Learn</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
-            <TabsTrigger value="saved">Saved</TabsTrigger>
+          <TabsList className={tabsListClass}>
+            <TabsTrigger value="learn" className={tabsTriggerClass}>
+              Learn
+            </TabsTrigger>
+            <TabsTrigger value="history" className={tabsTriggerClass}>
+              History
+            </TabsTrigger>
+            <TabsTrigger value="saved" className={tabsTriggerClass}>
+              Saved
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="learn" className="space-y-8 pt-4">
-            {next ? (
-              <p className="text-sm text-muted-foreground">
-                Next up: <span className="font-medium text-foreground">“{next.text}”</span> · {next.lessonTitle}
-              </p>
-            ) : null}
-            <section className="space-y-3" aria-labelledby="homework-heading">
-              <h2 id="homework-heading" className="font-heading text-lg font-semibold">
-                Homework
-              </h2>
+          <TabsContent value="learn" className="space-y-10 pt-6">
+            <section className="space-y-4" aria-labelledby="homework-heading">
+              <SectionHeading id="homework-heading" title="Homework" />
               <HomeworkList homework={learning.homework} />
             </section>
-            <section className="space-y-3">
-              <div className="flex items-baseline justify-between">
-                <h2 className="font-heading text-lg font-semibold">Chapters</h2>
-                <Link href="/student/chapters" className="text-sm font-medium text-primary hover:underline">
-                  See all
-                </Link>
-              </div>
+            <section className="space-y-4">
+              <SectionHeading title="Chapters" href="/student/chapters" />
               {chapters.length === 0 ? (
-                <p className="rounded-xl border border-dashed p-6 text-center text-muted-foreground">No chapters yet.</p>
+                <PikoSays size="sm" tone="card" message="No chapters yet. Ask your teacher!" />
               ) : (
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                   {chapters.slice(0, 4).map((c) => (
@@ -87,17 +101,20 @@ async function StudentHome() {
                 </div>
               )}
             </section>
-            <section className="space-y-3">
-              <h2 className="font-heading text-lg font-semibold">Recent attempts</h2>
+            <section className="space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <SectionHeading title="Recent attempts" />
+                <Eyebrow tone="mint">Your last 5</Eyebrow>
+              </div>
               <AttemptsTable attempts={attempts.slice(0, 5)} />
             </section>
           </TabsContent>
 
-          <TabsContent value="history" className="pt-4">
+          <TabsContent value="history" className="pt-6">
             <AttemptsTable attempts={attempts} />
           </TabsContent>
 
-          <TabsContent value="saved" className="pt-4">
+          <TabsContent value="saved" className="pt-6">
             <ComingSoon what="Saved words" milestone="FYP-2" />
           </TabsContent>
         </Tabs>

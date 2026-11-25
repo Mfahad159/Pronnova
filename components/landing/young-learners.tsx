@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BookOpen, Eye, Heart, Sparkle, SpeakerHigh, Stack } from "@phosphor-icons/react/ssr";
 import { speakReference } from "@/lib/speech-tts";
 import { cn } from "@/lib/utils";
-import { AppleIllustration, BookIllustration, CatIllustration, SunIllustration } from "./illustrations";
+import { AppleIllustration, BookIllustration, CatIllustration, SunIllustration } from "@/components/brand/illustrations";
 
 const principles = [
   {

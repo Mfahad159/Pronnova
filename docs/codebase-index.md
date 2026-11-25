@@ -38,16 +38,17 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/app-shell.tsx` | Sidebar + main area for `/student/*` and `/teacher/*` | ✅ |
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense) | ✅ |
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
-| `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
+| `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; Piko placeholder for unbuilt screens | ✅ |
 | `components/layout/landing-nav.tsx` | Landing navbar (client): floating white rounded bar (`Home`, `How It Works`, `Student Experience`, `Pronunciation`, `For Teachers`, `About`, `Try the Demo` `KiddyButton`); slide-in menu below lg | ✅ |
-| `components/landing/` | Guided 11-section interactive landing tour: `hero-card` (#top), `interactive-demo` (#demo, real `useRecorder` + `LiveWaveform` + Web Speech playback + clearly labelled demo assessment), `how-it-works` (#how-it-works, 4-step interactive cycle), `learning-buddy` (#buddy, Piko prompt switcher), `learning-journey` (#journey, Basic/Medium/Advanced sample words), `assessment-showcase` (#assessment, speech recognition vs assessment panel), `teacher-preview` (#teachers, Class Overview / Student Progress switcher), `classroom-workflow` (#classroom, 5-step teacher-student loop), `young-learners` (#learners, 6 principles + interactive flashcards), `faq` (#faq, exclusive native accordion), `final-cta`, `site-footer`, `illustrations` (2D SVG flashcards), `kiddy-button` | ✅ |
+| `components/landing/` | Guided 11-section interactive landing tour: `hero-card` (#top), `interactive-demo` (#demo, real `useRecorder` + `LiveWaveform` + Web Speech playback + clearly labelled demo assessment), `how-it-works` (#how-it-works, 4-step interactive cycle), `learning-buddy` (#buddy, Piko prompt switcher), `learning-journey` (#journey, Basic/Medium/Advanced sample words), `assessment-showcase` (#assessment, speech recognition vs assessment panel), `teacher-preview` (#teachers, Class Overview / Student Progress switcher), `classroom-workflow` (#classroom, 5-step teacher-student loop), `young-learners` (#learners, 6 principles + interactive flashcards), `faq` (#faq, exclusive native accordion), `final-cta`, `site-footer` | ✅ |
+| `components/brand/` | Shared landing design pieces used by app pages too (ADR-007): `kiddy-button` (coral CTA, link or button), `illustrations` (landing SVGs), `word-pictures` (`WordPicture`, picture per Class 1 word, letter-tile fallback), `piko` (`PikoSays` buddy + speech bubble), `ui` (`Eyebrow`, `Panel`, `PanelHeader`, `PanelTitle`, `OutlineButton/Link`, `InkButton/Link`, `StatTile`, `CheckDot`, level badge/tone + tab classes), `section-heading` | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
 | `features/materials/` | `material-form.tsx` (UC-10 form, live item preview), `actions.ts` (`saveMaterial` Server Action) | ✅ |
 | `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view) | ✅ |
 | `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
-| `features/practice/` | `practice-recorder.tsx` — record → listen back → send → score / retry (UC-05, UC-04); full feedback view in Phase 4 | ✅ |
+| `features/practice/` | `practice-recorder.tsx` — record → listen back → send → score + feedback / retry (UC-05, UC-04, UC-06) in the landing demo style; `practice-steps.tsx` header step chips; `listen-button.tsx` browser-voice "Listen" | ✅ |
 | `hooks/use-mobile.ts` | Phone-width check used by the sidebar | ✅ |
 | `lib/scoring.ts` | `classify()` (85/70 cut-offs), `errorRate()` | ✅ |
 | `lib/progress.ts` | UC-03 rules (ADR-004): level unlock, item access, chapter stage, `continueItem` | ✅ |
@@ -115,7 +116,7 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 | `hero/hero-hillside-reading.jpg` | Previous landing hero background (unused now) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Unused now (was the landing hero) |
 | `avatar/avatar_standing_beside_dice.png` | Teacher dashboard tip card |
-| `avatar/avatar_speaking.png` | `coming-soon.tsx` |
+| `avatar/avatar_speaking.png` | Unused now (`coming-soon.tsx` uses Piko) |
 | `avatar/avatar_sitting_and_speaking.jpg`, `avatar_staanding.jpg` | Unused yet |
 | `objects/img1–4.jpg` | Chapter cards (`chapters.cover_image` in the seed) |
 | `Microphone-flow.png` | Docs only |

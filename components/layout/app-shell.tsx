@@ -14,6 +14,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { BrandLogo } from "@/components/layout/brand-logo";
+import { Eyebrow } from "@/components/brand/ui";
 import { SidebarNav, SidebarNavStatic } from "@/components/layout/sidebar-nav";
 import { navByRole } from "@/lib/navigation";
 import type { Role } from "@/types";
@@ -24,12 +25,12 @@ export function AppShell({ role, children }: { role: Role; children: React.React
   const groups = navByRole[role];
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarHeader className="px-3 pt-4">
+      <Sidebar collapsible="icon" className="border-r border-foreground/10 [&_[data-slot=sidebar-inner]]:bg-card">
+        <SidebarHeader className="gap-3 px-3 pt-5">
           <BrandLogo href={`/${role}`} />
-          <p className="px-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-            {role === "student" ? "Student" : "Teacher"} · demo
-          </p>
+          <Eyebrow tone={role === "student" ? "coral" : "sky"} className="ml-1 group-data-[collapsible=icon]:hidden">
+            {role === "student" ? "Student" : "Teacher"} · Demo
+          </Eyebrow>
         </SidebarHeader>
         <SidebarContent>
           <Suspense fallback={<SidebarNavStatic groups={groups} />}>
@@ -39,7 +40,11 @@ export function AppShell({ role, children }: { role: Role; children: React.React
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Switch role">
+              <SidebarMenuButton
+                asChild
+                tooltip="Switch role"
+                className="h-11 rounded-xl border-2 border-foreground/15 bg-card font-heading font-semibold hover:border-primary/40 hover:bg-secondary/50 group-data-[collapsible=icon]:border-0 [&_svg]:size-5"
+              >
                 <Link href="/onboarding">
                   <SignOut />
                   <span>Switch role</span>

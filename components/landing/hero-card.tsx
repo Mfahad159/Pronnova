@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Microphone, Sparkle, SpeakerHigh } from "@phosphor-icons/react/ssr";
-import { KiddyButton } from "./kiddy-button";
+import { KiddyButton } from "@/components/brand/kiddy-button";
 
 /**
  * SECTION 01 — HERO: "Helping Little Voices Grow"
