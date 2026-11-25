@@ -1,4 +1,3 @@
-import { Marker } from "./doodles";
 import { Section } from "./section";
 
 // Three level cards (layout idea: the reference's offer/plan cards — here they explain levels, not prices).
@@ -13,7 +12,7 @@ export function Levels() {
     <Section
       id="levels"
       eyebrow="Learn in steps"
-      title={<>Chapters that <Marker>grow</Marker> with you</>}
+      title="Chapters that grow with you"
       intro="Each chapter has three levels, made for Class 6 to 10 and the English curriculum. Score 70% or more on every exercise to open the next level."
       className="bg-card"
     >

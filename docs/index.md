@@ -12,7 +12,6 @@ Read this first. Then open only what your task needs.
 | [architecture.md](architecture.md) | Parts of the system and how they talk | Changing data flow or adding a service |
 | [stack-options.md](stack-options.md) | Free-tier comparison + recommendation | Choosing or changing a service |
 | [design.md](design.md) | Layout, style, reference image, asset use | Building UI |
-| [design-audit-2026-11-25.md](design-audit-2026-11-25.md) | Design/UX/writing review against the reference site, with fixes | Before changing look or wording |
 | [agent-skills.md](agent-skills.md) | Approved AI skills + UI component sources | Before installing a skill or copying UI blocks |
 | [decisions/](decisions/) | Decision records: 001 stack, 002 no login in FYP-1, 003 test tools, 004 lesson access (unlock + visibility), 005 speech contract frozen | You want to know why something was chosen |
 | [../specs/README.md](../specs/README.md) | Feature specs | Before building a feature |

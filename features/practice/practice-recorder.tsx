@@ -12,13 +12,6 @@ import { cn } from "@/lib/utils";
 import { usePracticeStore } from "@/stores/practice-store";
 import type { AttemptResult } from "@/types";
 
-/** Kind, specific words after a score (SRS ratings stay as they are; this softens them for kids). */
-function cheer(c: AttemptResult["classification"]) {
-  if (c === "excellent") return "Excellent! You said it clearly. Ready for the next one?";
-  if (c === "good") return "Good job! Practise the red words to reach Excellent.";
-  return "Good try! Listen to the red words, then try again — you'll get there.";
-}
-
 const secs = (ms: number) => `${Math.floor(ms / 1000)}.${Math.floor((ms % 1000) / 100)}s`;
 
 /** UC-05 (record) + UC-04 (submit). The full feedback view (UC-06) builds on the result in Phase 4. */
@@ -123,7 +116,7 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              {phase === "requesting" ? "Allow the microphone when your browser asks." : "Tap the mic and read it out loud. Tap again when you're done."}
+              {phase === "requesting" ? "Allow the microphone when your browser asks." : "Tap the microphone, read the text aloud, then tap stop."}
             </p>
           )}
         </>
@@ -141,18 +134,18 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
       {(phase === "recorded" || phase === "submitting") && recording ? (
         <div className="flex w-full max-w-md flex-col items-center gap-4">
           <audio controls src={recording.url} className="w-full" aria-label="Your recording" />
-          <p className="text-sm text-muted-foreground">Listen to yourself first. Happy with it? Check it to get your score.</p>
+          <p className="text-sm text-muted-foreground">Listen to yourself. Happy with it? Send it to get your score.</p>
           {error?.kind === "network" ? (
             <p role="alert" className="text-sm text-destructive">
               {error.message}
             </p>
           ) : null}
           <div className="flex flex-wrap justify-center gap-3">
-            <Button size="lg" className="h-11 rounded-full px-5" onClick={submit} disabled={phase === "submitting"}>
+            <Button size="lg" className="h-11 px-5" onClick={submit} disabled={phase === "submitting"}>
               {phase === "submitting" ? <Loader2 className="animate-spin" /> : <Send />}
-              {phase === "submitting" ? "Checking…" : "Check my reading"}
+              {phase === "submitting" ? "Checking…" : "Send"}
             </Button>
-            <Button size="lg" variant="outline" className="h-11 rounded-full px-5" onClick={recordAgain} disabled={phase === "submitting"}>
+            <Button size="lg" variant="outline" className="h-11 px-5" onClick={recordAgain} disabled={phase === "submitting"}>
               <RotateCcw /> Record again
             </Button>
           </div>
@@ -162,7 +155,7 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
       {/* Saved, but scoring failed */}
       {phase === "failed" && result ? (
         <div role="alert" className="flex max-w-md flex-col items-center gap-3 rounded-xl border bg-secondary p-5 text-center">
-          <p className="font-medium">Your recording is safe — we just couldn&apos;t check it yet.</p>
+          <p className="font-medium">Your recording is saved, but we couldn&apos;t check it yet.</p>
           <p className="text-sm text-muted-foreground">{result.error ?? "Please try again in a moment."}</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button onClick={retry}>
@@ -179,7 +172,6 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
       {phase === "scored" && result ? (
         <div className="flex w-full max-w-xl flex-col items-center gap-4">
           <ScorePill score={result.score ?? 0} className="px-4 py-2 text-base" />
-          <p className="max-w-md text-muted-foreground">{cheer(result.classification)}</p>
           <p className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-lg" aria-label="Your words">
             {result.words.map((w, i) => (
               <span
@@ -192,11 +184,11 @@ export function PracticeRecorder({ itemId, nextHref }: { itemId: string; nextHre
             ))}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button size="lg" variant="outline" className="h-11 rounded-full px-5" onClick={recordAgain}>
+            <Button size="lg" variant="outline" className="h-11 px-5" onClick={recordAgain}>
               <RotateCcw /> Try again
             </Button>
             {nextHref ? (
-              <Button asChild size="lg" className="h-11 rounded-full px-5">
+              <Button asChild size="lg" className="h-11 px-5">
                 <Link href={nextHref}>
                   Next exercise <ArrowRight />
                 </Link>

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
@@ -10,7 +10,6 @@ import { getCurrentStudent } from "@/server/db/demo-user";
 import { getItem } from "@/server/db/queries/curriculum";
 import { getStudentLearning } from "@/server/db/queries/learning";
 import { PracticeRecorder } from "@/features/practice/practice-recorder";
-import { LockDoodle, SpeakDoodle } from "@/components/icons/doodle";
 import { itemAccess, openItemsInOrder } from "@/lib/progress";
 
 // UC-04 Attempt + UC-05 Record (Phase 3). Full feedback (UC-06) arrives in Phase 4.
@@ -36,10 +35,10 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
         <TopBar title="Practice" subtitle={`${item.chapterTitle} · ${levelLabel[item.level]}`} />
         <PageBody>
           <div className="flex flex-col items-center gap-4 rounded-3xl border bg-card px-6 py-12 text-center" role="status">
-            <LockDoodle className="size-10 text-muted-foreground" />
-            <p className="font-heading text-xl font-semibold">This one is still locked 🔒</p>
+            <Lock className="size-8 text-muted-foreground" />
+            <p className="font-heading text-xl font-semibold">This level is locked</p>
             <p className="max-w-md text-muted-foreground">
-              Get 70% or more on every exercise in the level before it, and {levelLabel[item.level]} in {item.chapterTitle} opens up.
+              Finish the earlier level in {item.chapterTitle} with 70% or more on every exercise to open {levelLabel[item.level]}.
             </p>
             <Button asChild size="lg">
               <Link href={`/student/chapters/${item.chapterId}`}>Back to {item.chapterTitle}</Link>
@@ -69,23 +68,10 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
         }
       />
       <PageBody>
-        <div className="grid items-start gap-6 lg:grid-cols-[1fr_240px]">
-          <div className="flex flex-col items-center gap-8 rounded-3xl border bg-card px-5 py-10 text-center md:px-10 md:py-14">
-            <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-              <SpeakDoodle className="size-5" /> Read this {item.itemType}
-            </p>
-            <p className="max-w-2xl font-heading text-4xl font-bold text-balance break-words md:text-5xl">{item.text}</p>
-            <PracticeRecorder itemId={item.id} nextHref={next ? `/student/practice/${next.id}` : null} />
-          </div>
-          {/* Friendly guide with one reading tip (desktop only, so phones stay focused on the task). */}
-          <aside className="hidden flex-col items-center gap-3 lg:flex" aria-label="Tip">
-            <div className="relative rounded-2xl border bg-card p-4 text-sm">
-              <p className="font-semibold">Tip</p>
-              <p className="mt-1 text-muted-foreground">Read slowly and clearly, like you&apos;re reading to a friend. You can listen to yourself before you check.</p>
-              <span aria-hidden className="absolute -bottom-2 left-1/2 size-4 -translate-x-1/2 rotate-45 border-r border-b bg-card" />
-            </div>
-            <Image src="/avatar/avatar_speaking.png" alt="" width={1192} height={1307} sizes="200px" className="w-48 rounded-3xl border bg-tint-peach" />
-          </aside>
+        <div className="flex flex-col items-center gap-8 rounded-3xl border bg-card px-6 py-12 text-center">
+          <p className="text-sm font-medium tracking-wide text-muted-foreground uppercase">{item.itemType}</p>
+          <p className="max-w-2xl font-heading text-3xl font-semibold text-balance md:text-4xl">{item.text}</p>
+          <PracticeRecorder itemId={item.id} nextHref={next ? `/student/practice/${next.id}` : null} />
         </div>
       </PageBody>
     </>

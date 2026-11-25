@@ -16,7 +16,6 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`) | ✅ |
 | `playwright.config.ts`, `tests/e2e/` | Browser tests (`npm run test:e2e`) with Chrome's fake mic: routes, Phase 2, Phase 3 recording. `E2E_MUTATE=1` runs tests that write data; `E2E_FIREFOX=1` adds Firefox | ✅ |
 | `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed, bucket and that the browser key is blocked | ✅ |
-| `scripts/clean-test-data.mjs` | `npm run db:clean-tests`: removes data made by tests (E2E lessons, mock-scored attempts + recordings), rebuilds error stats. Runs automatically after `E2E_MUTATE=1` test runs (`tests/e2e/global-teardown.ts`) | ✅ |
 | `scripts/db.mjs` | `npm run db:push / db:seed / db:status / db:verify` via the Supabase CLI (needs `SUPABASE_DB_URL`) | ✅ |
 | `supabase/config.toml` | Supabase CLI config (from `supabase init`); `[db.seed]` points at `seed.sql` | ✅ |
 | `supabase/checks/access.sql` | Read-only security check used by `db:verify` | ✅ |
@@ -41,12 +40,10 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
 | `components/layout/landing-nav.tsx` | Landing navbar: centred floating pill (w-fit, fixed, margin all round) with section links (How it works, Levels, For teachers, FAQ) + Get started; slide-in menu on phones | ✅ |
-| `components/icons/doodle.tsx` | Pronnova doodle icon set (18 icons) + `IconBlob` | ✅ |
-| `components/landing/doodles.tsx` | `Marker`, `Sparkles`, `Sticker`, `DashedPath` decorations | ✅ |
-| `components/landing/` | Landing sections: `section.tsx` (wrapper + sound-bars mark), `photo-collage` (tilted real-classroom photos after the hero), `benefits`, `how-it-works`, `feedback-preview`, `levels`, `for-teachers`, `faq` (native details), `final-cta`, `site-footer` | ✅ |
+| `components/landing/` | Landing sections: `section.tsx` (wrapper + sound-bars mark), `benefits`, `how-it-works`, `feedback-preview`, `levels`, `for-teachers`, `faq` (native details), `final-cta`, `site-footer` | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
-| `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `continue-card.tsx` (big Continue card), `homework-list.tsx` (3 soonest + Show more), `level.ts` | ✅ |
+| `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
 | `features/materials/` | `material-form.tsx` (UC-10 form, live item preview), `actions.ts` (`saveMaterial` Server Action) | ✅ |
 | `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view) | ✅ |
 | `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
@@ -112,7 +109,6 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 | `icons/pronnova-mark.svg` (+ `-on-dark`) | Brand mark (coral→orange sound columns) in `brand-logo.tsx` |
 | `favicon.ico`, `favicon.svg`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Browser/tab and iPhone icons, linked in `app/layout.tsx` metadata |
 | `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#FF594B`) |
-| `photos/*.jpg` | Landing photo collage: 5 free photos from Pakistan (Unsplash/Pexels licences; credits in `design.md`) |
 | `hero/hero-hillside-reading.jpg` | Landing hero background (four students reading on a hillside, 1376×768) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Unused now (was the landing hero) |
 | `avatar/avatar_standing_beside_dice.png` | Teacher dashboard tip card |

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Repeat2 } from "lucide-react";
+import { LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -28,7 +28,7 @@ export function AppShell({ role, children }: { role: Role; children: React.React
         <SidebarHeader className="px-3 pt-4">
           <BrandLogo href={`/${role}`} />
           <p className="px-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-            {role === "student" ? "Demo student" : "Demo teacher"}
+            {role === "student" ? "Student" : "Teacher"} · demo
           </p>
         </SidebarHeader>
         <SidebarContent>
@@ -39,10 +39,10 @@ export function AppShell({ role, children }: { role: Role; children: React.React
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={role === "student" ? "Switch to teacher" : "Switch to student"}>
+              <SidebarMenuButton asChild tooltip="Switch role">
                 <Link href="/onboarding">
-                  <Repeat2 />
-                  <span>{role === "student" ? "Switch to teacher" : "Switch to student"}</span>
+                  <LogOut />
+                  <span>Switch role</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

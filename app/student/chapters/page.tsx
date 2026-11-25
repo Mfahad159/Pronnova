@@ -23,7 +23,7 @@ async function Chapters() {
   const progressById = new Map(learning.view.map((c) => [c.id, c]));
   return (
     <>
-      <TopBar title="Chapters" subtitle="Start with chapter 1. Each one has Basic, Medium and Advanced levels." />
+      <TopBar title="Chapters" subtitle="Work through them in order. Each has Basic, Medium and Advanced levels." />
       <PageBody>
         {chapters.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-center text-muted-foreground">No chapters yet.</p>

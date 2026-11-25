@@ -30,7 +30,7 @@ async function Materials() {
     <>
       <TopBar
         title="Materials"
-        subtitle="Everything you've uploaded, and who it's assigned to."
+        subtitle="Practice material you've uploaded for your classes."
         action={
           <Button asChild size="lg">
             <Link href="/teacher/materials/new">

@@ -7,11 +7,9 @@ export const metadata = { title: "Students" };
 export default function TeacherStudentsPage() {
   return (
     <>
-      <TopBar title="Students" subtitle="See how each student is doing." />
+      <TopBar title="Students" subtitle="Each student's attempts, scores and progress." />
       <PageBody>
-        <ComingSoon title="Student progress is coming">
-          You&apos;ll see each student&apos;s attempts, scores and the words they find hard. The latest attempts are already on your dashboard.
-        </ComingSoon>
+        <ComingSoon what="Student progress" milestone="FYP-2" />
       </PageBody>
     </>
   );

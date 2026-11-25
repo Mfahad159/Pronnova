@@ -1,27 +1,13 @@
 import Image from "next/image";
-import { SparkleDoodle } from "@/components/icons/doodle";
 
-/**
- * Friendly placeholder for screens not built yet. User-facing text only — the phase it's planned
- * for lives in specs/fyp1-implementation-plan.md, never on screen.
- */
-export function ComingSoon({ title, children }: { title: string; children: React.ReactNode }) {
+/** Placeholder for screens not built yet. Names the phase from specs/fyp1-implementation-plan.md. */
+export function ComingSoon({ what, milestone }: { what: string; milestone: string }) {
   return (
-    <div className="grid items-center overflow-hidden rounded-3xl border bg-tint-peach sm:grid-cols-[220px_1fr]">
-      <Image
-        src="/avatar/avatar_staanding.jpg"
-        alt=""
-        width={440}
-        height={330}
-        sizes="(min-width: 640px) 220px, 100vw"
-        className="h-48 w-full object-cover object-[35%_center] sm:h-full"
-      />
-      <div className="p-6 md:p-8">
-        <p className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-semibold text-primary">
-          <SparkleDoodle className="size-4" /> Coming soon
-        </p>
-        <h2 className="mt-3 font-heading text-2xl font-bold">{title}</h2>
-        <div className="mt-2 text-muted-foreground">{children}</div>
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed bg-card p-8 text-center sm:flex-row sm:text-left">
+      <Image src="/avatar/avatar_speaking.png" alt="" width={96} height={105} className="rounded-xl" />
+      <div>
+        <p className="font-heading font-semibold">{what} is on the way</p>
+        <p className="text-sm text-muted-foreground">Planned for {milestone} (see specs/fyp1-implementation-plan.md).</p>
       </div>
     </div>
   );

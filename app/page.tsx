@@ -10,10 +10,7 @@ import { FinalCta } from "@/components/landing/final-cta";
 import { ForTeachers } from "@/components/landing/for-teachers";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { Levels } from "@/components/landing/levels";
-import { PhotoCollage } from "@/components/landing/photo-collage";
 import { SiteFooter } from "@/components/landing/site-footer";
-import { Sparkles, Sticker } from "@/components/landing/doodles";
-import { SoundBars } from "@/components/landing/section";
 
 // Landing. "Get started" → /onboarding, where the visitor picks Student or Teacher.
 // Section layout ideas from novakidenglish.com; all content, images and branding are Pronnova's.
@@ -44,15 +41,8 @@ export default function Home() {
 
         <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-6xl items-center px-4 py-12 md:px-6 md:py-20">
           <section className="max-w-xl space-y-6" aria-labelledby="hero-title">
-            <Sticker>
-              <SoundBars className="text-primary" /> Word-by-word feedback
-            </Sticker>
             <h1 id="hero-title" className="font-heading text-4xl font-bold tracking-tight text-balance md:text-6xl">
-              Say it out loud.{" "}
-              <span className="relative text-primary">
-                See every word.
-                <Sparkles className="absolute -top-7 -right-12 hidden md:block" />
-              </span>
+              Say it out loud. <span className="text-primary">See every word.</span>
             </h1>
             <p className="max-w-prose text-lg text-foreground/80">
               Read English words and sentences into your mic. Pronnova scores each word and sound, shows what to fix,
@@ -69,7 +59,6 @@ export default function Home() {
         </div>
       </div>
 
-        <PhotoCollage />
         <Benefits />
         <HowItWorks />
         <FeedbackPreview />

@@ -20,7 +20,7 @@ test.describe("recording", () => {
     await page.getByRole("button", { name: "Stop recording" }).click();
 
     await expect(page.getByLabel("Your recording")).toBeVisible();
-    await page.getByRole("button", { name: "Check my reading" }).click();
+    await page.getByRole("button", { name: "Send" }).click();
     // Score pill text is split across elements; the live region announces it in one string.
     await expect(page.getByRole("status").filter({ hasText: /your score is \d+ percent/i })).toBeAttached({ timeout: 15_000 });
     await expect(page.getByText(/^· (Excellent|Good|Average)$/)).toBeVisible();

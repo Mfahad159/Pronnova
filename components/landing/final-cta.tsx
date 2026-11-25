@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Marker } from "./doodles";
 
 // Closing call to action (layout idea: the reference repeats one main CTA at the end of the page).
 export function FinalCta() {
@@ -12,7 +11,7 @@ export function FinalCta() {
         <div className="grid items-center overflow-hidden rounded-[2rem] border bg-secondary md:grid-cols-[1.2fr_0.8fr]">
           <div className="p-8 md:p-12">
             <h2 id="cta-title" className="font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-              Ready to hear the <Marker>difference</Marker>?
+              Ready to hear the difference?
             </h2>
             <p className="mt-3 text-lg text-muted-foreground">Pick student or teacher and try it now. No sign-in needed in this demo.</p>
             <Button asChild size="lg" className="group mt-6 h-12 rounded-full px-6 text-base">
