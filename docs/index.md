@@ -42,5 +42,5 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 11 | SRS 3.2.2 "show a lesson only when assigned" vs UC-03 self-selected practice; SRS never says when a level unlocks | ADR-004: built-in lessons open to all (levels unlock at ≥70% on every item of the previous level); teacher material only for assignees |
 | 12 | Not-found inside a streamed (Suspense) page returns HTTP 200 with the 404 screen | Accepted for now; review in Phase 5 |
 | 13 | Plan asks for Firefox + Safari checks; Windows blocked the downloaded Firefox and Safari can't run here | Firefox e2e is opt-in (`E2E_FIREFOX=1`); both checked by hand in Phase 5 |
-| 14 | New logo/favicon are indigo→cyan (`#5B4BF5`→`#14C8E0`); the app UI is coral/orange | Logo used as given; UI colours unchanged until the team decides whether to re-theme |
+| 14 | New logo/favicon came indigo→cyan; the app UI is coral/orange | Resolved: logo + favicons recoloured to coral→orange (same shapes), UI stays coral |
 | 8 | Reference design is a green, adult audio-tool dashboard | Keep its layout; use Pronnova's coral/orange brand and friendlier tone (design.md) |

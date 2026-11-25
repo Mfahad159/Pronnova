@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#5B4BF5", // logo indigo; matches site.webmanifest
+  themeColor: "#FF594B", // brand coral; matches site.webmanifest
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

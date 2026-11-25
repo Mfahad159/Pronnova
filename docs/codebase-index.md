@@ -23,6 +23,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components.json` | shadcn/ui config | ✅ |
 | `eslint.config.mjs` | Lint rules; ignores `.agents/`, `archive/`, `Pronnova_mds/` | ✅ |
 | `.agents/skills/` + `skills-lock.json` | Agent skills (see `docs/agent-skills.md`); `.claude/skills/` links to them | ✅ |
+| `tools/` | Icon generator: `build-icons.py` (colours + shapes), `render-icons.mjs` (PNG via Playwright). How-to: `tools/README.md` | ✅ |
 | `.claude/launch.json` | Dev server config for the Claude preview pane | ✅ |
 | `archive/` | Old files moved out of `public/` (git-ignored) | ✅ |
 | `Pronnova_SRS_Updated_28_oct.docx` | Original SRS (git-ignored: `*.docx` never committed; Markdown copy is `docs/srs.md`) | local only |
@@ -103,9 +104,9 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 ## Assets in `public/`
 | Path | Used in |
 |---|---|
-| `icons/pronnova-mark.svg` (+ `-on-dark`) | Brand mark (indigo→cyan sound columns) in `brand-logo.tsx` |
+| `icons/pronnova-mark.svg` (+ `-on-dark`) | Brand mark (coral→orange sound columns) in `brand-logo.tsx` |
 | `favicon.ico`, `favicon.svg`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Browser/tab and iPhone icons, linked in `app/layout.tsx` metadata |
-| `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#5B4BF5`) |
+| `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#FF594B`) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Landing hero |
 | `avatar/avatar_standing_beside_dice.png` | Teacher dashboard tip card |
 | `avatar/avatar_speaking.png` | `coming-soon.tsx` |
