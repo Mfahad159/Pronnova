@@ -110,7 +110,7 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 | `icons/pronnova-mark.svg` (+ `-on-dark`) | Brand mark (coral→orange sound columns) in `brand-logo.tsx` |
 | `favicon.ico`, `favicon.svg`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Browser/tab and iPhone icons, linked in `app/layout.tsx` metadata |
 | `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#FF594B`) |
-| `photos/*.jpg` | 8 free-licence classroom photos for the landing collage (sources in `design.md`) |
+| `photos/*.jpg` | 8 free-licence classroom photos (sources in `design.md`). Unused since the 3b4bd89 landing redesign; keep the credits if reused |
 | `hero/pronnova-swing-crew.png`, `hero/piko-portrait.png` | Landing hero swing crew + consistent Piko learning buddy portrait (Gemini-generated in Pronnova coral/orange palette) |
 | `hero/hero-hillside-reading.jpg` | Previous landing hero background (unused now) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Unused now (was the landing hero) |

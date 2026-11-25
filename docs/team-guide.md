@@ -64,6 +64,8 @@ npm run db:check
    Prefer the terminal? Put `SUPABASE_DB_URL` in `.env.local` and run `npm run db:push`, then `npm run db:seed` instead of steps 3–4 (details: `database.md`).
 
 ### Run the app
+Use npm only (the repo's lock file is `package-lock.json`). Don't run `bun install`, `yarn` or `pnpm` — they create a second lock file that drifts from npm's. Never add the project to its own dependencies (e.g. `"pronnova": "."`).
+
 ```powershell
 npm install
 ```

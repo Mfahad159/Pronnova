@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 // Smoke test: every main route loads its heading and not our error screen (needs the seeded DB).
 // Note: don't assert on role="alert" — Next.js always renders an empty route announcer with that role.
 const routes: [path: string, heading: RegExp][] = [
-  ["/", /say it out loud/i],
+  ["/", /helping little voices grow/i],
   ["/onboarding", /how will you use pronnova/i],
   ["/student", /welcome back/i],
   ["/student/chapters", /^chapters$/i],
@@ -31,9 +31,10 @@ test("chapter → item → practice flow uses real data", async ({ page }) => {
   await expect(page.getByText("Three thin thieves thought about the weather.")).toBeVisible();
 });
 
-test("landing Get started → onboarding → choose student or teacher", async ({ page }) => {
+test("landing Choose Role → onboarding → choose student or teacher", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("main").getByRole("link", { name: "Get started" }).first().click(); // hero button
+  // The landing page links to the role chooser through "Choose Role" (redesign 3b4bd89).
+  await page.getByRole("link", { name: "Choose Role" }).first().click();
   await expect(page).toHaveURL(/\/onboarding$/);
   await page.getByRole("link", { name: /i'm a student/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: /welcome back/i })).toBeVisible();
