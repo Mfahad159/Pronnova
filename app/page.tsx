@@ -25,15 +25,16 @@ export default function Home() {
         {/* Hero background: full-bleed photo with a white overlay so the text stays readable. */}
         <div className="absolute inset-0 -z-10" aria-hidden>
           <Image
-            src="/avatar/avatar_sitting_with_studentrs.jpg"
+            src="/hero/hero-hillside.jpg"
             alt=""
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[70%_center]"
+            className="object-cover object-[90%_bottom] md:object-[75%_bottom]"
           />
-          {/* Stronger on the text side (left), lighter on the right so the teacher and students still show. */}
-          <div className="absolute inset-0 bg-background/85 md:bg-transparent md:bg-gradient-to-r md:from-background md:via-background/85 md:to-background/30" />
+          {/* White overlay: strongest behind the text (left), clear on the right so the two students show.
+              Phones get an even wash because the text covers most of the width there. */}
+          <div className="absolute inset-0 bg-background/70 md:bg-transparent md:bg-gradient-to-r md:from-background/90 md:via-background/60 md:to-transparent" />
         </div>
 
         <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-6xl items-center px-4 py-12 md:px-6 md:py-20">
