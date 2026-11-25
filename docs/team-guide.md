@@ -114,7 +114,7 @@ Only variables starting with `NEXT_PUBLIC_` reach the browser. Everything else s
 | Add a page | `app/<area>/<name>/page.tsx` using `TopBar` + `PageBody`, then add it to `codebase-index.md` |
 | Change sidebar links | `lib/navigation.ts` |
 | Change colors | Tokens at the top of `app/globals.css` — not inside components |
-| Change fonts | `app/layout.tsx` |
+| Change fonts | `app/layout.tsx` (load) + `--font-sans` / `--font-heading` in `app/globals.css` |
 | Add a shadcn component | `npx shadcn@4.23.0 add <name>` → lands in `components/ui/` |
 | Change demo data | `supabase/seed.sql`, then re-run it in the SQL Editor |
 | Read something new from the DB | Add a function in `server/db/queries/`, call it from a page inside `<Suspense>` |

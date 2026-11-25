@@ -31,7 +31,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 ## App code
 | Folder / file | Holds | |
 |---|---|---|
-| `app/layout.tsx` | Root layout: fonts (Plus Jakarta Sans), tooltip provider, toaster, metadata | ✅ |
+| `app/layout.tsx` | Root layout: font (Google Sans Flex), icons + manifest metadata, tooltip provider, toaster | ✅ |
 | `app/globals.css` | **Design tokens** (colors, score colors, tints, radius) + Tailwind theme | ✅ |
 | `components/ui/` | shadcn components (button, card, sidebar, table, tabs, dialog, select, …). Generated — edit with care | ✅ |
 | `components/layout/app-shell.tsx` | Sidebar + main area for `/student/*` and `/teacher/*` | ✅ |
