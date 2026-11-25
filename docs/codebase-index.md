@@ -40,7 +40,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
 | `components/layout/landing-nav.tsx` | Landing navbar: centred floating pill (w-fit, fixed, margin all round) with section links (How it works, Levels, For teachers, FAQ) + Get started; slide-in menu on phones | ✅ |
-| `components/landing/` | Landing sections: `section.tsx` (wrapper + sound-bars mark), `benefits`, `how-it-works`, `feedback-preview`, `levels`, `for-teachers`, `faq` (native details), `final-cta`, `site-footer` | ✅ |
+| `components/landing/` | Landing sections: `section.tsx` (wrapper + sound-bars mark), `photo-collage` (tilted photo tiles after the hero), `benefits`, `how-it-works`, `feedback-preview`, `levels`, `for-teachers`, `faq` (native details), `final-cta`, `site-footer` | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
@@ -109,6 +109,7 @@ Full explanation + how to change it: `database.md`. Columns list: `architecture.
 | `icons/pronnova-mark.svg` (+ `-on-dark`) | Brand mark (coral→orange sound columns) in `brand-logo.tsx` |
 | `favicon.ico`, `favicon.svg`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png` | Browser/tab and iPhone icons, linked in `app/layout.tsx` metadata |
 | `site.webmanifest`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-icon-512x512.png` | Install / home-screen icons (theme colour `#FF594B`) |
+| `photos/*.jpg` | 8 free-licence classroom photos for the landing collage (sources in `design.md`) |
 | `hero/hero-hillside-reading.jpg` | Landing hero background (four students reading on a hillside, 1376×768) |
 | `avatar/avatar_sitting_with_studentrs.jpg` | Unused now (was the landing hero) |
 | `avatar/avatar_standing_beside_dice.png` | Teacher dashboard tip card |
