@@ -75,7 +75,8 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 ## Routes
 | Route | File | UC | |
 |---|---|---|---|
-| `/` | `app/page.tsx` | Landing: navbar, full-width hero photo with white overlay, pick demo role | ✅ |
+| `/` | `app/page.tsx` | Landing: navbar, full-width hero photo with white overlay, one **Get started** button → `/onboarding` | ✅ |
+| `/onboarding` | `app/onboarding/page.tsx` | Choose **Student** or **Teacher** (picture cards). FYP-1 opens the demo user; FYP-2 → sign up / sign in | ✅ |
 | `/student` | `app/student/page.tsx` | Home: Continue, homework, chapter cards with stage, recent attempts (UC-03) | ✅ |
 | `/student/chapters` | `app/student/chapters/page.tsx` | UC-03 chapters + stage | ✅ |
 | `/student/chapters/[chapterId]` | `app/student/chapters/[chapterId]/page.tsx` | UC-03 levels (locked in order) → items, homework badges | ✅ |

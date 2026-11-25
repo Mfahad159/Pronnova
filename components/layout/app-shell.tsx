@@ -40,7 +40,7 @@ export function AppShell({ role, children }: { role: Role; children: React.React
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Switch role">
-                <Link href="/">
+                <Link href="/onboarding">
                   <LogOut />
                   <span>Switch role</span>
                 </Link>

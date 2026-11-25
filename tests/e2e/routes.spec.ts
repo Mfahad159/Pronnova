@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 // Note: don't assert on role="alert" — Next.js always renders an empty route announcer with that role.
 const routes: [path: string, heading: RegExp][] = [
   ["/", /say it out loud/i],
+  ["/onboarding", /how will you use pronnova/i],
   ["/student", /welcome back/i],
   ["/student/chapters", /^chapters$/i],
   ["/student/progress", /your progress/i],
@@ -28,6 +29,17 @@ test("chapter → item → practice flow uses real data", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Tricky Sounds" })).toBeVisible();
   await page.getByRole("link", { name: /three thin thieves/i }).click();
   await expect(page.getByText("Three thin thieves thought about the weather.")).toBeVisible();
+});
+
+test("landing Get started → onboarding → choose student or teacher", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("main").getByRole("link", { name: "Get started" }).click();
+  await expect(page).toHaveURL(/\/onboarding$/);
+  await page.getByRole("link", { name: /i'm a student/i }).click();
+  await expect(page.getByRole("heading", { level: 1, name: /welcome back/i })).toBeVisible();
+  await page.goto("/onboarding");
+  await page.getByRole("link", { name: /i'm a teacher/i }).click();
+  await expect(page.getByRole("heading", { level: 1, name: /hello/i })).toBeVisible();
 });
 
 test("unknown chapter shows the not-found page", async ({ page }) => {

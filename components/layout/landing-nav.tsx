@@ -35,7 +35,7 @@ export function LandingNav() {
           ))}
         </ul>
         <Button asChild size="lg" className="h-10 rounded-full px-4">
-          <Link href="/student">Start practising</Link>
+          <Link href="/onboarding">Get started</Link>
         </Button>
 
         {/* Phone: links move into a slide-in menu */}

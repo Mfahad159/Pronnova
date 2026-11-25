@@ -43,7 +43,7 @@ Simple rule: **pages are thin**. A page loads data and puts feature components o
 - The rules are in `lib/progress.ts`; the server enforces them on the practice page and the attempts API.
 
 ### Who is logged in? (FYP-1)
-No login in FYP-1 (see `decisions/002-fyp1-no-auth.md`). The landing page lets you enter as a **demo student** or **demo teacher**. Real sign-up/sign-in comes in FYP-2.
+No login in FYP-1 (see `decisions/002-fyp1-no-auth.md`). The landing page's **Get started** opens `/onboarding`, where you choose **demo student** or **demo teacher** (also reachable from "Switch role" in the sidebar). Real sign-up/sign-in comes in FYP-2.
 
 ## 3. Run it locally
 Needs: Node.js 22+ (Supabase dropped Node 20), npm, and a free Supabase project.

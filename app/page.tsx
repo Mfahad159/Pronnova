@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, GraduationCap, Presentation } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { LandingNav } from "@/components/layout/landing-nav";
 
-// Landing: pick a demo role. No login in FYP-1 (docs/decisions/002-fyp1-no-auth.md).
+// Landing. "Get started" → /onboarding, where the visitor picks Student or Teacher.
+// No login in FYP-1 (docs/decisions/002-fyp1-no-auth.md).
 export default function Home() {
   return (
     <div className="relative isolate flex min-h-svh flex-col">
@@ -32,29 +34,15 @@ export default function Home() {
             Read English words and sentences into your mic. Pronnova scores each word and sound, shows what to fix, and
             keeps track of the ones you keep missing.
           </p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <RoleLink href="/student" icon={<GraduationCap />} title="I'm a student" note="Practise lessons" />
-            <RoleLink href="/teacher" icon={<Presentation />} title="I'm a teacher" note="Upload and track" />
-          </div>
+          <Button asChild size="lg" className="group h-12 rounded-full px-6 text-base">
+            <Link href="/onboarding">
+              Get started
+              <ArrowRight className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
+            </Link>
+          </Button>
           <p className="text-xs text-foreground/70">Demo mode: no sign-in, sample data only.</p>
         </section>
       </main>
     </div>
-  );
-}
-
-function RoleLink({ href, icon, title, note }: { href: string; icon: React.ReactNode; title: string; note: string }) {
-  return (
-    <Link
-      href={href}
-      className="group flex items-center gap-3 rounded-2xl border bg-card/90 p-4 outline-none backdrop-blur-sm transition-colors hover:border-primary/40 hover:bg-card focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-5"
-    >
-      <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">{icon}</span>
-      <span className="flex-1">
-        <span className="block font-semibold">{title}</span>
-        <span className="block text-sm text-muted-foreground">{note}</span>
-      </span>
-      <ArrowRight className="text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-    </Link>
   );
 }
