@@ -19,7 +19,7 @@ What FYP-1 must deliver and how we know each use case is done. Confirm with the 
 | UC-03 | View Lesson | Student | Chapters/levels/items queries, unlock rule, homework, Continue | ✅ Done (Phase 2) |
 | UC-04 | Attempt Pronunciation Exercise | Student, Speech Engine | Upload audio, save attempt, score, save results + error stats atomically, retry | ✅ Done with mock scorer (Phase 3); real scorer deferred |
 | UC-05 | Record Speech | Student | Audio validation + private storage | ✅ Done (Phase 3) |
-| UC-06 | View Feedback & Score | Student | Results API, signed playback URLs | 🟡 Partly (score + coloured words); playback + tips in Phase 4 C |
+| UC-06 | View Feedback & Score | Student | Results API, signed playback URLs | ✅ Done with mock scorer (Phase 4): score + class, coloured words, tricky sounds, hear the word, play own recording, try again / next word |
 | UC-07 | View Progress (+ AI suggestions) | Student, AI Engine | Progress over time, repeated errors from `error_stats`, Gemini or template suggestions | ⬜ Not started (tables + error counts already exist) |
 | UC-08 | Assign / Reassign Lesson | Teacher | Create/move assignments | 🟡 Assign-on-upload exists (UC-10); reassign not |
 | UC-09 | Select Difficulty Level | Teacher | Update a lesson's level | 🟡 Level set on upload; changing later not |

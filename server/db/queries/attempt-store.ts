@@ -70,6 +70,13 @@ export async function uploadRecording(path: string, audio: Blob, contentType: st
   if (error && !/exists|duplicate/i.test(error.message)) throw new Error(`Storage upload failed: ${error.message}`);
 }
 
+/** Short-lived link to play a private recording in the browser (bucket stays private). */
+export async function signRecordingUrl(path: string, expiresIn = 300): Promise<string> {
+  const { data, error } = await (await getDb()).storage.from(BUCKET).createSignedUrl(path, expiresIn);
+  if (error || !data) throw new Error(`Storage sign failed: ${error?.message ?? "no data"}`);
+  return data.signedUrl;
+}
+
 export async function downloadRecording(path: string): Promise<Blob> {
   const { data, error } = await (await getDb()).storage.from(BUCKET).download(path);
   if (error || !data) throw new Error(`Storage download failed: ${error?.message ?? "no data"}`);

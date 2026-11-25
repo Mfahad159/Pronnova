@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { deadlineToIso, detectItemType, parseItemLines, todayInPakistan, validateMaterial, type MaterialInput } from "@/lib/materials";
+import {
+  deadlineToIso,
+  detectItemType,
+  itemProblem,
+  itemWarning,
+  parseItemLines,
+  todayInPakistan,
+  validateMaterial,
+  type MaterialInput,
+} from "@/lib/materials";
 
 describe("detectItemType", () => {
   it.each([
@@ -10,7 +19,25 @@ describe("detectItemType", () => {
     ["my brother walks to school with me", "sentence"],
     ["I woke up. Then I ate breakfast.", "paragraph"],
     ["one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen", "paragraph"],
+    ["I can see a big red dog in the park", "paragraph"],
   ])("%j → %s", (text, type) => expect(detectItemType(text)).toBe(type));
+});
+
+describe("Class 1 sentence length (ADR-006)", () => {
+  it("allows up to 6 words with no warning", () => {
+    const it6 = { text: "I see a big red ball.", itemType: "sentence" as const };
+    expect(itemProblem(it6)).toBeNull();
+    expect(itemWarning(it6)).toBeNull();
+  });
+  it("warns at 7–8 words but still allows them", () => {
+    const it8 = { text: "I can see a big red ball today.", itemType: "sentence" as const };
+    expect(itemProblem(it8)).toBeNull();
+    expect(itemWarning(it8)).toMatch(/long for Class 1/);
+  });
+  it("blocks sentences over 8 words", () => {
+    const it9 = { text: "I can see a big red ball in the park.", itemType: "sentence" as const };
+    expect(itemProblem(it9)).toMatch(/up to 8 words/);
+  });
 });
 
 describe("parseItemLines", () => {

@@ -7,7 +7,9 @@ export const MATERIAL_LIMITS = {
   instructionsMax: 1000,
   itemsMax: 30,
   itemCharsMax: 600,
-  sentenceWordsMax: 15, // SRS 2.4: sentences of up to about 15 words
+  // SRS 2.4 allows ~15-word sentences; Class 1 (ADR-006) keeps them short: max 8, warn above 6.
+  sentenceWordsMax: 8,
+  sentenceWordsWarn: 6,
   paragraphWordsMax: 80,
 } as const;
 
@@ -56,6 +58,14 @@ export function itemProblem(item: DraftItem): string | null {
     return `Sentences can have up to ${MATERIAL_LIMITS.sentenceWordsMax} words. Split it or mark it as a paragraph.`;
   if (item.itemType === "paragraph" && words > MATERIAL_LIMITS.paragraphWordsMax)
     return `Paragraphs can have up to ${MATERIAL_LIMITS.paragraphWordsMax} words.`;
+  return null;
+}
+
+/** Soft advice for Class 1 (does not block saving), or null. */
+export function itemWarning(item: DraftItem): string | null {
+  const words = wordCount(item.text);
+  if (item.itemType === "sentence" && words > MATERIAL_LIMITS.sentenceWordsWarn && words <= MATERIAL_LIMITS.sentenceWordsMax)
+    return `${words} words is long for Class 1. Try ${MATERIAL_LIMITS.sentenceWordsWarn} or fewer.`;
   return null;
 }
 

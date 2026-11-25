@@ -27,8 +27,8 @@ test("chapter → item → practice flow uses real data", async ({ page }) => {
   await page.goto("/student/chapters");
   await page.getByRole("link", { name: /tricky sounds/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Tricky Sounds" })).toBeVisible();
-  await page.getByRole("link", { name: /three thin thieves/i }).click();
-  await expect(page.getByText("Three thin thieves thought about the weather.")).toBeVisible();
+  await page.getByRole("link", { name: /this is my thumb/i }).click();
+  await expect(page.getByText("This is my thumb.")).toBeVisible();
 });
 
 test("landing Choose Role → onboarding → choose student or teacher", async ({ page }) => {
@@ -46,4 +46,9 @@ test("landing Choose Role → onboarding → choose student or teacher", async (
 test("unknown chapter shows the not-found page", async ({ page }) => {
   await page.goto("/student/chapters/does-not-exist");
   await expect(page.getByRole("heading", { name: /couldn.t find that page/i })).toBeVisible();
+});
+
+test("recordings API hides unknown or audio-less attempts", async ({ request }) => {
+  expect((await request.get("/api/recordings/not-a-uuid")).status()).toBe(404);
+  expect((await request.get("/api/recordings/00000000-0000-4000-8000-0000000000ff")).status()).toBe(404);
 });

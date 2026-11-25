@@ -137,10 +137,12 @@ The landing's interactive demo already shows the practice + feedback design. Reu
 11. Update codebase index, team guide, design.md.
 
 Exit checks
-- [ ] Student and teacher pages visibly match the landing page (buttons, cards, Piko, illustrations, colours, tone)
-- [ ] Seeded content is Class 1 level; every word has a picture and a listen button
-- [ ] Practice → result → play recording → try again / next word works with the mock scorer
-- [ ] All tests pass
+- [x] Student and teacher pages visibly match the landing page (buttons, cards, Piko, illustrations, colours, tone)
+- [x] Seeded content is Class 1 level; every word has a picture and a listen button
+- [x] Practice → result → play recording → try again / next word works with the mock scorer
+- [x] All tests pass
+
+**Phase 4 result (2026-11-26):** A–C and E done; D (Azure) still deferred. Shared pieces in `components/brand/`; app shell, student and teacher pages, error and not-found pages restyled; practice page uses the landing demo layout. Class 1 seed (Basic words all have pictures; vest, web and wet pictures added). Upload limit: sentences max 8 words, warning above 6. `GET /api/recordings/[attemptId]` + working play buttons. Checks: lint, types, 66 unit tests (incl. design-consistency and seed-picture checks), 42/42 browser tests with `E2E_MUTATE=1` (desktop + phone). Note: Windows Application Control now blocks `supabase.exe`, so the dev DB was reloaded through supabase-js with the same content as `seed.sql`.
 
 ### Deferred: Azure scorer (do last, before Phase 5)
 - Implement `server/speech/azure.ts` (Pronunciation Assessment → frozen contract, ADR-005); record WAV in the browser; retry on 429; measure ≤ 10 s.

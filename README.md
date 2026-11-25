@@ -7,7 +7,7 @@ AI-assisted English pronunciation practice and assessment for Class 1 students i
 - **Stack comparison + recommendation:** [docs/stack-options.md](docs/stack-options.md)
 - **AI agent rules:** [AGENTS.md](AGENTS.md)
 
-Status: Phases 0–3 done (database, lessons + teacher upload, recording + saved attempts). Phase 4 (feedback + real scoring + design alignment) next. Plan: [specs/fyp1-implementation-plan.md](specs/fyp1-implementation-plan.md).
+Status: Phases 0–4 done (database, lessons + teacher upload, recording + saved attempts, landing-style design + Class 1 content + feedback and playback). Azure scorer (deferred) and Phase 5 QA next. Plan: [specs/fyp1-implementation-plan.md](specs/fyp1-implementation-plan.md).
 
 ```powershell
 npm install

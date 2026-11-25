@@ -8,13 +8,14 @@ interface AttemptRow {
   status: AttemptSummary["status"];
   score: number | string | null;
   duration_ms: number | null;
+  audio_path: string | null;
   created_at: string;
   profiles: { name: string } | null;
   lesson_items: { text: string; lessons: { level: Level; chapters: { title: string } } };
 }
 
 const SELECT =
-  "id, item_id, status, score, duration_ms, created_at, profiles!attempts_student_id_fkey(name), lesson_items!inner(text, lessons!inner(level, chapters!inner(title)))";
+  "id, item_id, status, score, duration_ms, audio_path, created_at, profiles!attempts_student_id_fkey(name), lesson_items!inner(text, lessons!inner(level, chapters!inner(title)))";
 
 const toSummary = (r: AttemptRow): AttemptSummary & { studentName: string } => ({
   id: r.id,
@@ -26,6 +27,7 @@ const toSummary = (r: AttemptRow): AttemptSummary & { studentName: string } => (
   durationSec: Math.max(1, Math.round((r.duration_ms ?? 0) / 1000)),
   createdAt: r.created_at,
   status: r.status,
+  hasAudio: !!r.audio_path,
   studentName: r.profiles?.name ?? "",
 });
 
@@ -47,6 +49,11 @@ export async function listClassAttempts(teacherId: string, limit = 10) {
     "list class attempts",
   );
   return (rows as unknown as AttemptRow[]).map(toSummary);
+}
+
+/** True if the student is in one of this teacher's classes (who may hear a recording, UC-12). */
+export async function teacherHasStudent(teacherId: string, studentId: string): Promise<boolean> {
+  return (await classStudentIds(teacherId)).includes(studentId);
 }
 
 async function classStudentIds(teacherId: string): Promise<string[]> {

@@ -28,18 +28,20 @@ insert into public.chapters (id, title, order_no, grade_tag, cover_image, tint) 
 
 -- Helper: insert a lesson and its items in one go.
 create temporary table _seed (chapter int, level text, lesson_no int, title text, item_type text, items text[]) on commit drop;
+-- Class 1 content (ADR-006): Basic = single picture words, Medium = 2–4 word phrases,
+-- Advanced = short sentences (≤ 6 words). Most words have a picture in components/brand/word-pictures.tsx.
 insert into _seed values
-  (1, 'basic',    1, 'Around the house', 'word',     array['window', 'kitchen', 'bottle', 'chair', 'garden']),
-  (1, 'medium',   1, 'At school',        'phrase',   array['a sharp pencil', 'the school bell', 'my English book']),
-  (1, 'advanced', 1, 'My day',           'sentence', array['I brush my teeth every morning.', 'My brother walks to school with me.']),
-  (2, 'basic',    1, 'V and W',          'word',     array['van', 'wet', 'vest', 'west', 'very', 'wary']),
-  (2, 'medium',   1, 'P and F',          'phrase',   array['a fresh fruit', 'pack the file', 'four friendly people']),
-  (2, 'advanced', 1, 'TH sounds',        'sentence', array['Three thin thieves thought about the weather.', 'This is their brother''s bicycle.']),
-  (3, 'basic',    1, 'Greetings',        'phrase',   array['good morning', 'thank you very much', 'see you tomorrow']),
-  (3, 'medium',   1, 'In the classroom', 'phrase',   array['open your books', 'raise your hand', 'listen carefully']),
-  (3, 'advanced', 1, 'Polite requests',  'sentence', array['Could you please close the door?', 'May I borrow your eraser?']),
-  (4, 'basic',    1, 'Simple sentences', 'sentence', array['The cat is on the mat.', 'We play cricket after school.']),
-  (4, 'medium',   1, 'Telling time',     'sentence', array['The train leaves at seven o''clock.', 'We visited the village very early.']);
+  (1, 'basic',    1, 'Animals',          'word',     array['cat', 'dog', 'cow', 'duck', 'fish']),
+  (1, 'medium',   1, 'Colours and things', 'phrase', array['a red ball', 'a big hat', 'my blue pen']),
+  (1, 'advanced', 1, 'About me',         'sentence', array['I have a cat.', 'I can see a cow.']),
+  (2, 'basic',    1, 'V and W',          'word',     array['van', 'vest', 'web', 'wet']),
+  (2, 'medium',   1, 'P and F',          'phrase',   array['a fat fish', 'a pink fan', 'pat the pet']),
+  (2, 'advanced', 1, 'TH sounds',        'sentence', array['This is my thumb.', 'Three ducks swim.']),
+  (3, 'basic',    1, 'Greetings',        'phrase',   array['good morning', 'thank you', 'see you']),
+  (3, 'medium',   1, 'In the classroom', 'phrase',   array['open your book', 'sit down', 'stand up']),
+  (3, 'advanced', 1, 'Polite words',     'sentence', array['May I come in?', 'Please give me a pen.']),
+  (4, 'basic',    1, 'Simple sentences', 'sentence', array['The cat is on the mat.', 'I see the sun.']),
+  (4, 'medium',   1, 'My day',           'sentence', array['I go to school.', 'The moon is up at night.']);
   -- Chapter 4 → Advanced is left empty on purpose (tests the "No exercises" message).
 
 insert into public.lessons (chapter_id, level, order_no, title, created_by)
@@ -61,13 +63,13 @@ from public.lessons l where l.title = 'TH sounds';
 -- ── Sample attempts (so dashboards aren't empty) ────────────────────────────
 create temporary table _att (student uuid, item text, score numeric, status text, mins_ago int, words jsonb) on commit drop;
 insert into _att values
-  ('00000000-0000-4000-8000-000000000002', 'We visited the village very early.', 68, 'scored', 30,
-   '[["We",62,true],["visited",58,true],["the",95,false],["village",61,true],["very",72,false],["early",80,false]]'),
-  ('00000000-0000-4000-8000-000000000002', 'a sharp pencil', 91, 'scored', 1500,
-   '[["a",96,false],["sharp",88,false],["pencil",90,false]]'),
-  ('00000000-0000-4000-8000-000000000002', 'Three thin thieves thought about the weather.', 74, 'scored', 1520,
-   '[["Three",66,true],["thin",70,false],["thieves",64,true],["thought",71,false],["about",90,false],["the",92,false],["weather",69,true]]'),
-  ('00000000-0000-4000-8000-000000000002', 'window', null, 'failed', 3000, '[]'),
+  ('00000000-0000-4000-8000-000000000002', 'The moon is up at night.', 68, 'scored', 30,
+   '[["The",90,false],["moon",58,true],["is",92,false],["up",85,false],["at",88,false],["night",61,true]]'),
+  ('00000000-0000-4000-8000-000000000002', 'a red ball', 91, 'scored', 1500,
+   '[["a",96,false],["red",88,false],["ball",90,false]]'),
+  ('00000000-0000-4000-8000-000000000002', 'This is my thumb.', 74, 'scored', 1520,
+   '[["This",66,true],["is",90,false],["my",92,false],["thumb",64,true]]'),
+  ('00000000-0000-4000-8000-000000000002', 'cat', null, 'failed', 3000, '[]'),
   ('00000000-0000-4000-8000-000000000003', 'van', 55, 'scored', 200, '[["van",55,true]]'),
   ('00000000-0000-4000-8000-000000000004', 'good morning', 88, 'scored', 400, '[["good",90,false],["morning",86,false]]');
 

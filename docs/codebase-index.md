@@ -46,14 +46,14 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
 | `features/materials/` | `material-form.tsx` (UC-10 form, live item preview), `actions.ts` (`saveMaterial` Server Action) | ✅ |
-| `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view) | ✅ |
+| `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view), `play-recording-button.tsx` (fetches a signed link, plays/stops) | ✅ |
 | `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
 | `features/practice/` | `practice-recorder.tsx` — record → listen back → send → score + feedback / retry (UC-05, UC-04, UC-06) in the landing demo style; `practice-steps.tsx` header step chips; `listen-button.tsx` browser-voice "Listen" | ✅ |
 | `hooks/use-mobile.ts` | Phone-width check used by the sidebar | ✅ |
 | `lib/scoring.ts` | `classify()` (85/70 cut-offs), `errorRate()` | ✅ |
 | `lib/progress.ts` | UC-03 rules (ADR-004): level unlock, item access, chapter stage, `continueItem` | ✅ |
 | `lib/audio.ts` | Recording rules shared by browser + server: limits, allowed formats, `recordingProblem`, `wordUnit` | ✅ |
-| `lib/materials.ts` | UC-10 rules: item-type detection, line parsing, validation, Pakistan-time dates | ✅ |
+| `lib/materials.ts` | UC-10 rules: item-type detection, line parsing, validation, Pakistan-time dates. Class 1 limits: sentences max 8 words, `itemWarning` above 6 | ✅ |
 | `lib/navigation.ts` | Sidebar menu per role | ✅ |
 | `lib/speech-tts.ts` | Client Web Speech synthesis helper (`speakReference`) for landing pronunciation previews | ✅ |
 | `lib/utils.ts` | `cn()` class helper | ✅ |
@@ -71,7 +71,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `supabase/migrations/0001_init.sql` | All 14 tables, checks, indexes, RLS on + server-only grants, `recordings` bucket | ✅ |
 | `supabase/migrations/0002_materials.sql` | `lessons.visibility`, `create_material()` atomic save | ✅ |
 | `supabase/migrations/0003_attempt_results.sql` | `complete_attempt()`: results + error stats + mark scored in one transaction, runs once per attempt | ✅ |
-| `supabase/seed.sql` | Demo people, class, 4 chapters, lessons, items, homework, sample attempts. Re-runnable (wipes data) | ✅ |
+| `supabase/seed.sql` | Demo people, class, 4 chapters, Class 1 lessons/items (every Basic word has a picture in `word-pictures.tsx`), homework, sample attempts. Re-runnable (wipes data) | ✅ |
 | `engine/` | Python Speech Engine (research track). Only `README.md` so far | ✅ / 🕓 |
 | `engine/eval/` | Test clips + comparison notes | ✅ README only |
 
@@ -98,6 +98,7 @@ Both role areas share `components/layout/app-shell.tsx` via `app/student/layout.
 |---|---|---|
 | `POST /api/attempts` | Form: `attemptId` (browser uuid = idempotency key), `itemId`, `durationMs`, `audio`. Saves audio + pending attempt, scores, saves results. 200 scored · 202 saved-but-failed · 400/403/404/413 · 503 nothing saved | ✅ |
 | `POST /api/attempts/[attemptId]/retry` | Re-score a failed (or stuck pending) attempt from its stored audio; safe to repeat | ✅ |
+| `GET /api/recordings/[attemptId]?as=student\|teacher` | 5-minute signed link to play a saved recording. Only the student who made it or a teacher of their class; otherwise 404 (also 404 when no audio was saved) | ✅ |
 | `GET /api/attempts/[id]` | Attempt + word/phoneme results | 🕓 |
 | `GET /api/recordings/[attemptId]` | Short-lived signed URL for playback | 🕓 |
 | Server Action `saveMaterial` | UC-10: validate + `create_material()` (lesson + items + assignment in one transaction) | ✅ |

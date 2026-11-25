@@ -193,6 +193,67 @@ function NumberTile({ n, className = "size-20" }: { n: number; className?: strin
   );
 }
 
+export function WebIllustration({ className = "size-20" }: P) {
+  // Spider web with a small friendly spider.
+  const spokes = [0, 45, 90, 135].map((deg) => {
+    const r = (deg * Math.PI) / 180;
+    const dx = Math.cos(r) * 40;
+    const dy = Math.sin(r) * 40;
+    return `M${60 - dx} ${60 - dy} L${60 + dx} ${60 + dy}`;
+  });
+  return (
+    <svg viewBox="0 0 120 120" aria-hidden className={className}>
+      <circle cx="60" cy="60" r="40" fill="#E6F4FF" {...S} />
+      <path d={spokes.join(" ")} fill="none" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="60" cy="60" r="27" fill="none" stroke={INK} strokeWidth="2.5" />
+      <circle cx="60" cy="60" r="14" fill="none" stroke={INK} strokeWidth="2.5" />
+      <path d="M82 30 L82 46" stroke={INK} strokeWidth="2.5" />
+      <circle cx="82" cy="52" r="8" fill="#100E0E" />
+      <circle cx="79" cy="51" r="1.8" fill="#FFFBF7" />
+      <circle cx="85" cy="51" r="1.8" fill="#FFFBF7" />
+    </svg>
+  );
+}
+
+export function VestIllustration({ className = "size-20" }: P) {
+  return (
+    <svg viewBox="0 0 120 120" aria-hidden className={className}>
+      <path
+        d="M42 24 L50 24 Q60 44 70 24 L78 24 L80 40 Q90 46 90 58 L90 96 L30 96 L30 58 Q30 46 40 40 Z"
+        fill="#2DB8FF"
+        {...S}
+      />
+      <path d="M60 46 L60 96" stroke={INK} strokeWidth="3" />
+      <circle cx="66" cy="62" r="3" fill={INK} />
+      <circle cx="66" cy="78" r="3" fill={INK} />
+    </svg>
+  );
+}
+
+export function WetIllustration({ className = "size-20" }: P) {
+  // A rain cloud with drops: "wet".
+  return (
+    <svg viewBox="0 0 120 120" aria-hidden className={className}>
+      <path
+        d="M34 66 Q20 66 22 52 Q24 40 38 42 Q42 26 58 28 Q72 28 76 40 Q92 38 96 52 Q98 66 84 66 Z"
+        fill="#FFFBF7"
+        {...S}
+      />
+      <Face x={59} y={48} gap={9} />
+      {[36, 60, 84].map((x, i) => (
+        <path
+          key={x}
+          d={`M${x} ${78 + (i % 2) * 6} q-7 11 0 15 q7 -4 0 -15 Z`}
+          fill="#2DB8FF"
+          stroke={INK}
+          strokeWidth="3"
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
+  );
+}
+
 const PICTURES: Record<string, (p: P) => React.ReactNode> = {
   apple: AppleIllustration,
   ball: BallIllustration,
@@ -213,6 +274,9 @@ const PICTURES: Record<string, (p: P) => React.ReactNode> = {
   sun: SunIllustration,
   tree: TreeIllustration,
   van: VanIllustration,
+  vest: VestIllustration,
+  web: WebIllustration,
+  wet: WetIllustration,
   three: (p) => <NumberTile n={3} {...p} />,
   five: (p) => <NumberTile n={5} {...p} />,
 };

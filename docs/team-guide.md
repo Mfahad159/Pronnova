@@ -88,6 +88,9 @@ npm run build
 ### Good to know: this Next.js version
 - **Cache Components is on.** A page that reads URL params (like `[chapterId]`) or loads live data must do it inside a `<Suspense>` block, or the build fails. Copy the pattern in `app/student/chapters/[chapterId]/page.tsx`.
 - New Tailwind classes not showing in `npm run dev`? Stop the dev server, delete the `.next/dev` folder, start again (stale dev cache).
+- `npm run db:…` fails with `spawn UNKNOWN`? Windows (Smart App Control / Application Control) is blocking `supabase.exe`. Don't try to get around it: run the SQL in the Supabase dashboard's SQL Editor instead (steps 3–4 above).
+- Building a new screen? Use the pieces in `components/brand/` (`KiddyButton`, `Panel`, `PikoSays`, `WordPicture`, …), not plain shadcn buttons/cards — the landing page is the design base (ADR-007). A unit test checks this.
+- Teacher uploads are for Class 1: sentences can have up to 8 words; above 6 the form shows a warning.
 - Browser tests use Chrome's fake microphone. `E2E_MUTATE=1 npm run test:e2e` also runs the tests that save data; `E2E_FIREFOX=1` adds Firefox.
 - Next.js ships its own docs in `node_modules/next/dist/docs/`. They match our installed version, so check there before relying on older tutorials.
 

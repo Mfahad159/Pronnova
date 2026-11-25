@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowCounterClockwise, Play } from "@phosphor-icons/react/ssr";
+import { ArrowCounterClockwise } from "@phosphor-icons/react/ssr";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PikoSays } from "@/components/brand/piko";
+import { PlayRecordingButton } from "@/features/assessment/play-recording-button";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { levelLabel } from "@/features/curriculum/level";
 import type { AttemptSummary } from "@/types";
@@ -51,16 +53,18 @@ export function AttemptsTable({
 }) {
   if (attempts.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed p-8 text-center text-muted-foreground">
-        {showStudent ? "No attempts from your students yet." : "No attempts yet. Pick a chapter and try your first one!"}
-      </p>
+      <PikoSays
+        size="sm"
+        tone="card"
+        message={showStudent ? "No attempts from your students yet." : "No attempts yet. Pick a chapter and try your first one!"}
+      />
     );
   }
   return (
-    <div className="overflow-hidden rounded-xl border bg-card">
+    <div className="overflow-hidden rounded-2xl border-2 border-foreground/12 bg-card">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
+          <TableRow className="bg-muted/50 font-heading hover:bg-muted/50">
             <TableHead className="w-12" />
             {showStudent ? <TableHead>Student</TableHead> : null}
             <TableHead>Text</TableHead>
@@ -74,13 +78,11 @@ export function AttemptsTable({
           {attempts.map((a) => (
             <TableRow key={a.id}>
               <TableCell>
-                <Button variant="secondary" size="icon" aria-label={`Play recording: ${a.text} (available in Phase 4)`} disabled>
-                  <Play />
-                </Button>
+                <PlayRecordingButton attemptId={a.id} text={a.text} hasAudio={a.hasAudio} as={showStudent ? "teacher" : "student"} />
               </TableCell>
               {showStudent ? <TableCell className="font-medium">{a.studentName}</TableCell> : null}
               <TableCell className="max-w-[16rem] min-w-[10rem] whitespace-normal">
-                <p className="line-clamp-1 font-medium">{a.text}</p>
+                <p className="line-clamp-1 font-heading font-bold">{a.text}</p>
                 <p className="text-xs text-muted-foreground">
                   {a.chapterTitle} · {levelLabel[a.level]}
                 </p>
@@ -93,9 +95,9 @@ export function AttemptsTable({
               </TableCell>
               <TableCell>
                 {a.status === "failed" ? (
-                  <Badge variant="destructive">Not scored</Badge>
+                  <Badge variant="destructive" className="rounded-full">Not scored</Badge>
                 ) : a.status === "pending" ? (
-                  <Badge variant="secondary">Scoring…</Badge>
+                  <Badge variant="secondary" className="rounded-full">Scoring…</Badge>
                 ) : (
                   <ScorePill score={a.score} />
                 )}
@@ -103,7 +105,7 @@ export function AttemptsTable({
               <TableCell className="hidden text-muted-foreground sm:table-cell">{dateFmt.format(new Date(a.createdAt))}</TableCell>
               <TableCell>
                 {showStudent ? null : (
-                  <Button variant="ghost" size="icon" asChild>
+                  <Button variant="ghost" size="icon" className="rounded-xl text-primary hover:bg-secondary" asChild>
                     <Link href={`/student/practice/${a.itemId}`} aria-label={`Try again: ${a.text}`}>
                       <ArrowCounterClockwise />
                     </Link>

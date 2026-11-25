@@ -41,6 +41,7 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 10 | Supabase renamed keys (secret `sb_secret_…`) and no longer auto-exposes new tables | Env is `SUPABASE_URL` + `SUPABASE_SECRET_KEY`; migration grants tables to `service_role` only |
 | 11 | SRS 3.2.2 "show a lesson only when assigned" vs UC-03 self-selected practice; SRS never says when a level unlocks | ADR-004: built-in lessons open to all (levels unlock at ≥70% on every item of the previous level); teacher material only for assignees |
 | 12 | Not-found inside a streamed (Suspense) page returns HTTP 200 with the 404 screen | Accepted for now; review in Phase 5 |
+| 14 | SRS 2.4 allows sentences of about 15 words; Class 1 (ADR-006) needs much shorter ones | Upload limit is 8 words per sentence with a warning above 6 (`MATERIAL_LIMITS`); raise it if the audience changes |
 | 13 | Plan asks for Firefox + Safari checks; Windows blocked the downloaded Firefox and Safari can't run here | Firefox e2e is opt-in (`E2E_FIREFOX=1`); both checked by hand in Phase 5 |
 | 14 | New logo/favicon came indigo→cyan; the app UI is coral/orange | Resolved: logo + favicons recoloured to coral→orange (same shapes), UI stays coral |
 | 8 | Reference design is a green, adult audio-tool dashboard | Keep its layout; use Pronnova's coral/orange brand and friendlier tone (design.md) |

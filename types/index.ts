@@ -62,6 +62,8 @@ export interface AttemptSummary {
   durationSec: number;
   createdAt: string;
   status: AttemptStatus;
+  /** A recording file is stored (seed examples have none). */
+  hasAudio: boolean;
 }
 
 /** What the practice page gets back after submitting or retrying an attempt. */

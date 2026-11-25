@@ -6,9 +6,9 @@ test("UC-03: levels lock in order and assigned homework stays open", async ({ pa
   await page.goto(TRICKY);
   await expect(page.getByRole("heading", { level: 2, name: "Basic" })).toBeVisible();
   await expect(page.getByText(/this level is locked/i).first()).toBeVisible();
-  // Public item in a locked level is not a link; seeded TH homework is.
-  await expect(page.getByRole("link", { name: /a fresh fruit/i })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: /three thin thieves/i })).toBeVisible();
+  // Public item in a locked level is not a link; seeded TH homework is (Class 1 content, ADR-006).
+  await expect(page.getByRole("link", { name: /a fat fish/i })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /this is my thumb/i })).toBeVisible();
 });
 
 test("UC-03 alt 1B: homework list and Continue on student home", async ({ page }) => {

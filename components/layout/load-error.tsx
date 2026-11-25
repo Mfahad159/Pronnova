@@ -2,15 +2,17 @@
 
 import Image from "next/image";
 import { ArrowCounterClockwise } from "@phosphor-icons/react/ssr";
-import { Button } from "@/components/ui/button";
+import { KiddyButton } from "@/components/brand/kiddy-button";
 
-/** Shared body for app/student/error.tsx and app/teacher/error.tsx. */
+/** Shared body for app/student/error.tsx and app/teacher/error.tsx (Piko, landing style). */
 export function LoadError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const notConfigured = error.message.includes("Database is not configured");
   return (
     <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-16 text-center" role="alert">
-      <Image src="/avatar/avatar_speaking.png" alt="" width={110} height={120} className="rounded-2xl" />
-      <h1 className="font-heading text-xl font-semibold">
+      <div className="flex size-28 items-center justify-center rounded-2xl border-2 border-foreground/12 bg-tint-peach p-2">
+        <Image src="/hero/piko-portrait.png" alt="" width={419} height={420} sizes="112px" className="size-full object-contain" />
+      </div>
+      <h1 className="font-heading text-2xl font-bold">
         {notConfigured ? "The database isn't connected yet" : "We couldn't load this page"}
       </h1>
       <p className="text-muted-foreground">
@@ -19,9 +21,9 @@ export function LoadError({ error, reset }: { error: Error & { digest?: string }
           : "Please check your internet connection and try again."}
       </p>
       {error.digest ? <p className="text-xs text-muted-foreground">Error code: {error.digest}</p> : null}
-      <Button onClick={reset} size="lg">
-        <ArrowCounterClockwise /> Try again
-      </Button>
+      <KiddyButton onClick={reset}>
+        <ArrowCounterClockwise weight="bold" /> Try again
+      </KiddyButton>
     </div>
   );
 }
