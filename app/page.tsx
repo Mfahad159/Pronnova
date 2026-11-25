@@ -33,19 +33,19 @@ export default function Home() {
             sizes="100vw"
             className="object-cover object-[90%_bottom] md:object-[75%_bottom]"
           />
-          {/* White overlay: strongest behind the text (left), clear on the right so the two students show.
-              Phones get an even wash because the text covers most of the width there. */}
-          <div className="absolute inset-0 bg-background/70 md:bg-transparent md:bg-gradient-to-r md:from-background/90 md:via-background/60 md:to-transparent" />
+          {/* White overlay: an oval of white behind the centred text, fading out to the edges so the
+              students on the right still show. Phones get an even wash (text covers the full width). */}
+          <div className="absolute inset-0 bg-background/70 md:bg-transparent md:bg-[radial-gradient(ellipse_55%_60%_at_50%_45%,var(--background)_35%,color-mix(in_oklab,var(--background)_55%,transparent)_70%,transparent_100%)]" />
           {/* Bottom fade: the grass melts into the page colour instead of ending in a hard edge. */}
           <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-background/70 to-background md:h-56" />
         </div>
 
-        <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-6xl items-center px-4 py-12 md:px-6 md:py-20">
-          <section className="max-w-xl space-y-6" aria-labelledby="hero-title">
+        <div className="mx-auto flex min-h-[calc(100svh-5rem)] w-full max-w-6xl items-center justify-center px-4 py-12 md:px-6 md:py-20">
+          <section className="flex max-w-2xl flex-col items-center space-y-6 text-center" aria-labelledby="hero-title">
             <h1 id="hero-title" className="font-heading text-4xl font-bold tracking-tight text-balance md:text-6xl">
               Say it out loud. <span className="text-primary">See every word.</span>
             </h1>
-            <p className="max-w-prose text-lg text-foreground/80">
+            <p className="max-w-xl text-lg text-foreground/80">
               Read English words and sentences into your mic. Pronnova scores each word and sound, shows what to fix,
               and keeps track of the ones you keep missing.
             </p>
