@@ -109,47 +109,42 @@ Engine track: forced alignment on the test clips; start the `/score` server agai
 
 ---
 
-## Phase 4 — Feedback, real scoring and one consistent design: UC-06 + Azure
-**Goal:** a Class 1 student sees friendly, real word- and sound-level feedback within 10 s, in screens that look and feel like the landing page.
-**Depends on:** Phase 3 (stored attempts and results). Follows ADR-006 (Class 1) and ADR-007 (landing page is the design base).
+## Phase 4 — One consistent design + Class 1 content (Azure moved to the end)
+**Goal:** every student and teacher screen looks exactly like the landing page, and the content is Class 1 level.
+**Depends on:** Phase 3. Follows ADR-006 (Class 1) and ADR-007 (landing page is the design base).
+**Team changes (2026-11-26):** A = copy the landing design exactly; B = go with the suggested defaults; C = only what the landing doesn't already cover; D (Azure) moved to the end of FYP-1 work.
 
-**Before we start (team):** create a free Azure Speech resource (F0, or Azure for Students credit) and put `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION` in `.env.local`. Tasks A–C and E work without it (mock scorer); task D needs it.
+**A. Design — copy the landing page exactly**
+1. Move the landing building blocks into `components/brand/` (KiddyButton, 2D illustrations, Piko, label chips, tinted card styles) and import them from there in both the landing page and the app.
+2. App shell (sidebar, top bar) restyled to the landing navbar's look.
+3. Student pages (home, chapters, chapter, practice) rebuilt with the same components, spacing, radii, tints and copy tone as the landing sections.
+4. Teacher pages (dashboard, materials, upload form) restyled the same way, still data-dense (like the landing's teacher preview).
 
-**A. Design base — shared building blocks (ADR-007)**
-1. Move `KiddyButton`, the 2D illustrations and Piko into `components/brand/` (landing keeps working, app pages can use them).
-2. Restyle the app shell to match the landing page: sidebar + top bar in the landing navbar's style, kiddy buttons for main actions, Piko on empty/error/locked screens.
-3. Student pages in the landing look: home (Continue + homework as big tinted cards), chapters (picture cards), chapter page (level chips, word cards with pictures and a "listen" button).
-4. Teacher pages get the same buttons, cards, chips and colours (lighter touch, still data-dense).
+**B. Class 1 content — suggested defaults accepted**
+5. Re-seed with Class 1 content: Basic = picture words, Medium = 2–3 word phrases, Advanced = 3–6 word sentences; every word has a picture (illustration set) and a listen button (`speakReference`).
+6. Teacher upload limits: Advanced sentences up to 8 words, warning above 6 (`MATERIAL_LIMITS`).
 
-**B. Class 1 content (ADR-006)**
-5. Replace the seed's Class 6 content with Class 1 content: picture words (Basic), 2–3 word phrases (Medium), 3–6 word sentences (Advanced), and a picture for each word (from the illustration set or new ones in the same style).
-6. ❓ Class 1 limits for teacher uploads — suggested default: Advanced sentences up to 8 words; warn above 6.
+**C. Feedback screen — only what's missing**
+The landing's interactive demo already shows the practice + feedback design. Reuse it for the real practice page and add only the missing real-data parts:
+7. Practice page uses the demo's layout with the real recorder and real saved results.
+8. Play your own recording (`GET /api/recordings/[attemptId]`, short-lived signed URL) and turn on the play buttons in History / teacher tables.
+9. Try again / Next word + `aria-live` result (if not already covered by the reused component).
 
-**C. UC-06 View Feedback & Score — the practice + result screen**
-7. Practice screen in the landing's interactive-demo layout: flashcard (picture + word + "listen" via `speakReference`) on the left, microphone card on the right, steps Listen → Speak → Assess → Improve.
-8. Result view: score + Excellent/Good/Average shown in friendly words (e.g. "Super!", "Good try!", "Let's practise"), each word coloured, wrong sounds with a one-line kid-friendly tip, and Piko's reaction.
-9. Play the correct word (`speakReference`, UK/US voice) and play your own recording (new `GET /api/recordings/[attemptId]` → short-lived signed URL).
-10. **Try again** and **Next word** (UC-06 alt 4A/4B); `aria-live` announcement of the result.
-11. History tab and teacher "Latest attempts" play real recordings (the play buttons stop being disabled).
-
-**D. Azure scorer (app track)**
-12. Implement `server/speech/azure.ts` with Azure Pronunciation Assessment: audio + reference text in, word + phoneme accuracy mapped to our frozen contract (ADR-005), `model_version` recorded.
-13. ❓ Audio format: Azure's short-audio API wants WAV/PCM 16 kHz mono. Suggested default: record WAV in the browser (no server conversion, no new dependency); decide after a quick test.
-14. Free tier allows 1 request at a time: retry with backoff on HTTP 429, otherwise save as failed (Retry works, Phase 3).
-15. Measure submit → result time for 20 attempts; target ≤ 10 s (SRS 3.3.3); write the numbers in `docs/`.
+**D. Azure scorer — moved to the end** (see "Deferred: Azure" below)
 
 **E. Tests and docs**
-16. Unit: Azure response mapping (from a saved sample response), Class 1 limits, friendly-label mapping.
-17. Browser (mock scorer): record → result view → play correct word → try again → next word; design smoke check that student pages use the shared building blocks.
-18. Update codebase index, team guide (Azure setup), design.md.
+10. Browser tests for the restyled pages (mock scorer) and a check that app pages use `components/brand/`.
+11. Update codebase index, team guide, design.md.
 
 Exit checks
-- [ ] Student and teacher pages visibly match the landing page (buttons, cards, Piko, illustrations, colours)
-- [ ] Seeded content is Class 1 level, every word has a picture and a listen button
-- [ ] Real recordings get sensible word/sound feedback from Azure
-- [ ] 95% of attempts show feedback in ≤ 10 s (numbers written in `docs/`)
-- [ ] Try again / Next / play buttons all work; failed scoring still recoverable
-- [ ] Team can switch `SPEECH_ENGINE=mock|azure|python` with no code change
+- [ ] Student and teacher pages visibly match the landing page (buttons, cards, Piko, illustrations, colours, tone)
+- [ ] Seeded content is Class 1 level; every word has a picture and a listen button
+- [ ] Practice → result → play recording → try again / next word works with the mock scorer
+- [ ] All tests pass
+
+### Deferred: Azure scorer (do last, before Phase 5)
+- Implement `server/speech/azure.ts` (Pronunciation Assessment → frozen contract, ADR-005); record WAV in the browser; retry on 429; measure ≤ 10 s.
+- Needs `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION` in `.env.local`.
 
 Engine track: `python` engine answers `/score`; run the comparison script on the test clips (agreement with Azure + latency).
 
