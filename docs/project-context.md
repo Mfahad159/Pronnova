@@ -6,7 +6,7 @@ Source: `Pronnova_SRS_Updated_28_oct.docx` (Markdown copy: [srs.md](srs.md)). If
 A web app where students read English words, phrases and sentences into a microphone and get a score plus word- and sound-level feedback. Teachers upload lessons, assign them, and watch progress. It is a practice tool, not an exam.
 
 ## Users
-- **Students** — Class 6 to 10, first language Urdu or Punjabi. Practice, see feedback, track progress.
+- **Students** — **Class 1** (about ages 5–7), first language Urdu or Punjabi. Listen, practise, see feedback, track progress. (Team decision ADR-006; the SRS scope text says Class 6–10.)
 - **Teachers** — upload/organize lessons, assign with deadlines, evaluate attempts, see class progress.
 - **Speech Engine** and **AI Engine** — system actors (scoring; suggestions via Gemini API).
 
@@ -19,7 +19,9 @@ A web app where students read English words, phrases and sentences into a microp
 - If scoring fails, **keep the attempt** and let it be retried (3.3.7).
 - A student's recordings and results are visible only to that student and their teacher (3.3.4).
 
-Out of scope: free conversation, accent identification, intonation/stress, below Class 6, other languages, offline, native mobile apps.
+Out of scope: free conversation, accent identification, intonation/stress, other languages, offline, native mobile apps.
+
+Class 1 content: Basic = picture words, Medium = 2–3 word phrases, Advanced = short sentences (≈3–6 words). Every word gets a picture and a "listen first" option.
 
 ## Use cases
 | ID | Name | Actor | FYP-1? |

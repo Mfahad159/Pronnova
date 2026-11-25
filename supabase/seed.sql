@@ -14,17 +14,17 @@ insert into public.profiles (id, name, email, role) values
   ('00000000-0000-4000-8000-000000000004', 'Hira',      'hira.demo@pronnova.test',    'student');
 
 insert into public.classes (id, teacher_id, name, join_code) values
-  ('00000000-0000-4000-8000-000000000010', '00000000-0000-4000-8000-000000000001', 'Class 6 – Blue', 'BLUE6A');
+  ('00000000-0000-4000-8000-000000000010', '00000000-0000-4000-8000-000000000001', 'Class 1 – Blue', 'BLUE1A');
 
 insert into public.enrollments (class_id, student_id)
 select '00000000-0000-4000-8000-000000000010', id from public.profiles where role = 'student';
 
 -- ── Chapters → lessons → items ──────────────────────────────────────────────
 insert into public.chapters (id, title, order_no, grade_tag, cover_image, tint) values
-  ('10000000-0000-4000-8000-000000000001', 'Everyday Words', 1, 'Class 6', '/objects/img2.jpg', 'peach'),
-  ('10000000-0000-4000-8000-000000000002', 'Tricky Sounds',  2, 'Class 6', '/objects/img3.jpg', 'sky'),
-  ('10000000-0000-4000-8000-000000000003', 'Short Phrases',  3, 'Class 7', '/objects/img1.jpg', 'mint'),
-  ('10000000-0000-4000-8000-000000000004', 'Full Sentences', 4, 'Class 7', '/objects/img4.jpg', 'cream');
+  ('10000000-0000-4000-8000-000000000001', 'Everyday Words', 1, 'Class 1', '/objects/img2.jpg', 'peach'),
+  ('10000000-0000-4000-8000-000000000002', 'Tricky Sounds',  2, 'Class 1', '/objects/img3.jpg', 'sky'),
+  ('10000000-0000-4000-8000-000000000003', 'Short Phrases',  3, 'Class 1', '/objects/img1.jpg', 'mint'),
+  ('10000000-0000-4000-8000-000000000004', 'Full Sentences', 4, 'Class 1', '/objects/img4.jpg', 'cream');
 
 -- Helper: insert a lesson and its items in one go.
 create temporary table _seed (chapter int, level text, lesson_no int, title text, item_type text, items text[]) on commit drop;

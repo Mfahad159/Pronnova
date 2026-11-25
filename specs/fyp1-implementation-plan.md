@@ -109,25 +109,43 @@ Engine track: forced alignment on the test clips; start the `/score` server agai
 
 ---
 
-## Phase 4 — Feedback and real scoring: UC-06 + Azure
-**Goal:** the student sees real word- and sound-level feedback within 10 s.
-**Depends on:** Phase 3 (stored attempts and results).
+## Phase 4 — Feedback, real scoring and one consistent design: UC-06 + Azure
+**Goal:** a Class 1 student sees friendly, real word- and sound-level feedback within 10 s, in screens that look and feel like the landing page.
+**Depends on:** Phase 3 (stored attempts and results). Follows ADR-006 (Class 1) and ADR-007 (landing page is the design base).
 
-UC-06 View Feedback & Score
-1. Result view on the practice page: score %, classification badge, the sentence with each word colored by score, list of wrong words and sounds with short tips.
-2. Play the correct pronunciation of a word (Web Speech API; UK and US voices both accepted). Fallback message if the browser has no voice.
-3. Play the student's own recording (short-lived signed URL, `GET /api/recordings/[attemptId]`).
-4. Buttons: **Try again** (new attempt, updated score) and **Next exercise** (UC-06 alt 4A/4B).
-5. Announce the result to screen readers (`aria-live`).
-6. Student History tab and teacher "Latest attempts" read real attempts (replace sample rows).
+**Before we start (team):** create a free Azure Speech resource (F0, or Azure for Students credit) and put `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION` in `.env.local`. Tasks A–C and E work without it (mock scorer); task D needs it.
 
-Azure scorer
-7. Implement `server/speech/azure.ts` with Azure Pronunciation Assessment: send audio + reference text, map word and phoneme accuracy to our contract, record `model_version`.
-8. Convert audio if Azure needs it (WAV/PCM). ❓ Convert in the browser (record WAV) or on the server — decide after a quick test.
-9. Handle the free tier's 1-request-at-a-time limit: retry with backoff on 429, else save as failed for Retry.
-10. Measure: time from submit to result for 20 attempts. Target ≤ 10 s (SRS 3.3.3). Log timings.
+**A. Design base — shared building blocks (ADR-007)**
+1. Move `KiddyButton`, the 2D illustrations and Piko into `components/brand/` (landing keeps working, app pages can use them).
+2. Restyle the app shell to match the landing page: sidebar + top bar in the landing navbar's style, kiddy buttons for main actions, Piko on empty/error/locked screens.
+3. Student pages in the landing look: home (Continue + homework as big tinted cards), chapters (picture cards), chapter page (level chips, word cards with pictures and a "listen" button).
+4. Teacher pages get the same buttons, cards, chips and colours (lighter touch, still data-dense).
+
+**B. Class 1 content (ADR-006)**
+5. Replace the seed's Class 6 content with Class 1 content: picture words (Basic), 2–3 word phrases (Medium), 3–6 word sentences (Advanced), and a picture for each word (from the illustration set or new ones in the same style).
+6. ❓ Class 1 limits for teacher uploads — suggested default: Advanced sentences up to 8 words; warn above 6.
+
+**C. UC-06 View Feedback & Score — the practice + result screen**
+7. Practice screen in the landing's interactive-demo layout: flashcard (picture + word + "listen" via `speakReference`) on the left, microphone card on the right, steps Listen → Speak → Assess → Improve.
+8. Result view: score + Excellent/Good/Average shown in friendly words (e.g. "Super!", "Good try!", "Let's practise"), each word coloured, wrong sounds with a one-line kid-friendly tip, and Piko's reaction.
+9. Play the correct word (`speakReference`, UK/US voice) and play your own recording (new `GET /api/recordings/[attemptId]` → short-lived signed URL).
+10. **Try again** and **Next word** (UC-06 alt 4A/4B); `aria-live` announcement of the result.
+11. History tab and teacher "Latest attempts" play real recordings (the play buttons stop being disabled).
+
+**D. Azure scorer (app track)**
+12. Implement `server/speech/azure.ts` with Azure Pronunciation Assessment: audio + reference text in, word + phoneme accuracy mapped to our frozen contract (ADR-005), `model_version` recorded.
+13. ❓ Audio format: Azure's short-audio API wants WAV/PCM 16 kHz mono. Suggested default: record WAV in the browser (no server conversion, no new dependency); decide after a quick test.
+14. Free tier allows 1 request at a time: retry with backoff on HTTP 429, otherwise save as failed (Retry works, Phase 3).
+15. Measure submit → result time for 20 attempts; target ≤ 10 s (SRS 3.3.3); write the numbers in `docs/`.
+
+**E. Tests and docs**
+16. Unit: Azure response mapping (from a saved sample response), Class 1 limits, friendly-label mapping.
+17. Browser (mock scorer): record → result view → play correct word → try again → next word; design smoke check that student pages use the shared building blocks.
+18. Update codebase index, team guide (Azure setup), design.md.
 
 Exit checks
+- [ ] Student and teacher pages visibly match the landing page (buttons, cards, Piko, illustrations, colours)
+- [ ] Seeded content is Class 1 level, every word has a picture and a listen button
 - [ ] Real recordings get sensible word/sound feedback from Azure
 - [ ] 95% of attempts show feedback in ≤ 10 s (numbers written in `docs/`)
 - [ ] Try again / Next / play buttons all work; failed scoring still recoverable

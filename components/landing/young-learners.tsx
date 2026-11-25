@@ -9,7 +9,7 @@ import { AppleIllustration, BookIllustration, CatIllustration, SunIllustration }
 const principles = [
   {
     title: "Learner-Friendly Pace",
-    body: "Designed for Pakistani school learners (Class 6–10) building spoken English confidence step by step.",
+    body: "Designed for Class 1 learners in Pakistan, building spoken English confidence one word at a time.",
     Icon: Sparkle,
   },
   {

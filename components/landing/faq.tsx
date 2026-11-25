@@ -5,7 +5,7 @@ import { CaretDown } from "@phosphor-icons/react/ssr";
 const faqs = [
   {
     q: "What is Pronnova?",
-    a: "Pronnova is an English pronunciation practice and assessment web app designed for Pakistani school learners (Class 6–10) and their teachers. Students listen to clear examples, record their voice, and receive word-level scores and feedback.",
+    a: "Pronnova is an English pronunciation practice and assessment web app designed for Class 1 learners in Pakistan and their teachers. Students listen to clear examples, record their voice, and receive word-level scores and feedback.",
   },
   {
     q: "Who is Pronnova designed for?",

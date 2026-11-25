@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Pronnova — Rules for AI agents
 
-Pronnova: English pronunciation practice and assessment web app for Pakistani school students (Class 6–10), with a teacher dashboard. Source of truth for requirements: `Pronnova_SRS_Updated_28_oct.docx`. Read the Markdown copy `docs/srs.md` instead (search for the UC-xx or section you need).
+Pronnova: English pronunciation practice and assessment web app for **Class 1** students in Pakistan (ADR-006), with a teacher dashboard. **Design base: the landing page** — new screens reuse its UI/UX (ADR-007). Source of truth for requirements: `Pronnova_SRS_Updated_28_oct.docx`. Read the Markdown copy `docs/srs.md` instead (search for the UC-xx or section you need).
 
 ## Read order (save tokens)
 1. `docs/index.md` — map of all docs. Always first.

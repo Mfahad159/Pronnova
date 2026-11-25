@@ -62,7 +62,7 @@ export function HeroCard() {
           </h1>
 
           <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            An interactive pronunciation learning experience for young learners in Pakistan, helping students practise speaking while teachers understand their progress.
+            An interactive pronunciation learning experience for Class 1 learners in Pakistan, helping students practise speaking while teachers understand their progress.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
