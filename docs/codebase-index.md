@@ -39,7 +39,8 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense) | ✅ |
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; placeholder card for unbuilt screens | ✅ |
-| `components/layout/landing-nav.tsx` | Landing navbar: centred floating pill (w-fit, margin all round, sticky), links + Start practising; slide-in menu on phones | ✅ |
+| `components/layout/landing-nav.tsx` | Landing navbar: centred floating pill (w-fit, fixed, margin all round) with section links (How it works, Levels, For teachers, FAQ) + Get started; slide-in menu on phones | ✅ |
+| `components/landing/` | Landing sections: `section.tsx` (wrapper + sound-bars mark), `benefits`, `how-it-works`, `feedback-preview`, `levels`, `for-teachers`, `faq` (native details), `final-cta`, `site-footer` | ✅ |
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
@@ -75,7 +76,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 ## Routes
 | Route | File | UC | |
 |---|---|---|---|
-| `/` | `app/page.tsx` | Landing: navbar, full-width hero photo with white overlay, one **Get started** button → `/onboarding` | ✅ |
+| `/` | `app/page.tsx` | Landing: hero (photo + white overlay, **Get started** → `/onboarding`), then Why, How it works, Feedback example, Levels, For teachers, FAQ, final CTA, footer | ✅ |
 | `/onboarding` | `app/onboarding/page.tsx` | Choose **Student** or **Teacher** (picture cards). FYP-1 opens the demo user; FYP-2 → sign up / sign in | ✅ |
 | `/student` | `app/student/page.tsx` | Home: Continue, homework, chapter cards with stage, recent attempts (UC-03) | ✅ |
 | `/student/chapters` | `app/student/chapters/page.tsx` | UC-03 chapters + stage | ✅ |

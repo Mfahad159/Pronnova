@@ -153,6 +153,12 @@
   html {
     @apply font-sans;
   }
+  /* Smooth jumps to landing sections, unless the user prefers less motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
 }
 /* No shadows / depth anywhere (design decision 2026-11-25): flat UI, borders only.
    Toasts (sonner) set their own box-shadow, so override it here. */

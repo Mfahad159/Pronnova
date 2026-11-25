@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { BrandLogo } from "@/components/layout/brand-logo";
 
+// In-page sections on the landing page (prefixed with "/" so they also work from /onboarding).
 const links = [
-  { href: "/student/chapters", label: "Chapters" },
-  { href: "/student", label: "For students" },
-  { href: "/teacher", label: "For teachers" },
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#levels", label: "Levels" },
+  { href: "/#for-teachers", label: "For teachers" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 /**
@@ -16,7 +18,10 @@ const links = [
  */
 export function LandingNav() {
   return (
-    <header className="sticky top-4 z-30 mx-4 mt-4 flex justify-center">
+    <>
+    {/* Fixed so it stays visible over every landing section; the spacer keeps page content below it. */}
+    <div aria-hidden className="h-[4.5rem]" />
+    <header className="fixed inset-x-0 top-4 z-30 mx-4 flex justify-center">
       <nav
         aria-label="Main"
         className="flex h-14 w-fit max-w-full items-center gap-2 rounded-full border border-white/70 bg-background/75 py-2 pr-2 pl-4 backdrop-blur-md sm:gap-4"
@@ -64,5 +69,6 @@ export function LandingNav() {
         </Sheet>
       </nav>
     </header>
+    </>
   );
 }

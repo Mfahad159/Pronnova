@@ -33,7 +33,7 @@ test("chapter → item → practice flow uses real data", async ({ page }) => {
 
 test("landing Get started → onboarding → choose student or teacher", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("main").getByRole("link", { name: "Get started" }).click();
+  await page.getByRole("main").getByRole("link", { name: "Get started" }).first().click(); // hero button
   await expect(page).toHaveURL(/\/onboarding$/);
   await page.getByRole("link", { name: /i'm a student/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: /welcome back/i })).toBeVisible();
