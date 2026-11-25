@@ -61,7 +61,6 @@ export function HeroCard() {
           </PillLink>
         </div>
       </div>
-      <p className="mt-3 text-center text-xs text-muted-foreground">Demo mode: no sign-in, sample data only.</p>
     </section>
   );
 }
