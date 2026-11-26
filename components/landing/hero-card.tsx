@@ -1,42 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, Microphone, Sparkle, SpeakerHigh } from "@phosphor-icons/react/ssr";
 import { KiddyButton } from "@/components/brand/kiddy-button";
 import { SwappingText } from "@animate-ui/react/primitives/texts/swapping";
 
 /**
  * SECTION 01 — HERO: "Helping Little Voices Grow"
- * Uses the existing Pronnova Gemini swing illustration paired with surrounding floating
- * 2D learning elements (letters, sound waves, mic, book, stars) and high-contrast copy.
+ * Clean centered hero using the Pronnova swing crew illustration, SwappingText headline,
+ * and dual CTAs.
  */
 export function HeroCard() {
   return (
     <section id="top" aria-labelledby="hero-title" className="relative overflow-hidden bg-background pt-6 pb-12 md:pt-8 md:pb-16">
-      {/* Subtle floating decorative learning elements around the hero (hidden from screen readers) */}
-      <div aria-hidden className="pointer-events-none mx-auto max-w-6xl">
-        <span className="pronnova-float absolute top-14 left-[6%] hidden size-11 items-center justify-center rounded-xl border-2 border-foreground/15 bg-tint-peach font-heading text-xl font-bold text-primary lg:flex">
-          A
-        </span>
-        <span className="pronnova-float-slow absolute top-44 left-[4%] hidden items-center gap-1.5 rounded-xl border-2 border-foreground/15 bg-tint-sky px-3 py-2 text-xs font-semibold text-foreground lg:flex">
-          <SpeakerHigh className="size-4 text-primary" weight="duotone" />
-          /æp.əl/
-        </span>
-        <span className="pronnova-float absolute bottom-20 left-[7%] hidden size-10 items-center justify-center rounded-xl border-2 border-foreground/15 bg-tint-cream text-chart-5 lg:flex">
-          <Sparkle className="size-5" weight="duotone" />
-        </span>
-
-        <span className="pronnova-float-slow absolute top-16 right-[6%] hidden size-11 items-center justify-center rounded-xl border-2 border-foreground/15 bg-tint-mint font-heading text-xl font-bold text-score-excellent lg:flex">
-          B
-        </span>
-        <span className="pronnova-float absolute top-48 right-[5%] hidden items-center gap-1.5 rounded-xl border-2 border-foreground/15 bg-secondary px-3 py-2 text-xs font-semibold text-primary lg:flex">
-          <Microphone className="size-4" weight="duotone" />
-          Speak!
-        </span>
-        <span className="pronnova-float-slow absolute right-[8%] bottom-24 hidden size-11 items-center justify-center rounded-xl border-2 border-foreground/15 bg-tint-lavender text-foreground lg:flex">
-          <BookOpen className="size-5 text-primary" weight="duotone" />
-        </span>
-      </div>
-
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-10">
         {/* Existing Pronnova swing crew header illustration */}
         <div className="mx-auto -mt-6 w-full max-w-lg sm:-mt-8 sm:max-w-xl lg:max-w-[35rem]">
