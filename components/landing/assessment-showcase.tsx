@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowCounterClockwise, CheckCircle, Info, SpeakerHigh, Warning } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { speakReference } from "@/lib/speech-tts";
 import { cn } from "@/lib/utils";
@@ -24,20 +25,22 @@ export function AssessmentShowcase() {
 
   return (
     <section id="assessment" aria-labelledby="assessment-title" className="scroll-mt-24 bg-muted/50 py-14 md:py-20">
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 md:grid-cols-[0.95fr_1.05fr] md:px-6">
-        {/* Left: Technical explanation */}
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-card px-3.5 py-1 text-xs font-semibold tracking-wide text-primary uppercase">
-            Pronunciation Assessment
-          </p>
-          <h2 id="assessment-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Understand Every Attempt
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            Pronnova does more than convert speech to text. Speech recognition tells you <em>what</em> was said—pronunciation assessment evaluates <em>how clearly</em> the expected word was spoken.
-          </p>
+      <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
+        <LandingSectionHeader
+          id="assessment-title"
+          lead="Understand"
+          accent="Every Attempt"
+          subtitle="Pronnova does more than convert speech to text—evaluating how clearly each expected word was spoken."
+        />
 
-          <dl className="mt-6 space-y-4">
+        <div className="mt-10 grid items-center gap-10 md:grid-cols-[0.95fr_1.05fr]">
+          {/* Left: Technical explanation */}
+          <div>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Speech recognition tells you <em>what</em> was said—pronunciation assessment evaluates <em>how clearly</em> the expected word was spoken.
+            </p>
+
+            <dl className="mt-6 space-y-4">
             <div className="rounded-xl border border-border bg-card p-4">
               <dt className="font-heading text-sm font-bold text-foreground">Expected vs. Spoken Comparison</dt>
               <dd className="mt-1 text-sm text-muted-foreground">
@@ -146,6 +149,7 @@ export function AssessmentShowcase() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

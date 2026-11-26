@@ -1,4 +1,5 @@
 import { ArrowRight, BookOpen, ChartBar, ClipboardText, Microphone, Sparkle } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 
 const workflow = [
   {
@@ -47,17 +48,12 @@ export function ClassroomWorkflow() {
   return (
     <section id="classroom" aria-labelledby="classroom-title" className="scroll-mt-24 bg-secondary/45 py-14 md:py-20">
       <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-card px-3.5 py-1 text-xs font-semibold tracking-wide text-primary uppercase">
-            Student–Teacher Loop
-          </p>
-          <h2 id="classroom-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Learning That Fits the Classroom
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">
-            Supporting teachers with clearer insights into every learner&apos;s pronunciation journey.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="classroom-title"
+          lead="Learning That Fits the"
+          accent="Classroom"
+          subtitle="Supporting teachers with clearer insights into every learner's pronunciation journey."
+        />
 
         <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {workflow.map((w, i) => {

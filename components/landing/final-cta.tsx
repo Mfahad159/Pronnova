@@ -14,7 +14,7 @@ export function FinalCta() {
         <div className="grid items-center gap-8 overflow-hidden rounded-2xl border-2 border-primary/20 bg-tint-peach/80 p-8 md:grid-cols-[1.2fr_0.8fr] md:p-12">
           <div>
             <h2 id="cta-title" className="font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-              Every little voice deserves to be heard.
+              Every little voice <span className="text-brand-coral">deserves to be heard.</span>
             </h2>
             <p className="mt-3 max-w-lg text-base text-muted-foreground md:text-lg">
               Explore how Pronnova brings pronunciation practice and classroom guidance together—no sign-in required in this demo.

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BookOpen, Eye, Heart, Sparkle, SpeakerHigh, Stack } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { speakReference } from "@/lib/speech-tts";
 import { cn } from "@/lib/utils";
 import { AppleIllustration, BookIllustration, CatIllustration, SunIllustration } from "@/components/brand/illustrations";
@@ -65,17 +66,12 @@ export function YoungLearners() {
   return (
     <section id="learners" aria-labelledby="learners-title" className="scroll-mt-24 py-14 md:py-20">
       <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-tint-cream px-3.5 py-1 text-xs font-semibold tracking-wide text-foreground uppercase">
-            Educational Principles
-          </p>
-          <h2 id="learners-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Built Around Young Learners
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">
-            Calm, encouraging practice structured for real Pakistani classrooms.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="learners-title"
+          lead="Built Around"
+          accent="Young Learners"
+          subtitle="Calm, encouraging practice structured for real Pakistani classrooms."
+        />
 
         {/* 6 design principles */}
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

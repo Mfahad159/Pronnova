@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { BookOpenText, Check, Info, UsersThree } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { cn } from "@/lib/utils";
 
@@ -30,20 +31,18 @@ export function TeacherPreview() {
 
   return (
     <section id="teachers" aria-labelledby="teachers-title" className="scroll-mt-24 py-14 md:py-20">
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 md:grid-cols-[0.88fr_1.12fr] md:px-6">
-        {/* Left: Structured benefits */}
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-tint-sky px-3.5 py-1 text-xs font-semibold tracking-wide text-foreground uppercase">
-            Teacher Workspace
-          </p>
-          <h2 id="teachers-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Designed for Teachers
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            Give every learner in a busy Pakistani classroom speaking practice—and review attempts, difficulty levels, and tricky words in one calm dashboard.
-          </p>
+      <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
+        <LandingSectionHeader
+          id="teachers-title"
+          lead="Designed for"
+          accent="Teachers"
+          subtitle="Give every learner speaking practice—and review attempts, difficulty levels, and tricky words in one calm dashboard."
+        />
 
-          <ul className="mt-6 space-y-3">
+        <div className="mt-10 grid items-center gap-10 md:grid-cols-[0.88fr_1.12fr]">
+          {/* Left: Structured benefits */}
+          <div>
+            <ul className="space-y-3">
             {[
               "Manage Basic, Medium, and Advanced exercises for your class.",
               "Upload custom words or sentences from your syllabus and assign due dates.",
@@ -173,6 +172,7 @@ export function TeacherPreview() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </section>
   );

@@ -34,7 +34,7 @@ export function HeroCard() {
           >
             Helping little voices grow,{" "}
             {/* Animate UI SwappingText: the key word swaps letter by letter (screen readers hear it once). */}
-            <span className="text-primary">
+            <span className="text-brand-coral">
               one <SwappingText text={["word", "sound", "smile"]} duration={2600} delay={1200} /> at a time.
             </span>
           </h1>

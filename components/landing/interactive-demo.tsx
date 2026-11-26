@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react/ssr";
 import { AppleIllustration } from "@/components/brand/illustrations";
 import { KiddyButton } from "@/components/brand/kiddy-button";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { OutlineButton, Panel } from "@/components/brand/ui";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { LiveWaveform } from "@/features/voice/live-waveform";
@@ -95,17 +96,12 @@ export function InteractiveDemo() {
   return (
     <section id="demo" aria-labelledby="demo-title" className="scroll-mt-24 py-12 md:py-18">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-secondary px-3.5 py-1 text-xs font-semibold tracking-wide text-primary uppercase">
-            Interactive Demo · No Sign-In Required
-          </p>
-          <h2 id="demo-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Experience Pronnova
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">
-            Try a real microphone recording on a sample word right here—listen first, then speak out loud.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="demo-title"
+          lead="Experience"
+          accent="Pronnova"
+          subtitle="Try a real microphone recording on a sample word right here—listen first, then speak out loud."
+        />
 
         {/* Centered 4-step indicator */}
         <ol aria-label="Practice steps" className="mt-7 flex flex-wrap items-center justify-center gap-2 sm:gap-3">

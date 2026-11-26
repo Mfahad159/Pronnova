@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowCounterClockwise, ChartBar, Microphone, SpeakerHigh } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { cn } from "@/lib/utils";
 
 const steps = [
@@ -159,17 +160,12 @@ export function HowItWorks() {
   return (
     <section id="how-it-works" aria-labelledby="how-title" className="scroll-mt-24 py-12 md:py-18">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-tint-sky px-3.5 py-1 text-xs font-semibold tracking-wide text-foreground uppercase">
-            Continuous Practice Cycle
-          </p>
-          <h2 id="how-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            How Pronnova Works
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">
-            Four simple steps designed to turn hesitation into confident speaking.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="how-title"
+          lead="How Pronnova"
+          accent="Works"
+          subtitle="Four simple steps designed to turn hesitation into confident speaking."
+        />
 
         {/* Alternating left/right timeline with center scroll progress line */}
         <div ref={wrapperRef} className="relative mt-12">
