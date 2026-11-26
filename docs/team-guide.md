@@ -91,6 +91,7 @@ npm run build
 - `npm run db:…` fails with `spawn UNKNOWN`? Windows (Smart App Control / Application Control) is blocking `supabase.exe`. Don't try to get around it: run the SQL in the Supabase dashboard's SQL Editor instead (steps 3–4 above).
 - Building a new screen? Use the pieces in `components/brand/` (`KiddyButton`, `Panel`, `PikoSays`, `WordPicture`, …), not plain shadcn buttons/cards — the landing page is the design base (ADR-007). A unit test checks this.
 - The logo loader shows on every full page load (opening the site, refresh), not when moving between pages inside the app. It waits for the page to load, finishes the current bite, then fades; it never stays longer than 8 s.
+- Motion comes from Animate UI (ADR-008). Added a new shadcn component? Run `npx @animate-ui/cli@latest animate <name>` to animate it. Gotchas: a `Highlight` needs `inset-0` in its `className` (else it is 0×0); don't use `HighlightItem asChild` around a link (it nests the link twice) — use `as="li"`; anything that calls `usePathname()` in a layout must sit in `<Suspense>` (Cache Components).
 - CSS modules (`*.module.css`) don't work here: `next.config.ts` sends every `.css` file through Tailwind as plain CSS. Use Tailwind classes, or a plain `.css` file with prefixed class names (like `components/brand/page-loader.css`).
 - Teacher uploads are for Class 1: sentences can have up to 8 words; above 6 the form shows a warning.
 - Browser tests use Chrome's fake microphone. `E2E_MUTATE=1 npm run test:e2e` also runs the tests that save data; `E2E_FIREFOX=1` adds Firefox.

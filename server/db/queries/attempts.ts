@@ -56,6 +56,17 @@ export async function teacherHasStudent(teacherId: string, studentId: string): P
   return (await classStudentIds(teacherId)).includes(studentId);
 }
 
+/** Students in this teacher's classes, by name (dashboard avatar group). */
+export async function listClassStudents(teacherId: string): Promise<{ id: string; name: string }[]> {
+  const ids = await classStudentIds(teacherId);
+  if (ids.length === 0) return [];
+  const rows = check(
+    await (await getDb()).from("profiles").select("id, name").in("id", ids).order("name"),
+    "list class student names",
+  ) as { id: string; name: string }[];
+  return rows;
+}
+
 async function classStudentIds(teacherId: string): Promise<string[]> {
   const rows = check(
     await (await getDb()).from("enrollments").select("student_id, classes!inner(teacher_id)").eq("classes.teacher_id", teacherId),

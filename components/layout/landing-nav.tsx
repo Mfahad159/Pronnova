@@ -3,9 +3,20 @@
 import Link from "next/link";
 import { List } from "@phosphor-icons/react/ssr";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { BrandLogo } from "@/components/layout/brand-logo";
 import { KiddyButton } from "@/components/brand/kiddy-button";
+import {
+  Highlight,
+  HighlightItem,
+} from "@animate-ui/react/primitives/effects/highlight";
 
 const links = [
   { href: "/#top", label: "Home" },
@@ -30,26 +41,49 @@ export function LandingNav() {
         <BrandLogo />
 
         <div className="flex items-center gap-2 lg:gap-4">
-          <ul className="hidden items-center gap-0.5 lg:flex">
-            {links.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="rounded-xl px-2.5 py-2 text-sm font-medium whitespace-nowrap text-foreground/80 outline-none transition-colors hover:bg-secondary/70 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          {/* Animate UI Highlight: one soft pill glides between links on hover (ADR-007 colours). */}
+          <Highlight
+            controlledItems
+            hover
+            click={false}
+            exitDelay={120}
+            className="inset-0 rounded-xl bg-secondary"
+          >
+            <ul className="hidden items-center gap-0.5 lg:flex">
+              {links.map((l) => (
+                <HighlightItem
+                  key={l.href}
+                  as="li"
+                  value={l.href}
+                  className="group/nav rounded-xl"
                 >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  <Link
+                    href={l.href}
+                    className="block rounded-xl px-2.5 py-2 text-sm font-medium whitespace-nowrap text-foreground/80 outline-none transition-colors group-data-[active=true]/nav:text-primary focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    {l.label}
+                  </Link>
+                </HighlightItem>
+              ))}
+            </ul>
+          </Highlight>
 
-          <KiddyButton href="/#demo" size="sm" className="shrink-0 whitespace-nowrap">
+          <KiddyButton
+            href="/#demo"
+            size="sm"
+            className="shrink-0 whitespace-nowrap"
+          >
             Try the Demo
           </KiddyButton>
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon-lg" className="rounded-xl lg:hidden" aria-label="Open menu">
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                className="rounded-xl lg:hidden"
+                aria-label="Open menu"
+              >
                 <List className="size-5" weight="bold" aria-hidden />
               </Button>
             </SheetTrigger>
@@ -61,7 +95,10 @@ export function LandingNav() {
                 {links.map((l) => (
                   <li key={l.href}>
                     <SheetClose asChild>
-                      <Link href={l.href} className="block rounded-lg px-3 py-3 font-medium outline-none hover:bg-muted focus-visible:bg-muted">
+                      <Link
+                        href={l.href}
+                        className="block rounded-lg px-3 py-3 font-medium outline-none hover:bg-muted focus-visible:bg-muted"
+                      >
                         {l.label}
                       </Link>
                     </SheetClose>

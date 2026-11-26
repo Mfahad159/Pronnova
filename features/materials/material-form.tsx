@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CircleNotch } from "@phosphor-icons/react/ssr";
 import { toast } from "sonner";
 import { KiddyButton } from "@/components/brand/kiddy-button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PanelHeader, PanelTitle } from "@/components/brand/ui";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +33,70 @@ interface Option {
 
 const fieldClass = "rounded-xl border-2 border-foreground/12";
 const selectClass =
-  "h-11 w-full rounded-xl border-2 border-foreground/12 bg-background px-2.5 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive";
+  "h-11 w-full rounded-xl border-2 border-foreground/12 bg-background px-3 text-sm aria-invalid:border-destructive data-[size=default]:h-11";
+// Radix Select can't use "" as a value, so "no class / no chapter yet" maps to this.
+const NONE = "__none";
+
+interface SelectOption {
+  value: string;
+  label: string;
+  /** Colour dot: `bg` for the closed trigger, `before` for the list (Radix moves item text into the trigger). */
+  dot?: { bg: string; before: string };
+}
+
+// Literal classes so Tailwind generates them (level colours from the landing, ADR-007).
+const levelDot = {
+  basic: { bg: "bg-score-excellent", before: "before:bg-score-excellent" },
+  medium: { bg: "bg-[#ffb000]", before: "before:bg-[#ffb000]" },
+  advanced: { bg: "bg-[#2db8ff]", before: "before:bg-[#2db8ff]" },
+} as const;
+
+/** Animate UI select (opens with a spring, check glides) in the brand field style. */
+function BrandSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+  className,
+  ...trigger
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: SelectOption[];
+  placeholder?: string;
+  className?: string;
+  id?: string;
+  "aria-label"?: string;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
+}) {
+  const current = options.find((o) => o.value === value);
+  return (
+    <Select value={value || undefined} onValueChange={onChange}>
+      <SelectTrigger {...trigger} className={cn(selectClass, className)}>
+        <span className="flex min-w-0 items-center gap-2">
+          {current?.dot ? <span className={cn("size-2.5 shrink-0 rounded-full", current.dot.bg)} aria-hidden /> : null}
+          <SelectValue placeholder={placeholder} />
+        </span>
+      </SelectTrigger>
+      <SelectContent position="popper" className="rounded-xl border-2 border-foreground/12 ring-0">
+        {options.map((o) => (
+          <SelectItem
+            key={o.value}
+            value={o.value}
+            className={cn(
+              "rounded-lg py-2",
+              o.dot && "gap-2 before:size-2.5 before:shrink-0 before:rounded-full before:content-['']",
+              o.dot?.before,
+            )}
+          >
+            {o.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
 
 /** UC-10 form. Controlled fields so nothing is lost when validation fails. */
 export function MaterialForm({ chapters, classes }: { chapters: Option[]; classes: Option[] }) {
@@ -102,31 +166,33 @@ export function MaterialForm({ chapters, classes }: { chapters: Option[]; classe
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Chapter" error={errors.chapterId}>
           {(p) => (
-            <select {...p} className={selectClass} value={chapterId} onChange={(e) => setChapterId(e.target.value)}>
-              <option value="">Choose a chapter…</option>
-              {chapters.map((c) => (
-                <option key={c.id} value={c.id}>{c.label}</option>
-              ))}
-            </select>
+            <BrandSelect
+              {...p}
+              value={chapterId}
+              onChange={setChapterId}
+              placeholder="Choose a chapter…"
+              options={chapters.map((c) => ({ value: c.id, label: c.label }))}
+            />
           )}
         </Field>
         <Field label="Level" error={errors.level}>
           {(p) => (
-            <select {...p} className={selectClass} value={level} onChange={(e) => setLevel(e.target.value)}>
-              {levels.map((l) => (
-                <option key={l} value={l}>{levelLabel[l]}</option>
-              ))}
-            </select>
+            <BrandSelect
+              {...p}
+              value={level}
+              onChange={setLevel}
+              options={levels.map((l) => ({ value: l, label: levelLabel[l], dot: levelDot[l] }))}
+            />
           )}
         </Field>
         <Field label="Assign to class" error={errors.classId} hint="Choose “Don't assign yet” to save it and assign later.">
           {(p) => (
-            <select {...p} className={selectClass} value={classId} onChange={(e) => setClassId(e.target.value)}>
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.label}</option>
-              ))}
-              <option value="">Don&apos;t assign yet</option>
-            </select>
+            <BrandSelect
+              {...p}
+              value={classId || NONE}
+              onChange={(v) => setClassId(v === NONE ? "" : v)}
+              options={[...classes.map((c) => ({ value: c.id, label: c.label })), { value: NONE, label: "Don't assign yet" }]}
+            />
           )}
         </Field>
         <Field label={classId ? "Due date" : "Due date (optional)"} error={errors.deadline}>
@@ -164,16 +230,13 @@ export function MaterialForm({ chapters, classes }: { chapters: Option[]; classe
                 <li key={it.text} className={cn("flex flex-wrap items-center gap-3 px-3 py-2", problem && "bg-destructive/5")}>
                   <span className="w-6 text-right text-xs text-muted-foreground tabular-nums">{i + 1}</span>
                   <span className="min-w-0 flex-1 break-words">{it.text}</span>
-                  <select
+                  <BrandSelect
                     aria-label={`Type for “${it.text}”`}
-                    className={cn(selectClass, "h-8 w-32")}
+                    className="h-9 w-32 data-[size=default]:h-9"
                     value={it.itemType}
-                    onChange={(e) => setTypeOverrides((o) => ({ ...o, [it.text.toLowerCase()]: e.target.value as ItemType }))}
-                  >
-                    {itemTypes.map((t) => (
-                      <option key={t} value={t}>{t[0].toUpperCase() + t.slice(1)}</option>
-                    ))}
-                  </select>
+                    onChange={(v) => setTypeOverrides((o) => ({ ...o, [it.text.toLowerCase()]: v as ItemType }))}
+                    options={itemTypes.map((t) => ({ value: t, label: t[0].toUpperCase() + t.slice(1) }))}
+                  />
                   {problem ? <p className="w-full pl-9 text-sm text-destructive">{problem}</p> : null}
                   {warning ? <p className="w-full pl-9 text-sm text-score-good">{warning}</p> : null}
                 </li>

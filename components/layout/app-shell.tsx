@@ -17,6 +17,7 @@ import { BrandLogo } from "@/components/layout/brand-logo";
 import { Eyebrow } from "@/components/brand/ui";
 import { SidebarNav, SidebarNavStatic } from "@/components/layout/sidebar-nav";
 import { navByRole } from "@/lib/navigation";
+import { PageTransition } from "@/components/animate-ui/components/page-transition";
 import type { Role } from "@/types";
 
 /** Sidebar + main area for /student/* and /teacher/* (layout idea: docs/design.md). */
@@ -55,7 +56,15 @@ export function AppShell({ role, children }: { role: Role; children: React.React
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset className="min-w-0">{children}</SidebarInset>
+      <SidebarInset className="min-w-0">
+        {/* Animate UI page transition (view transitions): only the page content moves; sidebar stays. */}
+        {/* It reads the pathname, so (Cache Components) it sits in Suspense; the fallback is the same page, unanimated. */}
+        <Suspense fallback={<div className="flex min-h-full flex-col bg-background">{children}</div>}>
+          <PageTransition effect="slide" className="flex min-h-full flex-col bg-background">
+            {children}
+          </PageTransition>
+        </Suspense>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

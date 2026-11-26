@@ -11,6 +11,7 @@ import {
   Stop,
   X,
 } from "@phosphor-icons/react/ssr";
+import { AutoHeight } from "@animate-ui/react/primitives/effects/auto-height";
 import { KiddyButton } from "@/components/brand/kiddy-button";
 import { PikoSays } from "@/components/brand/piko";
 import { InkButton, OutlineButton } from "@/components/brand/ui";
@@ -97,6 +98,8 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
     : [];
 
   return (
+    // Animate UI AutoHeight: the card grows/shrinks smoothly between mic → recording → listen → result.
+    <AutoHeight deps={[phase, !!error]} className="w-full">
     <div className="flex w-full flex-col gap-5">
       <p role="status" aria-live="polite" className="sr-only">
         {status}
@@ -267,5 +270,6 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
         </div>
       ) : null}
     </div>
+    </AutoHeight>
   );
 }

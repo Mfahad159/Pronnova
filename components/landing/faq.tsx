@@ -1,7 +1,7 @@
-import { CaretDown } from "@phosphor-icons/react/ssr";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 // SECTION 10 — FREQUENTLY ASKED QUESTIONS
-// Exclusive native <details name="pronnova-faq"> accordion aligned with SRS & FYP-1 scope.
+// Animate UI accordion (one open at a time, height springs open) aligned with SRS & FYP-1 scope.
 const faqs = [
   {
     q: "What is Pronnova?",
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     q: "How are exercises organised by difficulty?",
-    a: "Every chapter is structured across three difficulty levels—Basic, Medium, and Advanced—covering single words, short phrases, and sentences up to 15 words.",
+    a: "Every chapter is structured across three difficulty levels—Basic, Medium, and Advanced—covering single picture words, short phrases, and short sentences (up to 8 words for Class 1).",
   },
 ] as const;
 
@@ -53,21 +53,16 @@ export function Faq() {
           </p>
         </div>
 
-        <div className="mt-10 divide-y rounded-2xl border border-border bg-background">
-          {faqs.map((f) => (
-            <details key={f.q} name="pronnova-faq" className="group px-5 py-1 md:px-6">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg py-4 font-heading font-semibold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
+        <Accordion type="single" collapsible className="mt-10 rounded-2xl border border-border bg-background">
+          {faqs.map((f, i) => (
+            <AccordionItem key={f.q} value={`faq-${i}`} className="px-5 md:px-6">
+              <AccordionTrigger className="gap-4 py-4 font-heading text-base font-semibold hover:no-underline hover:text-primary [&_[data-slot=accordion-trigger-icon]]:size-5">
                 {f.q}
-                <CaretDown
-                  className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180 motion-reduce:transition-none"
-                  weight="bold"
-                  aria-hidden
-                />
-              </summary>
-              <p className="pb-5 text-sm leading-relaxed text-muted-foreground md:text-base">{f.a}</p>
-            </details>
+              </AccordionTrigger>
+              <AccordionContent className="pb-5 text-sm leading-relaxed text-muted-foreground md:text-base">{f.a}</AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   );

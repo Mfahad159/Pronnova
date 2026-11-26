@@ -35,7 +35,9 @@ test("UC-10: saved material appears for the student", async ({ page }) => {
   const title = `E2E ${Date.now()}`;
   await page.goto("/teacher/materials/new");
   await page.getByLabel("Title").fill(title);
-  await page.getByLabel("Chapter").selectOption({ label: "2. Tricky Sounds" });
+  // Animate UI select: open it, then pick the option.
+  await page.getByLabel("Chapter").click();
+  await page.getByRole("option", { name: "2. Tricky Sounds" }).click();
   await page.getByLabel("Due date").fill("2099-12-31");
   await page.getByLabel(/practice items/i).fill("vowel\nvalley");
   await page.getByRole("button", { name: /save and assign/i }).click();

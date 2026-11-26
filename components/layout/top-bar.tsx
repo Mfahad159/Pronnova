@@ -1,6 +1,7 @@
 import { MagnifyingGlass } from "@phosphor-icons/react/ssr";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 /**
  * App top bar in the landing navbar's style (ADR-007): floating white rounded bar with a soft
@@ -18,7 +19,12 @@ export function TopBar({
   return (
     <header className="sticky top-0 z-10 bg-background/80 px-3 pt-3 pb-1 backdrop-blur-md sm:px-5">
       <div className="mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center gap-3 rounded-2xl border border-foreground/10 bg-card/95 px-3 py-2.5 sm:px-4">
-        <SidebarTrigger className="rounded-xl" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <SidebarTrigger className="rounded-xl" />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Show or hide the menu</TooltipContent>
+        </Tooltip>
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-heading text-lg font-bold tracking-tight md:text-xl">{title}</h1>
           {subtitle ? <p className="truncate text-sm text-muted-foreground">{subtitle}</p> : null}

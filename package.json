@@ -16,10 +16,14 @@
     "db:verify": "node --env-file=.env.local scripts/db.mjs verify"
   },
   "dependencies": {
+    "@animate-ui/react": "^2.4.6",
+    "@floating-ui/react": "^0.27.20",
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "2.119.2",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
+    "lucide-react": "^1.80.0",
+    "motion": "^14.14.0",
     "next": "16.4.6",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.8.1",

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { levelBadge } from "@/components/brand/ui";
+import { Progress } from "@/components/ui/progress";
 import { levelLabel } from "@/features/curriculum/level";
 import type { ChapterView } from "@/lib/progress";
 import type { Chapter } from "@/types";
@@ -58,16 +59,12 @@ export function ChapterCard({ chapter, progress }: { chapter: Chapter; progress?
         <span className="block font-heading text-lg leading-tight font-bold">{chapter.title}</span>
         {stage ? (
           <div className="space-y-1.5">
-            <div
-              className="h-2.5 overflow-hidden rounded-full border border-foreground/10 bg-card"
-              role="progressbar"
+            {/* Animate UI progress: the bar springs to its value. */}
+            <Progress
+              value={pct}
               aria-label={`${chapter.title} progress`}
-              aria-valuenow={pct}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div className="h-full rounded-full bg-score-excellent" style={{ width: `${pct}%` }} />
-            </div>
+              className="h-2.5 border border-foreground/10 bg-card [&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-indicator]]:bg-score-excellent"
+            />
             <p className="text-xs font-semibold text-foreground/70">{stage}</p>
           </div>
         ) : null}

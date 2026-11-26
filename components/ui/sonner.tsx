@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       icons={{
         success: (
-          <CheckCircle className="size-4" />
+          <CheckCircle className="size-5" weight="fill" />
         ),
         info: (
           <Info className="size-4" />
@@ -22,7 +22,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           <Warning className="size-4" />
         ),
         error: (
-          <WarningOctagon className="size-4" />
+          <WarningOctagon className="size-5" weight="fill" />
         ),
         loading: (
           <CircleNotch className="size-4 animate-spin" />
@@ -38,7 +38,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          // Brand look (ADR-007): rounded card, soft border, heading font.
+          toast: "cn-toast !rounded-2xl !border-2 !border-foreground/12 font-heading",
+          success: "[&_[data-icon]]:text-score-excellent",
+          error: "[&_[data-icon]]:text-destructive",
         },
       }}
       {...props}

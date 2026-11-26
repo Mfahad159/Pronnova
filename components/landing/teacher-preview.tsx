@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { BookOpenText, Check, Info, UsersThree } from "@phosphor-icons/react/ssr";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { cn } from "@/lib/utils";
@@ -59,9 +60,10 @@ export function TeacherPreview() {
 
           <Link
             href="/onboarding"
-            className="mt-7 inline-flex h-11 items-center rounded-xl border-2 border-foreground/20 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="group/arrow mt-7 inline-flex h-11 items-center gap-2 rounded-xl border-2 border-foreground/20 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
           >
-            Open Teacher Area →
+            Open Teacher Area
+            <ArrowRight className="size-4 transition-transform group-hover/arrow:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
           </Link>
         </div>
 

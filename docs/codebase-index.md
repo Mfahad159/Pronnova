@@ -34,7 +34,8 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 |---|---|---|
 | `app/layout.tsx` | Root layout: font (Google Sans Flex), icons + manifest metadata, tooltip provider, toaster | ✅ |
 | `app/globals.css` | **Design tokens** (colors, score colors, tints, radius) + Tailwind theme | ✅ |
-| `components/ui/` | shadcn components (button, card, sidebar, table, tabs, dialog, select, …). Generated — edit with care | ✅ |
+| `components/ui/` | shadcn components (button, card, sidebar, table, tabs, dialog, select, accordion, progress, …). Generated — edit with care. accordion, dialog, dropdown-menu, progress, select, sheet, tabs, tooltip import their primitives from `@animate-ui/react` (ADR-008) | ✅ |
+| `components/animate-ui/components/page-transition.tsx` | Animate UI page transition (view transitions), used in `AppShell` | ✅ |
 | `components/layout/app-shell.tsx` | Sidebar + main area for `/student/*` and `/teacher/*` | ✅ |
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense) | ✅ |
 | `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
@@ -46,6 +47,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
 | `features/materials/` | `material-form.tsx` (UC-10 form, live item preview), `actions.ts` (`saveMaterial` Server Action) | ✅ |
+| `features/teacher/class-avatars.tsx` | Animate UI avatar group of the class's students (dashboard) | ✅ |
 | `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view), `play-recording-button.tsx` (fetches a signed link, plays/stops) | ✅ |
 | `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
 | `features/practice/` | `practice-recorder.tsx` — record → listen back → send → score + feedback / retry (UC-05, UC-04, UC-06) in the landing demo style; `practice-steps.tsx` header step chips; `listen-button.tsx` browser-voice "Listen" | ✅ |
@@ -62,7 +64,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `server/db/client.ts` | `getDb()` — server-only Supabase client (secret key), `check()` error helper | ✅ |
 | `server/db/demo-user.ts` | Fixed demo student/teacher ids + `getCurrentStudent/Teacher()` (FYP-2: swap for login) | ✅ |
 | `server/db/queries/curriculum.ts` | `listChapters`, `getChapterContent`, `getItem`, `isUuid` | ✅ |
-| `server/db/queries/attempts.ts` | `listStudentAttempts`, `listClassAttempts`, `getTeacherStats` | ✅ |
+| `server/db/queries/attempts.ts` | `listStudentAttempts`, `listClassAttempts`, `getTeacherStats`, `listClassStudents`, `teacherHasStudent` | ✅ |
 | `server/db/queries/learning.ts` | `getStudentLearning` (view + homework + last item), `getItemAccess` | ✅ |
 | `server/db/queries/attempt-store.ts` | Attempt writes/reads: upload/download recording, insert pending, mark failed, `completeAttempt` (RPC), `getAttemptResult` | ✅ |
 | `server/db/queries/materials.ts` | `listTeacherClasses`, `listTeacherMaterials`, `createMaterial` (RPC) | ✅ |

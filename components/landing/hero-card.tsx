@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Microphone, Sparkle, SpeakerHigh } from "@phosphor-icons/react/ssr";
 import { KiddyButton } from "@/components/brand/kiddy-button";
+import { SwappingText } from "@animate-ui/react/primitives/texts/swapping";
 
 /**
  * SECTION 01 — HERO: "Helping Little Voices Grow"
@@ -58,7 +59,10 @@ export function HeroCard() {
             className="font-heading text-4xl leading-[1.08] font-bold tracking-tight text-balance text-foreground sm:text-5xl lg:text-[3.35rem]"
           >
             Helping little voices grow,{" "}
-            <span className="text-primary">one word at a time.</span>
+            {/* Animate UI SwappingText: the key word swaps letter by letter (screen readers hear it once). */}
+            <span className="text-primary">
+              one <SwappingText text={["word", "sound", "smile"]} duration={2600} delay={1200} /> at a time.
+            </span>
           </h1>
 
           <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">

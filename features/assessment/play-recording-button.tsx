@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CircleNotch, Play, Stop, WarningCircle } from "@phosphor-icons/react/ssr";
+import {
+  CircleNotch,
+  Play,
+  Stop,
+  WarningCircle,
+} from "@phosphor-icons/react/ssr";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 type State = "idle" | "loading" | "playing" | "error";
@@ -31,7 +41,9 @@ export function PlayRecordingButton({
     }
     setState("loading");
     try {
-      const res = await fetch(`/api/recordings/${attemptId}?as=${as}`, { cache: "no-store" });
+      const res = await fetch(`/api/recordings/${attemptId}?as=${as}`, {
+        cache: "no-store",
+      });
       const data = (await res.json()) as { url?: string };
       if (!res.ok || !data.url) throw new Error("no url");
       audioRef.current?.pause();
@@ -54,27 +66,41 @@ export function PlayRecordingButton({
         ? `Couldn't play, try again: ${text}`
         : `Play recording: ${text}`;
 
+  const tip = !hasAudio
+    ? "No recording saved"
+    : state === "playing"
+      ? "Stop"
+      : state === "error"
+        ? "Couldn't play — tap to try again"
+        : "Play recording";
+
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      disabled={!hasAudio || state === "loading"}
-      aria-label={label}
-      title={label}
-      className={cn(
-        "flex size-9 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-45 [&_svg]:size-4",
-        state === "error" ? "bg-destructive/10 text-destructive" : "bg-secondary text-primary hover:bg-primary hover:text-primary-foreground",
-      )}
-    >
-      {state === "loading" ? (
-        <CircleNotch className="animate-spin" weight="bold" />
-      ) : state === "playing" ? (
-        <Stop weight="fill" />
-      ) : state === "error" ? (
-        <WarningCircle weight="bold" />
-      ) : (
-        <Play weight="fill" />
-      )}
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={!hasAudio || state === "loading"}
+          aria-label={label}
+          className={cn(
+            "flex size-9 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-45 [&_svg]:size-4",
+            state === "error"
+              ? "bg-destructive/10 text-destructive"
+              : "bg-secondary text-primary hover:bg-primary hover:text-primary-foreground",
+          )}
+        >
+          {state === "loading" ? (
+            <CircleNotch className="animate-spin" weight="bold" />
+          ) : state === "playing" ? (
+            <Stop weight="fill" />
+          ) : state === "error" ? (
+            <WarningCircle weight="bold" />
+          ) : (
+            <Play weight="fill" />
+          )}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="right">{tip}</TooltipContent>
+    </Tooltip>
   );
 }

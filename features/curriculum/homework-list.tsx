@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarBlank, CaretRight, CheckCircle } from "@phosphor-icons/react/ssr";
 import { levelBadge } from "@/components/brand/ui";
+import { Progress } from "@/components/ui/progress";
 import { PikoSays } from "@/components/brand/piko";
 import { levelLabel } from "@/features/curriculum/level";
 import { cn } from "@/lib/utils";
@@ -38,7 +39,7 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
                 <CalendarBlank className="size-6" weight="duotone" />
               )}
             </span>
-            <span className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1">
               <span className="block truncate font-heading font-bold">{h.title}</span>
               <span className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                 <span className={cn("rounded-full px-2 py-0.5 font-bold", levelBadge[h.level])}>{levelLabel[h.level]}</span>
@@ -47,6 +48,13 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
                   · {h.mastered}/{h.itemCount} done
                 </span>
               </span>
+              {h.itemCount > 0 ? (
+                <Progress
+                  value={Math.round((h.mastered / h.itemCount) * 100)}
+                  aria-label={`${h.title} progress`}
+                  className="mt-2 h-2 bg-muted [&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-indicator]]:bg-score-excellent"
+                />
+              ) : null}
               {done ? (
                 <span className="mt-1.5 inline-block rounded-full bg-score-excellent/12 px-2 py-0.5 text-xs font-bold text-score-excellent">
                   Done
@@ -62,7 +70,7 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
                   {dateFmt.format(new Date(h.deadline))}
                 </span>
               ) : null}
-            </span>
+            </div>
             {h.firstItemId ? <CaretRight className="size-5 shrink-0 text-primary" weight="bold" /> : null}
           </>
         );

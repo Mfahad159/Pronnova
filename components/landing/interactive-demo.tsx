@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import {
   ArrowCounterClockwise,
   CheckCircle,
@@ -331,9 +332,10 @@ export function InteractiveDemo() {
                         </button>
                         <Link
                           href="/onboarding"
-                          className="inline-flex h-10 items-center rounded-xl bg-foreground px-4 text-xs font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+                          className="group/arrow inline-flex h-10 items-center gap-1.5 rounded-xl bg-foreground px-4 text-xs font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/50"
                         >
-                          Open Full Student Practice →
+                          Open Full Student Practice
+                          <ArrowRight className="size-4 transition-transform group-hover/arrow:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
                         </Link>
                       </div>
                     </div>

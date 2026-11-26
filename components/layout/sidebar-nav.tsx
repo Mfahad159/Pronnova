@@ -22,9 +22,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  Highlight,
+  HighlightItem,
+} from "@animate-ui/react/primitives/effects/highlight";
 import type { NavGroup, NavItem } from "@/lib/navigation";
 
-const icons: Record<NavItem["icon"], React.ComponentType<{ className?: string }>> = {
+const icons: Record<
+  NavItem["icon"],
+  React.ComponentType<{ className?: string }>
+> = {
   home: House,
   book: BookOpen,
   mic: Microphone,
@@ -49,40 +56,68 @@ export function SidebarNav({ groups }: { groups: NavGroup[] }) {
   const activeHref =
     groups
       .flatMap((g) => g.items.map((i) => i.href))
-      .filter((href) => pathname === href || (href.split("/").length > 2 && pathname.startsWith(href + "/")))
+      .filter(
+        (href) =>
+          pathname === href ||
+          (href.split("/").length > 2 && pathname.startsWith(href + "/")),
+      )
       .sort((a, b) => b.length - a.length)[0] ?? null;
   return <NavGroups groups={groups} activeHref={activeHref} />;
 }
 
-function NavGroups({ groups, activeHref }: { groups: NavGroup[]; activeHref: string | null }) {
-  return groups.map((group) => (
-    <SidebarGroup key={group.label}>
-      <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {group.items.map((item) => {
-            const Icon = icons[item.icon];
-            const active = item.href === activeHref;
-            return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={active}
-                  tooltip={item.title}
-                  size="lg"
-                  // Landing navbar link style: rounded-xl, secondary hover, coral active (ADR-007).
-                  className="h-11 rounded-xl font-medium text-foreground/80 hover:bg-secondary/70 hover:text-foreground data-[active=true]:bg-secondary data-[active=true]:font-semibold data-[active=true]:text-primary [&_svg]:size-5"
-                >
-                  <Link href={item.href} aria-current={active ? "page" : undefined}>
-                    <Icon />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  ));
+function NavGroups({
+  groups,
+  activeHref,
+}: {
+  groups: NavGroup[];
+  activeHref: string | null;
+}) {
+  // Animate UI Highlight: the peach pill rests on the current page and glides to the hovered item.
+  return (
+    <Highlight
+      controlledItems
+      hover
+      click={false}
+      value={activeHref}
+      exitDelay={150}
+      className="inset-0 rounded-xl bg-secondary"
+    >
+      {groups.map((group) => (
+        <SidebarGroup key={group.label}>
+          <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {group.items.map((item) => {
+                const Icon = icons[item.icon];
+                const active = item.href === activeHref;
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <HighlightItem value={item.href} className="rounded-xl">
+                      <SidebarMenuButton
+                        asChild
+                        isActive={active}
+                        tooltip={item.title}
+                        size="lg"
+                        // Landing navbar link style: rounded-xl, secondary hover, coral active (ADR-007).
+                        // Pill comes from Highlight; the current page keeps coral text (aria-current).
+                        className="h-11 rounded-xl bg-transparent font-medium text-foreground/80 hover:bg-transparent hover:text-foreground active:bg-transparent data-[active=true]:bg-transparent aria-[current=page]:font-semibold aria-[current=page]:text-primary [&_svg]:size-5"
+                      >
+                        <Link
+                          href={item.href}
+                          aria-current={active ? "page" : undefined}
+                        >
+                          <Icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </HighlightItem>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      ))}
+    </Highlight>
+  );
 }

@@ -9,7 +9,8 @@ import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { AttemptsTable } from "@/features/assessment/attempts-table";
 import { classify } from "@/lib/scoring";
 import { getCurrentTeacher } from "@/server/db/demo-user";
-import { getTeacherStats, listClassAttempts } from "@/server/db/queries/attempts";
+import { getTeacherStats, listClassAttempts, listClassStudents } from "@/server/db/queries/attempts";
+import { ClassAvatars } from "@/features/teacher/class-avatars";
 
 export const metadata = { title: "Dashboard" };
 
@@ -30,7 +31,11 @@ export default function TeacherHomePage() {
 
 async function TeacherHome() {
   const teacher = await getCurrentTeacher();
-  const [stats, attempts] = await Promise.all([getTeacherStats(teacher.id), listClassAttempts(teacher.id, 8)]);
+  const [stats, attempts, students] = await Promise.all([
+    getTeacherStats(teacher.id),
+    listClassAttempts(teacher.id, 8),
+    listClassStudents(teacher.id),
+  ]);
 
   return (
     <>
@@ -47,7 +52,10 @@ async function TeacherHome() {
         <Panel>
           <PanelHeader>
             <PanelTitle>Class overview</PanelTitle>
-            <span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">This week</span>
+            <div className="flex items-center gap-3">
+              <ClassAvatars students={students} />
+              <span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">This week</span>
+            </div>
           </PanelHeader>
           <div className="grid grid-cols-2 gap-3 p-5 sm:p-6 lg:grid-cols-4">
             <StatTile label="Students" value={stats.students} />
