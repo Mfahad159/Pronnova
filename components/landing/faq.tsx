@@ -1,3 +1,4 @@
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 // SECTION 10 — FREQUENTLY ASKED QUESTIONS
@@ -41,17 +42,12 @@ export function Faq() {
   return (
     <section id="faq" aria-labelledby="faq-title" className="scroll-mt-24 bg-card py-16 md:py-22">
       <div className="mx-auto w-full max-w-4xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-secondary px-3.5 py-1 text-xs font-semibold tracking-wide text-primary uppercase">
-            Questions &amp; Answers
-          </p>
-          <h2 id="faq-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Frequently Asked Questions
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Clear answers for students, teachers, and academic evaluators.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="faq-title"
+          lead="Frequently Asked"
+          accent="Questions"
+          subtitle="Clear answers for students, teachers, and academic evaluators."
+        />
 
         <Accordion type="single" collapsible className="mt-10 rounded-2xl border border-border bg-background">
           {faqs.map((f, i) => (

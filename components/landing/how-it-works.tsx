@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowCounterClockwise, ChartBar, Microphone, SpeakerHigh } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { cn } from "@/lib/utils";
 
 const steps = [
@@ -15,7 +16,6 @@ const steps = [
     Icon: SpeakerHigh,
     previewTitle: "Reference audio: “Apple”",
     previewText: "Clear, steady playback at a learner-friendly pace.",
-    bars: [14, 24, 34, 22, 16],
   },
   {
     num: "02",
@@ -27,7 +27,6 @@ const steps = [
     Icon: Microphone,
     previewTitle: "Live microphone waveform",
     previewText: "Up to 15 seconds per attempt, with silence and length checks.",
-    bars: [20, 38, 28, 42, 24],
   },
   {
     num: "03",
@@ -39,7 +38,6 @@ const steps = [
     Icon: ChartBar,
     previewTitle: "Word-by-word evaluation",
     previewText: "Score percentage + rating (Excellent ≥85, Good 70–84, Average <70).",
-    bars: [30, 26, 40, 32, 22],
   },
   {
     num: "04",
@@ -51,7 +49,6 @@ const steps = [
     Icon: ArrowCounterClockwise,
     previewTitle: "Retry anytime",
     previewText: "No exam pressure—every retry helps build clearer habits.",
-    bars: [18, 28, 36, 40, 44],
   },
 ] as const;
 
@@ -69,67 +66,83 @@ export function HowItWorks() {
   const fillRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
+  const updateRailBounds = useCallback(() => {
+    const wrap = wrapperRef.current;
+    const rail = railRef.current;
+    const first = nodeRefs.current[0];
+    const last = nodeRefs.current[steps.length - 1];
+    if (!wrap || !rail || !first || !last) return;
+
+    const wrapRect = wrap.getBoundingClientRect();
+    const firstRect = first.getBoundingClientRect();
+    const lastRect = last.getBoundingClientRect();
+    const top = firstRect.top - wrapRect.top + firstRect.height / 2;
+    const bottom = lastRect.top - wrapRect.top + lastRect.height / 2;
+    rail.style.top = `${top}px`;
+    rail.style.height = `${Math.max(0, bottom - top)}px`;
+  }, []);
+
+  const syncFillTransform = useCallback(() => {
+    const rail = railRef.current;
+    const fill = fillRef.current;
+    if (!rail || !fill) return false;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      fill.style.transform = "scaleY(1)";
+      return true;
+    }
+
+    const rect = rail.getBoundingClientRect();
+    const focalY = window.innerHeight * 0.58;
+    const raw = rect.height > 0 ? (focalY - rect.top) / rect.height : 0;
+    const clamped = Math.max(0, Math.min(1, raw));
+    fill.style.transform = `scaleY(${clamped})`;
+    return false;
+  }, []);
+
+  const updateProgress = useCallback(() => {
+    const reduced = syncFillTransform();
+    if (reduced) {
+      setReached(steps.length - 1);
+      return;
+    }
+
+    const focalY = window.innerHeight * 0.58;
+    let lastReached = 0;
+    for (let i = 0; i < nodeRefs.current.length; i++) {
+      const node = nodeRefs.current[i];
+      if (!node) continue;
+      const nRect = node.getBoundingClientRect();
+      if (nRect.top + nRect.height / 2 <= focalY + 8) {
+        lastReached = i;
+      }
+    }
+    setReached((prev) => (prev === lastReached ? prev : lastReached));
+  }, [syncFillTransform]);
+
+  const activeIdx = selected ?? reached;
+
+  // Re-measure rail bounds and fill transform synchronously before paint whenever activeIdx changes
+  // (expanding/collapsing a card shifts node 01/04 vertical centers even if net wrapper height is unchanged).
+  useLayoutEffect(() => {
+    updateRailBounds();
+    syncFillTransform();
+  }, [activeIdx, updateRailBounds, syncFillTransform]);
+
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
-
-    const updateRailBounds = () => {
-      const wrap = wrapperRef.current;
-      const rail = railRef.current;
-      const first = nodeRefs.current[0];
-      const last = nodeRefs.current[steps.length - 1];
-      if (!wrap || !rail || !first || !last) return;
-
-      const wrapRect = wrap.getBoundingClientRect();
-      const firstRect = first.getBoundingClientRect();
-      const lastRect = last.getBoundingClientRect();
-      const top = firstRect.top - wrapRect.top + firstRect.height / 2;
-      const bottom = lastRect.top - wrapRect.top + lastRect.height / 2;
-      rail.style.top = `${top}px`;
-      rail.style.height = `${Math.max(0, bottom - top)}px`;
-    };
-
-    const updateProgress = () => {
-      raf = 0;
-      const rail = railRef.current;
-      const fill = fillRef.current;
-      if (!rail || !fill) return;
-
-      if (reduceMotion) {
-        fill.style.transform = "scaleY(1)";
-        setReached(steps.length - 1);
-        return;
-      }
-
-      const rect = rail.getBoundingClientRect();
-      const focalY = window.innerHeight * 0.58;
-      const raw = rect.height > 0 ? (focalY - rect.top) / rect.height : 0;
-      const clamped = Math.max(0, Math.min(1, raw));
-      fill.style.transform = `scaleY(${clamped})`;
-
-      let lastReached = 0;
-      for (let i = 0; i < nodeRefs.current.length; i++) {
-        const node = nodeRefs.current[i];
-        if (!node) continue;
-        const nRect = node.getBoundingClientRect();
-        if (nRect.top + nRect.height / 2 <= focalY + 8) {
-          lastReached = i;
-        }
-      }
-      setReached((prev) => (prev === lastReached ? prev : lastReached));
-    };
-
     const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(updateProgress);
+      if (!raf) {
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          updateProgress();
+        });
+      }
     };
-
     const onResize = () => {
       updateRailBounds();
-      onScroll();
+      updateProgress();
     };
-
-    updateRailBounds();
-    updateProgress();
 
     const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(onResize) : null;
     if (ro && wrapperRef.current) ro.observe(wrapperRef.current);
@@ -142,32 +155,25 @@ export function HowItWorks() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, []);
-
-  const activeIdx = selected ?? reached;
+  }, [updateRailBounds, updateProgress]);
 
   return (
     <section id="how-it-works" aria-labelledby="how-title" className="scroll-mt-24 py-12 md:py-18">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-tint-sky px-3.5 py-1 text-xs font-semibold tracking-wide text-foreground uppercase">
-            Continuous Practice Cycle
-          </p>
-          <h2 id="how-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            How Pronnova Works
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">
-            Four simple steps designed to turn hesitation into confident speaking.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="how-title"
+          lead="How Pronnova"
+          accent="Works"
+          subtitle="Four simple steps designed to turn hesitation into confident speaking."
+        />
 
         {/* Alternating left/right timeline with center scroll progress line */}
         <div ref={wrapperRef} className="relative mt-12">
-          {/* Base rail + scroll-driven fill anchored from Step 01 center to Step 04 center */}
+          {/* Base rail + scroll-driven fill anchored strictly between Step 01 center and Step 04 center */}
           <div
             ref={railRef}
             aria-hidden="true"
-            className="pointer-events-none absolute top-12 left-5 w-1 -translate-x-1/2 overflow-hidden rounded-full bg-border md:left-1/2"
+            className="pointer-events-none absolute top-0 left-5 w-1 -translate-x-1/2 overflow-hidden rounded-full bg-border md:left-1/2"
           >
             <div
               ref={fillRef}
@@ -193,22 +199,10 @@ export function HowItWorks() {
                     isActive ? step.tone : "border-border bg-card hover:border-primary/30",
                   )}
                 >
-                  <div className="flex w-full items-center justify-between gap-3">
-                    <span className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1 font-heading text-xs font-bold", step.badge)}>
-                      <span>{step.num}</span>
-                      <span>{step.title}</span>
-                    </span>
-
-                    <div aria-hidden="true" className="flex items-center gap-1">
-                      {step.bars.map((h, i) => (
-                        <span
-                          key={i}
-                          style={{ height: `${Math.round(h * 0.65)}px` }}
-                          className={cn("w-1 rounded-full", isActive ? "bg-primary" : "bg-primary/25")}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  <span className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1 font-heading text-xs font-bold", step.badge)}>
+                    <span>{step.num}</span>
+                    <span>{step.title}</span>
+                  </span>
 
                   <div className="mt-4 flex items-start gap-3.5">
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-foreground/10 bg-card text-foreground">

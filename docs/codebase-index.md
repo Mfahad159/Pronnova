@@ -34,7 +34,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 ## App code
 | Folder / file | Holds | |
 |---|---|---|
-| `app/layout.tsx` | Root layout: font (Google Sans Flex), icons + manifest metadata, tooltip provider, toaster | ✅ |
+| `app/layout.tsx` | Root layout: font (Quicksand), icons + manifest metadata, tooltip provider, toaster | ✅ |
 | `app/globals.css` | **Design tokens** (colors, score colors, tints, radius) + Tailwind theme | ✅ |
 | `components/ui/` | shadcn components (button, card, sidebar, table, tabs, dialog, select, accordion, progress, …). Generated — edit with care. accordion, dialog, dropdown-menu, progress, select, sheet, tabs, tooltip import their primitives from `@animate-ui/react` (ADR-008) | ✅ |
 | `components/animate-ui/components/page-transition.tsx` | Animate UI page transition (view transitions), used in `AppShell` | ✅ |

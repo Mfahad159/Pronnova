@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { SpeakerHigh } from "@phosphor-icons/react/ssr";
+import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { speakReference } from "@/lib/speech-tts";
 import { cn } from "@/lib/utils";
 import { ButterflyIllustration, CatIllustration, ElephantIllustration } from "@/components/brand/illustrations";
@@ -100,17 +101,12 @@ export function LearningJourney() {
   return (
     <section id="journey" aria-labelledby="journey-title" className="scroll-mt-24 py-12 md:py-18">
       <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-tint-mint px-3.5 py-1 text-xs font-semibold tracking-wide text-score-excellent uppercase">
-            Structured Progression · Sample Words
-          </p>
-          <h2 id="journey-title" className="mt-3 font-heading text-3xl font-bold tracking-tight text-balance md:text-4xl">
-            Explore the Learning Journey
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground md:text-lg">
-            Chapters grow across three clear difficulty levels—from short familiar words to longer sentences. Click a level to explore illustrative sample words.
-          </p>
-        </div>
+        <LandingSectionHeader
+          id="journey-title"
+          lead="Explore the"
+          accent="Learning Journey"
+          subtitle="Chapters grow across three clear difficulty levels—from short familiar words to longer sentences. Click a level to explore sample words."
+        />
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {levels.map((lvl) => {
