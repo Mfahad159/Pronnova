@@ -55,8 +55,8 @@ export function itemWarnings(text: string, level: Level): string[] {
   const words = wordCount(normaliseItem(text));
   const fit = LEVEL_WORDS[level];
   if (!fit || words === 0) return [];
-  if (words < fit.min) return [`${words} word${words === 1 ? "" : "s"} is short for ${levelName[level]} (${fit.min}–${fit.max} words).`];
-  if (words > fit.max) return [`${words} words is long for ${levelName[level]} (${fit.min}–${fit.max} words).`];
+  if (words < fit.min) return [`Short for ${levelName[level]}: ${fit.min}–${fit.max} words suggested`];
+  if (words > fit.max) return [`Long for ${levelName[level]}: ${fit.min}–${fit.max} words suggested`];
   return [];
 }
 

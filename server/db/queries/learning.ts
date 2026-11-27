@@ -16,12 +16,16 @@ export interface HomeworkEntry {
   /** Due date, yyyy-mm-dd (nearest upcoming one when assigned several times). */
   deadline: string | null;
   firstItemId: string | null;
+  /** Where tapping the lesson resumes: first item not tried yet, else first not mastered, else the first. */
+  nextItemId: string | null;
   itemCount: number;
   /** Items with at least one attempt (any result). */
   attempted: number;
   mastered: number;
   /** Past the due date and not finished. Computed here (not in render) so pages stay pure. */
   overdue: boolean;
+  /** Due today or within the next 2 days, and not finished. */
+  dueSoon: boolean;
 }
 
 export interface StudentLearning {
@@ -115,16 +119,24 @@ export async function getStudentLearning(student: { id: string; classId: string 
         level: l.level,
         deadline: a.deadline,
         firstItemId: l.items[0]?.id ?? null,
+        nextItemId:
+          (l.items.find((i) => !tried.has(i.id)) ?? l.items.find((i) => (best.get(i.id) ?? 0) < PASS_SCORE) ?? l.items[0])?.id ?? null,
         itemCount: l.items.length,
         attempted: l.items.filter((i) => tried.has(i.id)).length,
         mastered,
         overdue: a.deadline != null && a.deadline < today && mastered < l.items.length,
+        dueSoon: a.deadline != null && a.deadline >= today && daysBetween(today, a.deadline) <= 2 && mastered < l.items.length,
       });
     }
   }
   homework.sort((a, b) => (a.deadline ?? "9999").localeCompare(b.deadline ?? "9999") || a.title.localeCompare(b.title));
 
   return { view: learningView({ chapters, best, assigned }), homework, lastItemId: last[0]?.item_id ?? null };
+}
+
+/** Whole days from one yyyy-mm-dd date to another. */
+function daysBetween(from: string, to: string) {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
 }
 
 /** Can this student open this item? (ADR-004: locked levels, hidden teacher material). */

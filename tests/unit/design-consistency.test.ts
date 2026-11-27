@@ -18,6 +18,7 @@ const appPages = [...pages(join(root, "app/student")), ...pages(join(root, "app/
 describe("app pages use the landing design pieces", () => {
   it.each(appPages.map((p) => [p.slice(root.length + 1)]))("%s", (file) => {
     const src = readFileSync(join(root, file), "utf8");
+    if (/^\s*redirect\(/m.test(src) && !src.includes("return (")) return; // redirect-only page, renders nothing
     // Old generic shadcn look is replaced by components/brand (KiddyButton, Panel, PikoSays…).
     expect(src).not.toMatch(/@\/components\/ui\/(button|card|badge)"/);
     expect(src).toMatch(/@\/components\/(brand\/|layout\/(coming-soon|top-bar))/);

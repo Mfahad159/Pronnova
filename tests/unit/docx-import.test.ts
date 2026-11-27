@@ -25,7 +25,7 @@ describe("Word (.docx) import → preview", () => {
     const bytes = await makeDocx(["I see a cow. It is big."]);
     const [item] = await importDocx(file("a.DOCX", bytes), "line", "basic");
     expect(item.text).toBe("I see a cow. It is big.");
-    expect(item.warnings[0]).toMatch(/long for Basic/);
+    expect(item.warnings[0]).toMatch(/Long for Basic: 1–3 words suggested/);
   });
   it("rejects .doc, .pdf and other names", async () => {
     const bytes = await makeDocx(["cat"]);

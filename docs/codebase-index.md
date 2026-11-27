@@ -48,7 +48,11 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
-| `features/materials/` | `material-form.tsx` (UC-10: paste / Word import → editable preview → save, optional assign to classes), `duplicate-button.tsx` | ✅ |
+| `features/materials/` | `material-editor.tsx` (one editor for new/edit: Write / Paste / Upload Word tabs → one list, inline edit, drag reorder, limits, unsaved-changes guard, locked banner), `material-library.tsx` (search, level filter, Open/Assign/Duplicate), `assign-dialog.tsx` (UC-08 assign only), `duplicate-button.tsx` | ✅ |
+| `features/roster/roster-manager.tsx` | Classes & Students screen (add/rename class; add/edit/move/archive/unarchive students) | ✅ |
+| `features/student/` | `identity.ts` (picked student: localStorage `pronnova.studentId` + cookie), `student-picker.tsx` ("Who are you?"), `student-menu.tsx` + `current-student-menu.tsx` (profile menu: Switch student) | ✅ |
+| `components/brand/form.tsx` | `Field`, `BrandSelect`, `fieldClass`/`inputClass`, `levelDot` — shared brand form pieces | ✅ |
+| `lib/api-client.ts` | `api()` browser fetch helper → `{ ok, status, data, error, fieldErrors }` | ✅ |
 | `features/teacher/class-avatars.tsx` | Animate UI avatar group of the class's students (dashboard) | ✅ |
 | `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view), `play-recording-button.tsx` (fetches a signed link, plays/stops) | ✅ |
 | `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
@@ -91,12 +95,15 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 |---|---|---|---|
 | `/` | `app/page.tsx` | Guided 11-section interactive tour: Hero → Interactive Demo (`Apple` mic/TTS) → How Pronnova Works → Learning Buddy (`Piko`) → Learning Journey (`Basic`/`Medium`/`Advanced`) → Pronunciation Assessment → Teacher Dashboard preview → Classroom Workflow → Young Learners flashcards → FAQ → Final CTA & Footer | ✅ |
 | `/onboarding` | `app/onboarding/page.tsx` | Choose **Student** or **Teacher** (picture cards). FYP-1 opens the demo user; FYP-2 → sign up / sign in | ✅ |
-| `/student` | `app/student/page.tsx` | Home: Continue, homework, chapter cards with stage, recent attempts (UC-03) | ✅ |
+| `/student` | `app/student/page.tsx` | Dashboard: greeting + class, Continue, Your lessons (due-date highlight, progress), chapters, recent attempts. No pick → redirects to `/student/who` | ✅ |
 | `/student/chapters` | `app/student/chapters/page.tsx` | UC-03 chapters + stage | ✅ |
 | `/student/chapters/[chapterId]` | `app/student/chapters/[chapterId]/page.tsx` | UC-03 levels (locked in order) → items, homework badges | ✅ |
 | `/student/practice/[itemId]` | `app/student/practice/[itemId]/page.tsx` | UC-04/05 record → send → score/retry; UC-06 basic result (full view 🕓 Phase 4) | ✅ |
 | `/student/progress` | `app/student/progress/page.tsx` | UC-07 | placeholder (FYP-2) |
-| `/student/who` | `app/student/who/page.tsx` | "Who are you?" picker: class → name (no login, ADR-002) | ✅ |
+| `/student/who` | `app/student/who/page.tsx` | "Who are you?" picker: class → name → Continue (first visit; replaces login until FYP-2, ADR-002) | ✅ |
+| `/teacher/classes` | `app/teacher/classes/page.tsx` | Classes & Students (roster). `/teacher/students` redirects here | ✅ |
+| `/teacher/materials` | `app/teacher/materials/page.tsx` | Library + Assign dialog | ✅ |
+| `/teacher/materials/new`, `/teacher/materials/[materialId]` | `app/teacher/materials/new/page.tsx`, `…/[materialId]/page.tsx` | One editor for new/edit (the only upload path); edit page lists the material's assignments (read-only) | ✅ |
 | `/teacher` | `app/teacher/page.tsx` | UC-12 overview | ✅ DB stats + latest attempts |
 | `/teacher/materials` | `app/teacher/materials/page.tsx` | UC-10 list of uploaded material + assignment | ✅ |
 | `/teacher/materials/new` | `app/teacher/materials/new/page.tsx` | UC-10 upload form (saves via `saveMaterial`) | ✅ |

@@ -5,8 +5,9 @@ import type { Profile } from "@/types";
 import { check, getDb } from "./client";
 
 // FYP-1 has no login (ADR-002). The teacher is the seeded demo teacher. The student is whoever was
-// picked on "Who are you?" (/student/who), remembered in a plain cookie — NOT authentication.
-// Without a pick, the seeded demo student is used so existing flows keep working.
+// picked on "Who are you?" (/student/who): this REPLACES LOGIN until auth arrives in FYP-2.
+// The id lives in localStorage (`pronnova.studentId`, as asked) and is mirrored into a plain cookie
+// so server-rendered pages and API routes can read it. Not authentication. No pick → the picker.
 // FYP-2 replaces these functions with the signed-in user — nothing else should need to change.
 export const DEMO_TEACHER_ID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_STUDENT_ID = "00000000-0000-4000-8000-000000000002";
@@ -34,15 +35,16 @@ async function loadProfile(id: string) {
   ) as { id: string; name: string; role: Profile["role"]; class_id: string | null; archived_at: string | null } | null;
 }
 
-/** Id of the picked student (cookie), or the demo student. */
-export async function getCurrentStudentId(): Promise<string> {
+/** Id of the picked student (cookie), or null when nobody has been picked on this device. */
+export async function getCurrentStudentId(): Promise<string | null> {
   const picked = (await cookies()).get(STUDENT_COOKIE)?.value;
-  return picked && UUID.test(picked) ? picked : DEMO_STUDENT_ID;
+  return picked && UUID.test(picked) ? picked : null;
 }
 
 /** For API routes: throws StudentUnavailableError if missing, not a student, or archived (→ 404). */
 export async function getCurrentStudent(): Promise<CurrentStudent> {
-  const row = await loadProfile(await getCurrentStudentId());
+  const id = await getCurrentStudentId();
+  const row = id ? await loadProfile(id) : null;
   if (!row || row.role !== "student" || row.archived_at) throw new StudentUnavailableError();
   return { id: row.id, name: row.name, role: row.role, classId: row.class_id, archivedAt: row.archived_at };
 }

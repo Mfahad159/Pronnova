@@ -47,7 +47,7 @@ describe("splitTextToItems — sentence mode (default)", () => {
     const [item] = splitTextToItems("The big red ball is under the table.", "sentence", "basic");
     expect(item.words).toBe(8);
     expect(item.tooLong).toBe(false);
-    expect(item.warnings[0]).toMatch(/long for Basic/);
+    expect(item.warnings[0]).toMatch(/Long for Basic: 1–3 words suggested/);
   });
   it("returns nothing for empty input", () => {
     expect(splitTextToItems("   \n \n")).toEqual([]);

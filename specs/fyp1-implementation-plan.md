@@ -152,6 +152,34 @@ Engine track: `python` engine answers `/score`; run the comparison script on the
 
 ---
 
+## Phase A — Roster, material library, assignments (backend) ✅ 2026-11-28
+**Goal:** the data and APIs for classes/students, a teacher material library, Paste/Word import and UC-08 assign-only.
+1. Migration 0004: students on `profiles` (class, roll no, archive), unique class names, materials = teacher `lessons`, `assignment_targets`; 5 atomic DB functions.
+2. APIs: classes, students (+archive), materials (+duplicate, split, .docx import), assignments, student session/home.
+3. One shared splitter (`lib/split-items.ts`) for Paste and Word.
+
+Exit checks
+- [x] Migration runs on the existing data (3 students, 1 assignment, 9 attempts kept); UC-03/04/06 flows still pass
+- [ ] Migration on a fresh, empty project — not run (needs a second Supabase project)
+- [x] Tests: 25-word block, non-blocking warnings, atomic rollback, 409 lock, duplicate, splitter, .docx, CHECK, duplicate targets, past date, archived targeting, visibility union/dedupe, late-added student (unit + `npm run test:db`)
+
+## Phase B — Screens for the roster, library, assigning and the student dashboard ✅ 2026-11-28
+**Goal:** every Phase A feature usable from the UI, in the existing design.
+1. Teacher: Classes & Students (add/rename class; add/edit/move/archive students, show archived + unarchive).
+2. Teacher: Materials library (search, level filter, Open / Assign / Duplicate, lock icon) and one editor for new/edit (Write / Paste / Upload Word tabs, inline edit, drag reorder, limits, unsaved-changes guard, locked banner + Duplicate & edit, read-only assignment list).
+3. Teacher: Assign dialog (classes + searchable students, due date, live summary).
+4. Student: "Who are you?" (first visit; id in localStorage, mirrored to a cookie), "Not you? Switch student" in the profile menu, dashboard (greeting, Continue, Your lessons with due-date highlight + progress).
+
+Exit checks (walked in `tests/e2e/phase-b.spec.ts`, `E2E_MUTATE=1`)
+- [x] 1. Class + 3 students; an archived student leaves the picker and the Assign dialog
+- [x] 2. Materials by Write, Paste (sentence mode) and .docx upload
+- [x] 3. 26 words disables Save; 8 words in Basic warns but saves
+- [x] 4. Class + 1 student from another class → both see it; a student added later sees it too
+- [x] 5. First visit → picker; reload → dashboard; Switch works
+- [x] 6. After an attempt the material is locked; Duplicate & edit works
+- [x] 7. Record → feedback → retry from the new dashboard
+- [x] 8. Every new screen at 390 px and 1280 px, no sideways scrolling (screenshots reviewed)
+
 ## Phase 5 — QA, fixes and release
 **Goal:** a stable, consistent demo build for the FYP-1 evaluation. Mostly fixing, no new features.
 **Depends on:** Phases 1–4.

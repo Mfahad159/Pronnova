@@ -1,16 +1,6 @@
-import { PageBody, TopBar } from "@/components/layout/top-bar";
-import { ComingSoon } from "@/components/layout/coming-soon";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Students" };
-
-// UC-12 (FYP-2): per-student attempts, scores and evaluation.
+// The roster lives on "Classes & Students". Per-student progress (UC-12) is FYP-2.
 export default function TeacherStudentsPage() {
-  return (
-    <>
-      <TopBar title="Students" subtitle="Each student's attempts, scores and progress." />
-      <PageBody>
-        <ComingSoon what="Student progress" milestone="FYP-2" />
-      </PageBody>
-    </>
-  );
+  redirect("/teacher/classes");
 }

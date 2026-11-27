@@ -402,6 +402,12 @@ function PageTransition({
 
   React.useLayoutEffect(refreshStyle);
 
+  // Pronnova: set view-transition-class after mount. React's server renderer drops this newer CSS
+  // property, so putting it in `style` caused a hydration mismatch on every page.
+  React.useLayoutEffect(() => {
+    localRef.current?.style.setProperty('view-transition-class', `page-transition ${className}`);
+  }, [className, key]);
+
   React.useEffect(() => {
     const onInput = (event: Event) => {
       if (!localRef.current) return;
@@ -441,10 +447,7 @@ function PageTransition({
         ref={localRef}
         data-slot="page-transition"
         {...props}
-        style={{
-          viewTransitionClass: `page-transition ${className}`,
-          ...props.style,
-        }}
+        style={props.style}
       >
         <style href="page-transition" precedence="default">
           {CLIP}
@@ -470,6 +473,10 @@ function PageTransitionShared({
   const fromRef = React.useRef<string | undefined>(undefined);
 
   React.useLayoutEffect(() => {
+    localRef.current?.style.setProperty('view-transition-class', 'page-transition-shared');
+  }, []);
+
+  React.useLayoutEffect(() => {
     if (!localRef.current) return;
     fromRef.current = radii.get(name);
     radii.set(name, getComputedStyle(localRef.current).borderRadius);
@@ -492,10 +499,7 @@ function PageTransitionShared({
         ref={localRef}
         data-slot="page-transition-shared"
         {...props}
-        style={{
-          viewTransitionClass: 'page-transition-shared',
-          ...props.style,
-        }}
+        style={props.style}
       />
     </AnimateView>
   );

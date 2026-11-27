@@ -18,6 +18,7 @@ import { BrandLogo } from "@/components/layout/brand-logo";
 import { Eyebrow } from "@/components/brand/ui";
 import { SidebarNav, SidebarNavStatic } from "@/components/layout/sidebar-nav";
 import { navByRole } from "@/lib/navigation";
+import { CurrentStudentMenu } from "@/features/student/current-student-menu";
 import { PageTransition } from "@/components/animate-ui/components/page-transition";
 import type { Role } from "@/types";
 
@@ -33,6 +34,12 @@ export function AppShell({ role, children }: { role: Role; children: React.React
           <Eyebrow tone={role === "student" ? "coral" : "sky"} className="ml-1 group-data-[collapsible=icon]:hidden">
             {role === "student" ? "Student" : "Teacher"} · Demo
           </Eyebrow>
+          {/* Student profile menu (who's practising + "Not you? Switch student"); request-time, so in Suspense. */}
+          {role === "student" ? (
+            <Suspense fallback={null}>
+              <CurrentStudentMenu />
+            </Suspense>
+          ) : null}
         </SidebarHeader>
         <SidebarContent>
           <Suspense fallback={<SidebarNavStatic groups={groups} />}>

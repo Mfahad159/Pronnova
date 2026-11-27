@@ -52,7 +52,7 @@ describe("POST /api/materials/split", () => {
     expect(res.status).toBe(200);
     const { items } = await res.json();
     expect(items.map((i: { text: string }) => i.text)).toEqual(["cat", "I see a dog."]);
-    expect(items[1].warnings[0]).toMatch(/long for Basic/);
+    expect(items[1].warnings[0]).toMatch(/Long for Basic: 1–3 words suggested/);
   });
 });
 

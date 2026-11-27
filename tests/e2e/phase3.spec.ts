@@ -40,8 +40,8 @@ test.describe("recording", () => {
     await expect(page.getByRole("status").filter({ hasText: /your score is \d+ percent/i })).toBeAttached({ timeout: 15_000 });
 
     await page.goto("/student");
-    await page.getByRole("tab", { name: "History" }).click();
-    const play = page.getByRole("tabpanel").getByRole("button", { name: "Play recording: dog" }).first();
+    const recent = page.locator("section", { has: page.getByRole("heading", { name: "Recent attempts" }) });
+    const play = recent.getByRole("button", { name: "Play recording: dog" }).first();
     await expect(play).toBeEnabled();
     const signed = page.waitForResponse((r) => r.url().includes("/api/recordings/"));
     await play.click();

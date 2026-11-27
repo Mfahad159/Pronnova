@@ -5,15 +5,16 @@ import { expect, test } from "@playwright/test";
 const routes: [path: string, heading: RegExp][] = [
   ["/", /helping little voices grow/i],
   ["/onboarding", /how will you use pronnova/i],
-  ["/student", /welcome back/i],
+  ["/student", /^hi, ayesha/i],
   ["/student/chapters", /^chapters$/i],
   ["/student/progress", /your progress/i],
   ["/teacher", /hello/i],
   ["/student/who", /who are you/i],
   ["/teacher/materials", /^materials$/i],
-  ["/teacher/materials/new", /upload practice material/i],
+  ["/teacher/materials/new", /^new material$/i],
   ["/teacher/chapters", /organize chapters/i],
-  ["/teacher/students", /^students$/i],
+  ["/teacher/classes", /classes & students/i],
+  ["/teacher/students", /classes & students/i], // old URL redirects
 ];
 
 for (const [path, heading] of routes) {
@@ -39,7 +40,7 @@ test("landing Choose Role → onboarding → choose student or teacher", async (
   await page.getByRole("link", { name: "Choose Role" }).first().click();
   await expect(page).toHaveURL(/\/onboarding$/);
   await page.getByRole("link", { name: /i'm a student/i }).click();
-  await expect(page.getByRole("heading", { level: 1, name: /welcome back/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /^hi, ayesha/i })).toBeVisible();
   await page.goto("/onboarding");
   await page.getByRole("link", { name: /i'm a teacher/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: /hello/i })).toBeVisible();

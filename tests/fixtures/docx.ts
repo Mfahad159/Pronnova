@@ -2,7 +2,8 @@
 // Uses jszip, which mammoth already depends on.
 import { createRequire } from "node:module";
 
-const require = createRequire(import.meta.url);
+// Resolve from the project root: works under Vitest (ESM) and Playwright (CommonJS).
+const require = createRequire(`${process.cwd()}/package.json`);
 const JSZip = require("jszip") as new () => {
   file(path: string, data: string): void;
   generateAsync(o: { type: "uint8array" }): Promise<Uint8Array>;

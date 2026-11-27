@@ -45,6 +45,9 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 18 | Brief's 25-word cap vs ADR-006's 8-word Class 1 cap | Team: brief wins (25 hard, level fit as warnings); ADR-006 updated |
 | 19 | Brief wants `students`, `materials`, `material_items` tables, but `profiles`, `lessons`, `lesson_items` already do the job | Team: extend the existing tables (no parallel system); `enrollments` folded into `profiles.class_id` and dropped |
 | 20 | Brief: one shared splitter for "Paste" and "Word import"; it also says Urdu text passes through unchanged | Splitter only splits on . ! ? — Urdu "۔" is NOT treated as a sentence end, so Urdu text stays whole |
+| 21 | Phase B brief labels levels Easy/Medium/Hard ("Long for Easy…") | Kept Basic/Medium/Advanced (team decision #17); warnings read "Long for Basic: 1–3 words suggested" |
+| 22 | Phase B brief: keep the picked student in `localStorage` | Server-rendered pages can't read localStorage, so the id is in localStorage AND mirrored to a cookie (`pronnova_student`) |
+| 23 | Brief: "no progress analytics" on the dashboard; the old home had chapters + attempt history | Dashboard = greeting, Continue, Your lessons; chapter cards and the recent-attempts list (UC-03/UC-06 playback) stay below — no charts |
 | 16 | Icons: the project standard is Phosphor (`components.json`); the team asked for lucide arrows, and Animate UI components ship with lucide | Both installed (ADR-008): Phosphor for icons in general, lucide for arrows and inside Animate UI components |
 | 14 | SRS 2.4 allows sentences of about 15 words; Class 1 (ADR-006) needs much shorter ones | Upload limit is 8 words per sentence with a warning above 6 (`MATERIAL_LIMITS`); raise it if the audience changes |
 | 13 | Plan asks for Firefox + Safari checks; Windows blocked the downloaded Firefox and Safari can't run here | Firefox e2e is opt-in (`E2E_FIREFOX=1`); both checked by hand in Phase 5 |

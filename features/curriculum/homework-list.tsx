@@ -1,88 +1,80 @@
 import Link from "next/link";
-import { CalendarBlank, CaretRight, CheckCircle } from "@phosphor-icons/react/ssr";
+import { CalendarBlank, CaretRight, CheckCircle, WarningCircle } from "@phosphor-icons/react/ssr";
 import { levelBadge } from "@/components/brand/ui";
 import { Progress } from "@/components/ui/progress";
 import { PikoSays } from "@/components/brand/piko";
+import { WordPicture } from "@/components/brand/word-pictures";
 import { levelLabel } from "@/features/curriculum/level";
 import { cn } from "@/lib/utils";
 import type { HomeworkEntry } from "@/server/db/queries/learning";
 
-const dateFmt = new Intl.DateTimeFormat("en-GB", {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  timeZone: "Asia/Karachi",
-});
+// Due dates are plain calendar days (yyyy-mm-dd), so format them in UTC to keep the same day.
+const dateFmt = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 
-const card = "flex items-center gap-3.5 rounded-2xl border-2 border-foreground/12 bg-card p-4";
-
-/** UC-03 alt 1B: lessons the teacher assigned, soonest due first. Landing card style (ADR-007). */
+/**
+ * "Your lessons": assigned materials (class + individual, deduplicated) with level, due date
+ * (red when overdue, amber when due within 2 days) and progress = items attempted / total.
+ * Tapping a card resumes the lesson at the next item (existing practice flow).
+ */
 export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
   if (homework.length === 0) {
-    return <PikoSays size="sm" tone="mint" message="No homework right now. Great job! 🎉" />;
+    return <PikoSays size="sm" tone="mint" message="No lessons assigned yet. Check back soon." />;
   }
   return (
     <ul className="grid gap-3 sm:grid-cols-2">
       {homework.map((h) => {
         const done = h.itemCount > 0 && h.mastered === h.itemCount;
+        const pct = h.itemCount ? Math.round((h.attempted / h.itemCount) * 100) : 0;
         const body = (
           <>
-            <span
-              className={cn(
-                "flex size-12 shrink-0 items-center justify-center rounded-xl border-2 border-foreground/10",
-                done ? "bg-tint-mint text-score-excellent" : "bg-tint-peach text-primary",
-              )}
-            >
-              {done ? (
-                <CheckCircle className="size-6" weight="duotone" />
-              ) : (
-                <CalendarBlank className="size-6" weight="duotone" />
-              )}
-            </span>
-            <div className="min-w-0 flex-1">
-              <span className="block truncate font-heading font-bold">{h.title}</span>
-              <span className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-                <span className={cn("rounded-full px-2 py-0.5 font-bold", levelBadge[h.level])}>{levelLabel[h.level]}</span>
-                <span>{h.chapterTitle}</span>
-                <span>
-                  · {h.mastered}/{h.itemCount} done
+            <div className="flex items-start gap-3">
+              <WordPicture text={h.title} size="sm" />
+              <div className="min-w-0 flex-1">
+                <span className="block font-heading text-lg leading-tight font-bold">{h.title}</span>
+                <span className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+                  <span className={cn("rounded-full px-2 py-0.5 font-bold", levelBadge[h.level])}>{levelLabel[h.level]}</span>
+                  {done ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-score-excellent/12 px-2 py-0.5 font-bold text-score-excellent">
+                      <CheckCircle className="size-3.5" weight="fill" /> Done
+                    </span>
+                  ) : h.deadline ? (
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold",
+                        h.overdue ? "bg-destructive/10 text-destructive" : h.dueSoon ? "bg-[#ffb000]/20 text-score-good" : "bg-secondary text-primary",
+                      )}
+                    >
+                      {h.overdue ? <WarningCircle className="size-3.5" weight="bold" /> : <CalendarBlank className="size-3.5" weight="bold" />}
+                      {h.overdue ? "Overdue · " : "Due "}
+                      {dateFmt.format(new Date(`${h.deadline}T00:00:00Z`))}
+                    </span>
+                  ) : null}
                 </span>
-              </span>
-              {h.itemCount > 0 ? (
-                <Progress
-                  value={Math.round((h.mastered / h.itemCount) * 100)}
-                  aria-label={`${h.title} progress`}
-                  className="mt-2 h-2 bg-muted [&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-indicator]]:bg-score-excellent"
-                />
-              ) : null}
-              {done ? (
-                <span className="mt-1.5 inline-block rounded-full bg-score-excellent/12 px-2 py-0.5 text-xs font-bold text-score-excellent">
-                  Done
-                </span>
-              ) : h.deadline ? (
-                <span
-                  className={cn(
-                    "mt-1.5 inline-block rounded-full px-2 py-0.5 text-xs font-bold",
-                    h.overdue ? "bg-destructive/10 text-destructive" : "bg-secondary text-primary",
-                  )}
-                >
-                  {h.overdue ? "Overdue · " : "Due "}
-                  {dateFmt.format(new Date(h.deadline))}
-                </span>
-              ) : null}
+              </div>
+              {h.nextItemId ? <CaretRight className="mt-1 size-5 shrink-0 text-primary" weight="bold" /> : null}
             </div>
-            {h.firstItemId ? <CaretRight className="size-5 shrink-0 text-primary" weight="bold" /> : null}
+            <div className="mt-3 space-y-1">
+              <Progress
+                value={pct}
+                aria-label={`${h.title}: ${h.attempted} of ${h.itemCount} tried`}
+                className="h-2.5 border border-foreground/10 bg-muted [&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-indicator]]:bg-score-excellent"
+              />
+              <p className="text-xs font-semibold text-muted-foreground">
+                {h.attempted}/{h.itemCount} tried
+              </p>
+            </div>
           </>
+        );
+        const card = cn(
+          "block rounded-2xl border-2 bg-card p-4",
+          h.overdue ? "border-destructive/30" : h.dueSoon ? "border-[#ffb000]/50" : "border-foreground/12",
         );
         return (
           <li key={h.lessonId}>
-            {h.firstItemId ? (
+            {h.nextItemId ? (
               <Link
-                href={`/student/practice/${h.firstItemId}`}
-                className={cn(
-                  card,
-                  "outline-none transition-colors hover:border-primary/40 hover:bg-secondary/40 focus-visible:ring-3 focus-visible:ring-ring/50",
-                )}
+                href={`/student/practice/${h.nextItemId}`}
+                className={cn(card, "outline-none transition-colors hover:border-primary/40 hover:bg-secondary/30 focus-visible:ring-3 focus-visible:ring-ring/50")}
               >
                 {body}
               </Link>

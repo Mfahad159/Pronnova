@@ -40,7 +40,7 @@ describe("level fit is a warning only", () => {
     const { errors, warnings } = validateMaterial({ ...base, level: "advanced", items: ["cat", "dog", "cow"] });
     expect(errors).toEqual({});
     expect(warnings.filter((w) => w.item !== undefined)).toHaveLength(3);
-    expect(warnings[0].message).toMatch(/short for Advanced \(11–20 words\)/);
+    expect(warnings[0].message).toBe("Short for Advanced: 11–20 words suggested");
   });
   it.each([
     ["basic", "cat", 0],

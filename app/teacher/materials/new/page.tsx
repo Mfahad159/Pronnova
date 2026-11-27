@@ -1,27 +1,15 @@
-import { Suspense } from "react";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
-import { PageSkeleton } from "@/components/layout/page-skeleton";
-import { MaterialForm } from "@/features/materials/material-form";
-import { listClasses } from "@/server/db/queries/roster";
+import { MaterialEditor } from "@/features/materials/material-editor";
 
-export const metadata = { title: "Upload material" };
+export const metadata = { title: "New material" };
 
-// UC-10 Upload Practice Material.
-export default function UploadMaterialPage() {
-  return (
-    <Suspense fallback={<PageSkeleton variant="panel" />}>
-      <UploadMaterial />
-    </Suspense>
-  );
-}
-
-async function UploadMaterial() {
-  const classes = await listClasses();
+// UC-10: the one upload path — new material (Write / Paste / Upload Word → item list → Save).
+export default function NewMaterialPage() {
   return (
     <>
-      <TopBar title="Upload practice material" subtitle="Paste text or import a Word file, check the items, then save — and assign it if you like." />
+      <TopBar title="New material" subtitle="Write, paste or upload a Word file, check the items, then save." />
       <PageBody>
-        <MaterialForm classes={classes.map((c) => ({ id: c.id, label: c.name }))} />
+        <MaterialEditor />
       </PageBody>
     </>
   );
