@@ -2,9 +2,7 @@ import { Suspense } from "react";
 import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { MaterialForm } from "@/features/materials/material-form";
-import { getCurrentTeacher } from "@/server/db/demo-user";
-import { listChapters } from "@/server/db/queries/curriculum";
-import { listTeacherClasses } from "@/server/db/queries/materials";
+import { listClasses } from "@/server/db/queries/roster";
 
 export const metadata = { title: "Upload material" };
 
@@ -18,16 +16,12 @@ export default function UploadMaterialPage() {
 }
 
 async function UploadMaterial() {
-  const teacher = await getCurrentTeacher();
-  const [chapters, classes] = await Promise.all([listChapters(), listTeacherClasses(teacher.id)]);
+  const classes = await listClasses();
   return (
     <>
-      <TopBar title="Upload practice material" subtitle="Add words, phrases or sentences, then assign them to a class." />
+      <TopBar title="Upload practice material" subtitle="Paste text or import a Word file, check the items, then save — and assign it if you like." />
       <PageBody>
-        <MaterialForm
-          chapters={chapters.map((c) => ({ id: c.id, label: `${c.orderNo}. ${c.title}` }))}
-          classes={classes.map((c) => ({ id: c.id, label: c.name }))}
-        />
+        <MaterialForm classes={classes.map((c) => ({ id: c.id, label: c.name }))} />
       </PageBody>
     </>
   );

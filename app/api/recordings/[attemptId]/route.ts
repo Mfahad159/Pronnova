@@ -1,4 +1,4 @@
-import { getCurrentStudent, getCurrentTeacher } from "@/server/db/demo-user";
+import { findCurrentStudent, getCurrentTeacher } from "@/server/db/demo-user";
 import { isUuid } from "@/server/db/queries/curriculum";
 import { getAttempt, signRecordingUrl } from "@/server/db/queries/attempt-store";
 import { teacherHasStudent } from "@/server/db/queries/attempts";
@@ -23,7 +23,7 @@ export async function GET(request: Request, ctx: RouteContext<"/api/recordings/[
   const allowed =
     as === "teacher"
       ? await teacherHasStudent((await getCurrentTeacher()).id, attempt.studentId)
-      : attempt.studentId === (await getCurrentStudent()).id;
+      : attempt.studentId === (await findCurrentStudent())?.id; // archived → null → 404
   if (!allowed) return notFound; // don't reveal that someone else's attempt exists
   if (!attempt.audioPath) return Response.json({ error: "No recording was saved for this attempt." }, { status: 404 });
 

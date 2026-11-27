@@ -22,3 +22,6 @@ Accepted (2026-11-26, team decision). Replaces the "Class 6–10" audience used 
 - The seed demo data now says Class 1 (grade tags, "Class 1 – Blue", join code `BLUE1A`). The seed's sentences are still Class 6-level; replacing them with Class 1 content is a Phase 4 task.
 - Upload limits (`MATERIAL_LIMITS` in `lib/materials.ts`) still allow 15-word sentences; Phase 4 decides on Class 1 limits.
 - Scoring rules (85/70 cut-offs, level unlock at 70%) are unchanged.
+
+## Update (2026-11-28)
+The 8-word sentence cap (warning above 6) is **retired**. Team brief: an item may have up to 25 words (hard limit, fits the 15 s recording); level fit (Basic 1–3, Medium 4–10, Advanced 11–20 words) and "fewer than 3 items" are warnings only. See `lib/materials.ts`.

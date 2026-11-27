@@ -41,6 +41,10 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 10 | Supabase renamed keys (secret `sb_secret_…`) and no longer auto-exposes new tables | Env is `SUPABASE_URL` + `SUPABASE_SECRET_KEY`; migration grants tables to `service_role` only |
 | 11 | SRS 3.2.2 "show a lesson only when assigned" vs UC-03 self-selected practice; SRS never says when a level unlocks | ADR-004: built-in lessons open to all (levels unlock at ≥70% on every item of the previous level); teacher material only for assignees |
 | 12 | Not-found inside a streamed (Suspense) page returns HTTP 200 with the 404 screen | Accepted for now; review in Phase 5 |
+| 17 | Brief (2026-11-28) names levels easy/medium/hard; SRS + app use Basic/Medium/Advanced | Team: keep Basic/Medium/Advanced; easy=basic, hard=advanced in the brief's rules |
+| 18 | Brief's 25-word cap vs ADR-006's 8-word Class 1 cap | Team: brief wins (25 hard, level fit as warnings); ADR-006 updated |
+| 19 | Brief wants `students`, `materials`, `material_items` tables, but `profiles`, `lessons`, `lesson_items` already do the job | Team: extend the existing tables (no parallel system); `enrollments` folded into `profiles.class_id` and dropped |
+| 20 | Brief: one shared splitter for "Paste" and "Word import"; it also says Urdu text passes through unchanged | Splitter only splits on . ! ? — Urdu "۔" is NOT treated as a sentence end, so Urdu text stays whole |
 | 16 | Icons: the project standard is Phosphor (`components.json`); the team asked for lucide arrows, and Animate UI components ship with lucide | Both installed (ADR-008): Phosphor for icons in general, lucide for arrows and inside Animate UI components |
 | 14 | SRS 2.4 allows sentences of about 15 words; Class 1 (ADR-006) needs much shorter ones | Upload limit is 8 words per sentence with a warning above 6 (`MATERIAL_LIMITS`); raise it if the audience changes |
 | 13 | Plan asks for Firefox + Safari checks; Windows blocked the downloaded Firefox and Safari can't run here | Firefox e2e is opt-in (`E2E_FIREFOX=1`); both checked by hand in Phase 5 |

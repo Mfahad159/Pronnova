@@ -13,7 +13,7 @@ import { PracticeRecorder } from "@/features/practice/practice-recorder";
 import { PracticeSteps } from "@/features/practice/practice-steps";
 import { itemAccess, openItemsInOrder, PASS_SCORE } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { getCurrentStudent } from "@/server/db/demo-user";
+import { getCurrentStudentOrPick } from "@/server/db/demo-user";
 import { getItem } from "@/server/db/queries/curriculum";
 import { getStudentLearning } from "@/server/db/queries/learning";
 
@@ -28,8 +28,8 @@ export default function PracticePage(props: PageProps<"/student/practice/[itemId
 
 async function PracticeContent({ params }: { params: PageProps<"/student/practice/[itemId]">["params"] }) {
   const { itemId } = await params;
-  const student = await getCurrentStudent();
-  const [item, learning] = await Promise.all([getItem(itemId), getStudentLearning(student.id)]);
+  const student = await getCurrentStudentOrPick();
+  const [item, learning] = await Promise.all([getItem(itemId), getStudentLearning(student)]);
   const access = itemAccess(learning.view, itemId);
   // Hidden = teacher material not assigned to this student: same as "doesn't exist".
   if (!item || access === "hidden") notFound();

@@ -1,5 +1,5 @@
 import { RECORDING, recordingProblem } from "@/lib/audio";
-import { getCurrentStudent } from "@/server/db/demo-user";
+import { findCurrentStudent } from "@/server/db/demo-user";
 import { getItem, isUuid } from "@/server/db/queries/curriculum";
 import { getItemAccess } from "@/server/db/queries/learning";
 import { submitAttempt } from "@/server/services/attempts";
@@ -36,8 +36,10 @@ export async function POST(request: Request) {
   if (!item) return Response.json({ error: "Unknown exercise." }, { status: 404 });
 
   // Same rule as the practice page (ADR-004): no attempts on locked or unassigned items.
-  const student = await getCurrentStudent();
-  const access = await getItemAccess(student.id, item.id);
+  // Archived (or no longer existing) students can't attempt anything: send them back to the picker.
+  const student = await findCurrentStudent();
+  if (!student) return Response.json({ error: "Pick your name again." }, { status: 404 });
+  const access = await getItemAccess(student, item.id);
   if (access === "hidden") return Response.json({ error: "Unknown exercise." }, { status: 404 });
   if (access === "locked") {
     return Response.json({ error: "This level is locked. Finish the earlier level first." }, { status: 403 });

@@ -1,91 +1,87 @@
 import { describe, expect, it } from "vitest";
 import {
-  deadlineToIso,
+  MATERIAL_LIMITS,
+  cleanMaterial,
   detectItemType,
   itemProblem,
-  itemWarning,
-  parseItemLines,
+  itemWarnings,
   todayInPakistan,
   validateMaterial,
   type MaterialInput,
 } from "@/lib/materials";
 
+const words = (n: number) => Array.from({ length: n }, (_, i) => `w${i + 1}`).join(" ");
+const base: MaterialInput = { title: "Animal words", level: "basic", instructions: "", items: ["cat", "dog", "cow"] };
+
 describe("detectItemType", () => {
   it.each([
     ["window", "word"],
     ["a sharp pencil", "phrase"],
-    ["thank you very much", "phrase"],
     ["We visited the village.", "sentence"],
     ["my brother walks to school with me", "sentence"],
     ["I woke up. Then I ate breakfast.", "paragraph"],
-    ["one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen", "paragraph"],
-    ["I can see a big red dog in the park", "paragraph"],
   ])("%j → %s", (text, type) => expect(detectItemType(text)).toBe(type));
 });
 
-describe("Class 1 sentence length (ADR-006)", () => {
-  it("allows up to 6 words with no warning", () => {
-    const it6 = { text: "I see a big red ball.", itemType: "sentence" as const };
-    expect(itemProblem(it6)).toBeNull();
-    expect(itemWarning(it6)).toBeNull();
+describe("25-word hard limit (15 s recording, UC-05)", () => {
+  it("allows exactly 25 words", () => {
+    expect(itemProblem(words(25))).toBeNull();
   });
-  it("warns at 7–8 words but still allows them", () => {
-    const it8 = { text: "I can see a big red ball today.", itemType: "sentence" as const };
-    expect(itemProblem(it8)).toBeNull();
-    expect(itemWarning(it8)).toMatch(/long for Class 1/);
-  });
-  it("blocks sentences over 8 words", () => {
-    const it9 = { text: "I can see a big red ball in the park.", itemType: "sentence" as const };
-    expect(itemProblem(it9)).toMatch(/up to 8 words/);
+  it("blocks 26 words with a clear message", () => {
+    expect(itemProblem(words(26))).toMatch(/26 words \(max 25\)/);
+    const { errors } = validateMaterial({ ...base, level: "advanced", items: [words(12), words(26)] });
+    expect(errors.itemErrors?.[1]).toMatch(/max 25/);
+    expect(errors.items).toBe("Fix the highlighted items.");
   });
 });
 
-describe("parseItemLines", () => {
-  it("trims, collapses spaces, drops blanks and case-insensitive duplicates", () => {
-    const items = parseItemLines("  van \n\nVan\nwet   weather\r\n");
-    expect(items.map((i) => i.text)).toEqual(["van", "wet weather"]);
+describe("level fit is a warning only", () => {
+  it("warns but never blocks", () => {
+    const { errors, warnings } = validateMaterial({ ...base, level: "advanced", items: ["cat", "dog", "cow"] });
+    expect(errors).toEqual({});
+    expect(warnings.filter((w) => w.item !== undefined)).toHaveLength(3);
+    expect(warnings[0].message).toMatch(/short for Advanced \(11–20 words\)/);
+  });
+  it.each([
+    ["basic", "cat", 0],
+    ["basic", "the big cat sat", 1],
+    ["medium", "the big cat sat", 0],
+    ["medium", words(11), 1],
+    ["advanced", words(11), 0],
+    ["advanced", words(21), 1],
+  ] as const)("%s / %j → %i warning(s)", (level, text, n) => expect(itemWarnings(text, level)).toHaveLength(n));
+  it("warns (not blocks) when there are fewer than 3 items", () => {
+    const { errors, warnings } = validateMaterial({ ...base, items: ["cat", "dog"] });
+    expect(errors).toEqual({});
+    expect(warnings.some((w) => w.item === undefined && /3 or more/.test(w.message))).toBe(true);
   });
 });
 
-const base: MaterialInput = {
-  title: "TH homework",
-  instructions: "",
-  chapterId: "10000000-0000-4000-8000-000000000002",
-  level: "basic",
-  classId: "",
-  deadline: "",
-  items: [{ text: "three", itemType: "word" }],
-};
-const today = "2026-11-24";
-
-describe("validateMaterial (UC-10)", () => {
-  it("accepts a valid material saved without a class (alt flow 3A)", () => {
-    expect(validateMaterial(base, today)).toEqual({});
+describe("validateMaterial hard rules", () => {
+  it("requires title, level and 1–20 items", () => {
+    const { errors } = validateMaterial({ title: "", level: "easy", instructions: "", items: [] });
+    expect(errors.title).toBe("Enter a title.");
+    expect(errors.level).toBe("Choose a level.");
+    expect(errors.items).toMatch(/at least one/);
+    const tooMany = validateMaterial({ ...base, items: Array.from({ length: MATERIAL_LIMITS.itemsMax + 1 }, () => "cat") });
+    expect(tooMany.errors.items).toMatch(/at most 20/);
   });
-  it("requires title, chapter, level and at least one item", () => {
-    const e = validateMaterial({ ...base, title: " ", chapterId: "", level: "x", items: [] }, today);
-    expect(Object.keys(e).sort()).toEqual(["chapterId", "items", "level", "title"]);
+  it("rejects empty items", () => {
+    const { errors } = validateMaterial(cleanMaterial({ ...base, items: ["cat", "   ", "dog"] }));
+    expect(errors.itemErrors?.[1]).toBe("An item can't be empty.");
   });
-  it("needs a due date when a class is chosen, and not in the past", () => {
-    expect(validateMaterial({ ...base, classId: "c" }, today).deadline).toMatch(/due date/);
-    expect(validateMaterial({ ...base, classId: "c", deadline: "2026-11-23" }, today).deadline).toMatch(/past/);
-    expect(validateMaterial({ ...base, classId: "c", deadline: "2026-11-24" }, today)).toEqual({});
-  });
-  it("flags a too-long sentence and a multi-word 'word'", () => {
-    const long = Array.from({ length: 16 }, (_, i) => `w${i}`).join(" ");
-    const e = validateMaterial(
-      { ...base, items: [{ text: long, itemType: "sentence" }, { text: "two words", itemType: "word" }] },
-      today,
-    );
-    expect(Object.keys(e.itemErrors ?? {})).toEqual(["0", "1"]);
+  it("cleanMaterial trims and collapses spaces", () => {
+    expect(cleanMaterial({ title: "  Big   cats ", level: " basic ", items: ["  red   ball "] })).toEqual({
+      title: "Big cats",
+      level: "basic",
+      instructions: "",
+      items: ["red ball"],
+    });
   });
 });
 
-describe("dates", () => {
-  it("uses Pakistan time for today", () => {
-    expect(todayInPakistan(new Date("2026-11-24T20:00:00Z"))).toBe("2026-11-25");
-  });
-  it("deadline is the end of that day in Pakistan", () => {
-    expect(new Date(deadlineToIso("2026-11-30")).toISOString()).toBe("2026-11-30T18:59:59.000Z");
+describe("todayInPakistan", () => {
+  it("uses Pakistan time (UTC+5)", () => {
+    expect(todayInPakistan(new Date("2026-11-23T19:30:00Z"))).toBe("2026-11-24");
   });
 });

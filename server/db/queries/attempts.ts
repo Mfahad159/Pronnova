@@ -61,7 +61,7 @@ export async function listClassStudents(teacherId: string): Promise<{ id: string
   const ids = await classStudentIds(teacherId);
   if (ids.length === 0) return [];
   const rows = check(
-    await (await getDb()).from("profiles").select("id, name").in("id", ids).order("name"),
+    await (await getDb()).from("profiles").select("id, name").in("id", ids).is("archived_at", null).order("name"),
     "list class student names",
   ) as { id: string; name: string }[];
   return rows;
@@ -69,10 +69,14 @@ export async function listClassStudents(teacherId: string): Promise<{ id: string
 
 async function classStudentIds(teacherId: string): Promise<string[]> {
   const rows = check(
-    await (await getDb()).from("enrollments").select("student_id, classes!inner(teacher_id)").eq("classes.teacher_id", teacherId),
+    await (await getDb())
+      .from("profiles")
+      .select("id, classes!profiles_class_id_fkey!inner(teacher_id)")
+      .eq("role", "student")
+      .eq("classes.teacher_id", teacherId),
     "list class students",
-  ) as { student_id: string }[];
-  return [...new Set(rows.map((r) => r.student_id))];
+  ) as { id: string }[];
+  return rows.map((r) => r.id);
 }
 
 export interface TeacherStats {

@@ -13,10 +13,12 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `docs/`, `specs/` | Docs (start at `docs/index.md`) and feature specs | ✅ |
 | `docs/srs.md`, `docs/srs/` | SRS as Markdown + its 21 diagrams | ✅ |
 | `.env.local` | Your keys (git-ignored, never committed). Variable list: `team-guide.md` → Environment variables | local only |
-| `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`) | ✅ |
+| `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`), incl. splitter, material/assignment rules, docx import, API validation | ✅ |
+| `vitest.db.config.ts`, `tests/db/` | Opt-in DB tests (`npm run test:db`) against the project in `.env.local`: 0004 rules (rollback, 409 lock, duplicate, CHECK, targets, visibility). Creates and removes `zz-test-…` rows | ✅ |
+| `tests/fixtures/docx.ts` | Builds tiny .docx files in memory (`*.docx` is git-ignored) | ✅ |
 | `playwright.config.ts`, `tests/e2e/` | Browser tests (`npm run test:e2e`) with Chrome's fake mic: routes, Phase 2, Phase 3 recording. `E2E_MUTATE=1` runs tests that write data; `E2E_FIREFOX=1` adds Firefox | ✅ |
 | `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed, bucket and that the browser key is blocked | ✅ |
-| `scripts/db.mjs` | `npm run db:push / db:seed / db:status / db:verify` via the Supabase CLI (needs `SUPABASE_DB_URL`) | ✅ |
+| `scripts/db-pg.mjs` | `npm run db:push / db:seed / db:status / db:verify` over a direct Postgres connection (`pg`, needs `SUPABASE_DB_URL`). Records migrations in `supabase_migrations.schema_migrations` like the Supabase CLI did | ✅ |
 | `supabase/config.toml` | Supabase CLI config (from `supabase init`); `[db.seed]` points at `seed.sql` | ✅ |
 | `supabase/checks/access.sql` | Read-only security check used by `db:verify` | ✅ |
 | `next.config.ts` | `cacheComponents`, `partialPrefetching`, Tailwind loader | ✅ |
@@ -46,7 +48,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/page-skeleton.tsx` | Loading placeholder used as every DB page's Suspense fallback | ✅ |
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
-| `features/materials/` | `material-form.tsx` (UC-10 form, live item preview), `actions.ts` (`saveMaterial` Server Action) | ✅ |
+| `features/materials/` | `material-form.tsx` (UC-10: paste / Word import → editable preview → save, optional assign to classes), `duplicate-button.tsx` | ✅ |
 | `features/teacher/class-avatars.tsx` | Animate UI avatar group of the class's students (dashboard) | ✅ |
 | `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view), `play-recording-button.tsx` (fetches a signed link, plays/stops) | ✅ |
 | `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
@@ -55,24 +57,31 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `lib/scoring.ts` | `classify()` (85/70 cut-offs), `errorRate()` | ✅ |
 | `lib/progress.ts` | UC-03 rules (ADR-004): level unlock, item access, chapter stage, `continueItem` | ✅ |
 | `lib/audio.ts` | Recording rules shared by browser + server: limits, allowed formats, `recordingProblem`, `wordUnit` | ✅ |
-| `lib/materials.ts` | UC-10 rules: item-type detection, line parsing, validation, Pakistan-time dates. Class 1 limits: sentences max 8 words, `itemWarning` above 6 | ✅ |
+| `lib/materials.ts` | Material rules: 1–20 items, ≤ 25 words per item (hard), level fit + < 3 items (warnings), item-type detection, Pakistan-time dates | ✅ |
+| `lib/split-items.ts` | `splitTextToItems(text, mode, level?)`: the ONE splitter for Paste and Word import (bullets, numbering, abbreviations) → preview | ✅ |
+| `lib/assignments.ts`, `lib/roster.ts` | Assignment rules + visibility merge (`mergeVisible`, `pickDueDate`); class/student validation | ✅ |
 | `lib/navigation.ts` | Sidebar menu per role | ✅ |
 | `lib/speech-tts.ts` | Client Web Speech synthesis helper (`speakReference`) for landing pronunciation previews | ✅ |
 | `lib/utils.ts` | `cn()` class helper | ✅ |
 | `types/index.ts` | Shared types (Profile, Chapter, Lesson, LessonItem, results, AttemptSummary) | ✅ |
 | `server/speech/` | Speech Engine: `types.ts` (contract), `index.ts` (`getSpeechEngine()`), `mock.ts`, `azure.ts` (stub), `python.ts` | ✅ |
 | `server/db/client.ts` | `getDb()` — server-only Supabase client (secret key), `check()` error helper | ✅ |
-| `server/db/demo-user.ts` | Fixed demo student/teacher ids + `getCurrentStudent/Teacher()` (FYP-2: swap for login) | ✅ |
+| `server/db/demo-user.ts` | Demo teacher; picked student from the `pronnova_student` cookie (fallback: demo student). `getCurrentStudent()` (throws if archived), `findCurrentStudent()` (null), `getCurrentStudentOrPick()` (redirects to `/student/who`) | ✅ |
+| `server/http.ts` | JSON helpers + `errorResponse` (maps PN404/PN409/PN422 and 23505/23503/23514 to HTTP) | ✅ |
+| `server/services/docx-import.ts` | `.docx` → text (mammoth) → splitter; rejects non-docx, empty, > 5 MB | ✅ |
+| `server/db/queries/roster.ts` | Classes + students (list/create/rename, create/edit/archive) | ✅ |
+| `server/db/queries/assignments.ts` | `createAssignment` (RPC), `listVisibleAssignmentRows` (class OR student targets) | ✅ |
 | `server/db/queries/curriculum.ts` | `listChapters`, `getChapterContent`, `getItem`, `isUuid` | ✅ |
 | `server/db/queries/attempts.ts` | `listStudentAttempts`, `listClassAttempts`, `getTeacherStats`, `listClassStudents`, `teacherHasStudent` | ✅ |
 | `server/db/queries/learning.ts` | `getStudentLearning` (view + homework + last item), `getItemAccess` | ✅ |
 | `server/db/queries/attempt-store.ts` | Attempt writes/reads: upload/download recording, insert pending, mark failed, `completeAttempt` (RPC), `getAttemptResult` | ✅ |
-| `server/db/queries/materials.ts` | `listTeacherClasses`, `listTeacherMaterials`, `createMaterial` (RPC) | ✅ |
+| `server/db/queries/materials.ts` | Library: `listMaterials` (counts + locked), `getMaterial`, `createMaterial`, `createMaterialAndAssign`, `updateMaterial`, `duplicateMaterial` (all RPC) | ✅ |
 | `server/services/attempts.ts` | UC-04 pipeline: `submitAttempt` (upload → pending → score → save), `retryAttempt`, `SCORING_VERSION` | ✅ |
 | `stores/practice-store.ts` | Zustand: practice session phase (idle → recording → recorded → submitting → scored/failed/error), recording, result | ✅ |
 | `supabase/migrations/0001_init.sql` | All 14 tables, checks, indexes, RLS on + server-only grants, `recordings` bucket | ✅ |
 | `supabase/migrations/0002_materials.sql` | `lessons.visibility`, `create_material()` atomic save | ✅ |
 | `supabase/migrations/0003_attempt_results.sql` | `complete_attempt()`: results + error stats + mark scored in one transaction, runs once per attempt | ✅ |
+| `supabase/migrations/0004_roster_materials_assignments.sql` | Roster on profiles, materials = teacher lessons, assignments + targets, 5 atomic functions (see `database.md`) | ✅ |
 | `supabase/seed.sql` | Demo people, class, 4 chapters, Class 1 lessons/items (every Basic word has a picture in `word-pictures.tsx`), homework, sample attempts. Re-runnable (wipes data) | ✅ |
 | `engine/` | Python Speech Engine (research track). Only `README.md` so far | ✅ / 🕓 |
 | `engine/eval/` | Test clips + comparison notes | ✅ README only |
@@ -87,6 +96,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `/student/chapters/[chapterId]` | `app/student/chapters/[chapterId]/page.tsx` | UC-03 levels (locked in order) → items, homework badges | ✅ |
 | `/student/practice/[itemId]` | `app/student/practice/[itemId]/page.tsx` | UC-04/05 record → send → score/retry; UC-06 basic result (full view 🕓 Phase 4) | ✅ |
 | `/student/progress` | `app/student/progress/page.tsx` | UC-07 | placeholder (FYP-2) |
+| `/student/who` | `app/student/who/page.tsx` | "Who are you?" picker: class → name (no login, ADR-002) | ✅ |
 | `/teacher` | `app/teacher/page.tsx` | UC-12 overview | ✅ DB stats + latest attempts |
 | `/teacher/materials` | `app/teacher/materials/page.tsx` | UC-10 list of uploaded material + assignment | ✅ |
 | `/teacher/materials/new` | `app/teacher/materials/new/page.tsx` | UC-10 upload form (saves via `saveMaterial`) | ✅ |
@@ -102,8 +112,13 @@ Both role areas share `components/layout/app-shell.tsx` via `app/student/layout.
 | `POST /api/attempts/[attemptId]/retry` | Re-score a failed (or stuck pending) attempt from its stored audio; safe to repeat | ✅ |
 | `GET /api/recordings/[attemptId]?as=student\|teacher` | 5-minute signed link to play a saved recording. Only the student who made it or a teacher of their class; otherwise 404 (also 404 when no audio was saved) | ✅ |
 | `GET /api/attempts/[id]` | Attempt + word/phoneme results | 🕓 |
-| `GET /api/recordings/[attemptId]` | Short-lived signed URL for playback | 🕓 |
-| Server Action `saveMaterial` | UC-10: validate + `create_material()` (lesson + items + assignment in one transaction) | ✅ |
+| `GET/POST /api/classes`, `PATCH /api/classes/[classId]` | List (with active student count) / create / rename classes | ✅ |
+| `GET/POST /api/students`, `GET/PATCH /api/students/[studentId]`, `POST …/archive`, `POST …/unarchive` | Roster: list (filter by class, archived only if asked), create, get (404 if archived unless `includeArchived=true`), edit, archive/unarchive | ✅ |
+| `GET/POST /api/materials`, `GET/PATCH /api/materials/[materialId]`, `POST …/duplicate` | Library: list, create (+ optional `assign`, one transaction), get, update (409 when items change after attempts), duplicate | ✅ |
+| `POST /api/materials/split`, `POST /api/materials/import` | Preview only: pasted text / one `.docx` → items with word counts + warnings | ✅ |
+| `POST /api/assignments` | UC-08 assign only: material + due date + class/student targets, one transaction | ✅ |
+| `POST/DELETE /api/student/session` | Remember / forget the picked student (cookie) | ✅ |
+| `GET /api/student/home` | Picked student's assigned materials (deduped, due date, progress) + Continue target; 404 if archived | ✅ |
 
 ## Data tables
 Full explanation + how to change it: `database.md`. Columns list: `architecture.md` → Data model. Schema: `supabase/migrations/0001_init.sql`. New changes = a new numbered file, never edit an applied one.

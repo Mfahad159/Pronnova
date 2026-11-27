@@ -10,7 +10,7 @@ import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { levelLabel } from "@/features/curriculum/level";
 import { LEVEL_ORDER, PASS_SCORE, type ItemView, type LevelView } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { getCurrentStudent } from "@/server/db/demo-user";
+import { getCurrentStudentOrPick } from "@/server/db/demo-user";
 import { isUuid } from "@/server/db/queries/curriculum";
 import { getStudentLearning } from "@/server/db/queries/learning";
 
@@ -27,8 +27,8 @@ export default function ChapterPage(props: PageProps<"/student/chapters/[chapter
 async function ChapterContent({ params }: { params: PageProps<"/student/chapters/[chapterId]">["params"] }) {
   const { chapterId } = await params;
   if (!isUuid(chapterId)) notFound();
-  const student = await getCurrentStudent();
-  const { view } = await getStudentLearning(student.id);
+  const student = await getCurrentStudentOrPick();
+  const { view } = await getStudentLearning(student);
   const chapter = view.find((c) => c.id === chapterId);
   if (!chapter) notFound();
 

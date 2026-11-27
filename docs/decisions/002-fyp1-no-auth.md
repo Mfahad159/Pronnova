@@ -14,3 +14,6 @@ The old prototype recorded that university policy does not allow login/sign-up i
 
 ## Consequences
 SRS 3.2.1, password hashing (3.3.2) and per-user privacy (3.3.4) are not met until FYP-2 adds Supabase Auth.
+
+## Update (2026-11-28)
+Students are now **picked, not signed in**: "Who are you?" (`/student/who`) → class → name. The choice is a plain cookie (`pronnova_student`), read only through `getCurrentStudent()`; without it the demo student is used. Archived students are rejected by every student endpoint. This is not authentication: anyone on the device can pick any name.

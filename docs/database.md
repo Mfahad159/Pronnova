@@ -20,12 +20,11 @@ How Pronnova stores data, **why** it is built this way, and **how to change it**
 ### Tables at a glance
 
 ```
-profiles ──< classes ──< enrollments >── profiles (students)
-    │
+profiles (teacher) ──< classes ──< profiles (students: class_id, roll_no, archived_at)   [0004]
 chapters ──< lessons ──< lesson_items ──< attempts >── profiles (student)
-                │                            ├──< word_results
-                └──< assignments             ├──< phoneme_results
-                     (to a class OR student) └──< teacher_evaluations
+  (optional for       │                      ├──< word_results
+   teacher materials) └──< assignments ──< assignment_targets (a class OR a student)   [0004]
+                         (material + due date)  └──< phoneme_results, teacher_evaluations
 profiles ──< error_stats     profiles ──< suggestions     settings (key/value)
 ```
 `A ──< B` means one A has many B.
@@ -36,11 +35,12 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 |---|---|---|---|
 | `profiles` | Every person: name, email, **role** (student/teacher), status | 3.2.1, UC-01/02 | `role` limited to two values so code can trust it. Email unique for future login. |
 | `classes` | A teacher's class + `join_code` | UC-01 alt 1A, UC-08 | Join code is 4–12 capital letters/digits so it's easy to read out in class. |
-| `enrollments` | Which student is in which class | UC-08, UC-12 | Primary key is (class, student): a student can't be added to the same class twice. |
+| ~~`enrollments`~~ | Dropped in 0004: a student now has exactly one class (`profiles.class_id`) | — | Folded into `profiles`; the migration stops if any student was in two classes. |
+| `assignment_targets` (0004) | Who an assignment is for: one class **or** one student per row | UC-08 | CHECK exactly one of class/student; UNIQUE (assignment, class) and (assignment, student) → no duplicate targets. Class targets are dynamic: students added later are included. |
 | `chapters` | Ordered chapters with grade tag | 3.2.2, UC-03, UC-11 | `order_no` is unique → chapters always have one clear sequence. |
 | `lessons` | A lesson inside a chapter at a level | 3.2.2, UC-09, UC-10 | `level` is basic/medium/advanced (SRS names). (chapter, level, order_no) unique → no two lessons fight for the same spot. `visibility` = public (built-in) or assigned (teacher material, only for assignees — ADR-004). |
 | `lesson_items` | The words/phrases/sentences/paragraphs to read | 3.2.2, UC-03 | `item_type` limited to the four SRS types. Text 1–600 chars (SRS: sentences ≈15 words, paragraphs later). `variants` holds UK/US forms (both accepted, SRS 2.4). |
-| `assignments` | Lesson given to a class **or** one student, with deadline | 3.2.9, UC-08 | Check: exactly one of class/student is set — an assignment can't target both or nobody. |
+| `assignments` | A material given out, with a `due_date` (0004). Targets live in `assignment_targets` | 3.2.9, UC-08 | Created with its targets in one transaction (`create_assignment()`); due date can't be in the past; archived students can't be targeted. The same material can be assigned many times. |
 | `attempts` | One recording attempt and its result | 3.2.3–3.2.5, UC-04 | `status` pending → scored/failed. Row is saved **before** scoring, so a failed score never loses the attempt (SRS 3.3.7). A `scored` row must have a score and classification (check). Stores `model_version`/`scoring_version` so results stay comparable when the speech engine changes. |
 | `word_results` | Score per word of an attempt | 3.2.4, UC-06 | `position` keeps word order for coloring the sentence. |
 | `phoneme_results` | Score per sound (GOP) | 3.2.4, UC-06 | `expected` vs `detected` sound, `gop_score`. |
@@ -58,6 +58,9 @@ profiles ──< error_stats     profiles ──< suggestions     settings (key/
 | `attempts.duration_ms`, `error_message`, `scored_at` | Show recording length, explain failures, measure the 10 s feedback target (SRS 3.3.3). |
 | `word_results.position` | Word order for feedback display. |
 | `lessons.visibility` (0002) | Teacher material must be hidden from students it isn't assigned to (ADR-004). |
+| `profiles.class_id`, `roll_no`, `archived_at` (0004) | Roster: one class per student, roll number unique per class, archive instead of delete (attempts point at students). |
+| `lessons.updated_at`, nullable `chapter_id` (0004) | A teacher material (`visibility='assigned'`) is the "material" of the library; it no longer needs a chapter. Built-in lessons still must have one (CHECK). |
+| `lesson_items` ≤ 25 words (0004) | The 15 s recording limit (UC-05). CHECK = last line of defence behind the API's validation. |
 | `error_stats.unit_type` | The ER diagram's "unit (word / phoneme)" split into type + value, so the word "the" and a sound "θ" never clash. |
 
 ## 3. Design decisions you may be asked about
@@ -123,3 +126,4 @@ Run `supabase/seed.sql` again in the SQL Editor. (`npm run db:seed` only re-runs
 | `0001_init.sql` | 2026-11-24 | All 14 tables, checks, indexes, server-only access, `recordings` bucket | Phase 1: implement the SRS ER diagram. Applied with `npm run db:push`; seeded with `npm run db:seed` |
 | `0002_materials.sql` | 2026-11-24 | `lessons.visibility`; `create_material()` function (server-only) | Phase 2: save UC-10 material atomically; ADR-004 visibility. Applied with `npm run db:push` |
 | `0003_attempt_results.sql` | 2026-11-24 | `complete_attempt()` function (server-only) | Phase 3: save word/sound results, update error stats and mark the attempt scored in one transaction; refuses to run twice. Applied with `npm run db:push` |
+| `0004_roster_materials_assignments.sql` | 2026-11-28 | Roster on `profiles` (+ drop `enrollments`), class names unique, materials = teacher `lessons` (chapter optional, ≤ 25-word items), `assignments.due_date` + `assignment_targets`; functions `create_material`, `update_material` (409 lock), `duplicate_material`, `create_assignment`, `create_material_and_assign` | Brief of 2026-11-28 (roster, library, UC-08 assign only). Migrates existing data; STOPS instead of guessing (student in 2 classes / no class, assignment without deadline). Existing students get roll numbers 1…n per class by name. Applied 2026-11-28 with `npm run db:push` (new `pg` runner): 3 students, 1 assignment, 9 attempts kept; enrollments → class_id; 1 target created |

@@ -9,6 +9,8 @@ const routes: [path: string, heading: RegExp][] = [
   ["/student/chapters", /^chapters$/i],
   ["/student/progress", /your progress/i],
   ["/teacher", /hello/i],
+  ["/student/who", /who are you/i],
+  ["/teacher/materials", /^materials$/i],
   ["/teacher/materials/new", /upload practice material/i],
   ["/teacher/chapters", /organize chapters/i],
   ["/teacher/students", /^students$/i],
@@ -27,8 +29,8 @@ test("chapter → item → practice flow uses real data", async ({ page }) => {
   await page.goto("/student/chapters");
   await page.getByRole("link", { name: /tricky sounds/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Tricky Sounds" })).toBeVisible();
-  await page.getByRole("link", { name: /this is my thumb/i }).click();
-  await expect(page.getByText("This is my thumb.")).toBeVisible();
+  await page.getByRole("link", { name: /\bvan\b/i }).click();
+  await expect(page.getByText("van", { exact: true })).toBeVisible();
 });
 
 test("landing Choose Role → onboarding → choose student or teacher", async ({ page }) => {

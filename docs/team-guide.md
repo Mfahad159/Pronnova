@@ -53,7 +53,7 @@ Needs: Node.js 22+ (Supabase dropped Node 20), npm, and a free Supabase project.
 2. Create a file named `.env.local` in the project root (it is git-ignored) with the variables from the table below. Get the values from the Supabase dashboard, or privately from a teammate. At minimum:
    - `SUPABASE_URL` — Project Settings → Data API (looks like `https://abcd.supabase.co`)
    - `SUPABASE_SECRET_KEY` — Project Settings → API Keys → **Secret** key (`sb_secret_…`). Never put it in any committed file, chat or screenshots.
-3. Supabase dashboard → **SQL Editor** → paste all of `supabase/migrations/0001_init.sql` → Run.
+3. Supabase dashboard → **SQL Editor** → paste each file in `supabase/migrations/` **in order** (0001, 0002, 0003, 0004) → Run each.
 4. Same place → paste `supabase/seed.sql` → Run. (Run the seed again any time to reset demo data — it **wipes** all app data first.)
 5. Check it:
 
@@ -88,12 +88,15 @@ npm run build
 ### Good to know: this Next.js version
 - **Cache Components is on.** A page that reads URL params (like `[chapterId]`) or loads live data must do it inside a `<Suspense>` block, or the build fails. Copy the pattern in `app/student/chapters/[chapterId]/page.tsx`.
 - New Tailwind classes not showing in `npm run dev`? Stop the dev server, delete the `.next/dev` folder, start again (stale dev cache).
-- `npm run db:…` fails with `spawn UNKNOWN`? Windows (Smart App Control / Application Control) is blocking `supabase.exe`. Don't try to get around it: run the SQL in the Supabase dashboard's SQL Editor instead (steps 3–4 above).
+- Database commands (`npm run db:push / db:seed / db:status / db:verify`) use a direct Postgres connection (`pg` + `SUPABASE_DB_URL`), not `supabase.exe` (Windows Application Control blocks it on our PCs). The SQL Editor still works as a fallback.
 - Building a new screen? Use the pieces in `components/brand/` (`KiddyButton`, `Panel`, `PikoSays`, `WordPicture`, …), not plain shadcn buttons/cards — the landing page is the design base (ADR-007). A unit test checks this.
 - The logo loader shows on every full page load (opening the site, refresh), not when moving between pages inside the app. It waits for the page to load, finishes the current bite, then fades; it never stays longer than 8 s.
 - Motion comes from Animate UI (ADR-008). Added a new shadcn component? Run `npx @animate-ui/cli@latest animate <name>` to animate it. Gotchas: a `Highlight` needs `inset-0` in its `className` (else it is 0×0); don't use `HighlightItem asChild` around a link (it nests the link twice) — use `as="li"`; anything that calls `usePathname()` in a layout must sit in `<Suspense>` (Cache Components).
 - CSS modules (`*.module.css`) don't work here: `next.config.ts` sends every `.css` file through Tailwind as plain CSS. Use Tailwind classes, or a plain `.css` file with prefixed class names (like `components/brand/page-loader.css`).
-- Teacher uploads are for Class 1: sentences can have up to 8 words; above 6 the form shows a warning.
+- **Students pick their name** (no login): `/student/who` → class → name. It's remembered in a cookie on that device; "Not Ayesha?" on the student home switches. An archived student is sent back to the picker.
+- **Teacher library:** paste text or import one Word `.docx` (≤ 5 MB) → the items are split into a preview you can edit → Save. Nothing is stored until Save. After any student attempts a material, its items are locked: use **Duplicate**, then edit the copy.
+- **Database tests:** `npm run test:db` runs the real DB rules (rollback, lock, CHECKs, visibility) against the project in `.env.local`. It creates rows named `zz-test-…` and deletes them at the end. Needs migration 0004.
+- Item limits: up to 25 words per item (hard: the 15 s recording). The form warns (never blocks) when an item doesn't fit its level (Basic 1–3, Medium 4–10, Advanced 11–20 words) or a material has fewer than 3 items.
 - Browser tests use Chrome's fake microphone. `E2E_MUTATE=1 npm run test:e2e` also runs the tests that save data; `E2E_FIREFOX=1` adds Firefox.
 - Next.js ships its own docs in `node_modules/next/dist/docs/`. They match our installed version, so check there before relying on older tutorials.
 

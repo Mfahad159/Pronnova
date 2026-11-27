@@ -81,7 +81,8 @@ export async function getChapterContent(chapterId: string): Promise<ChapterConte
 export interface ItemWithContext extends LessonItem {
   lessonTitle: string;
   level: Lesson["level"];
-  chapterId: string;
+  /** null for teacher materials that aren't in a chapter (migration 0004). */
+  chapterId: string | null;
   chapterTitle: string;
 }
 
@@ -90,7 +91,7 @@ export async function getItem(itemId: string): Promise<ItemWithContext | null> {
   const row = check(
     await (await getDb())
       .from("lesson_items")
-      .select("id, lesson_id, item_type, text, lessons!inner(title, level, chapters!inner(id, title))")
+      .select("id, lesson_id, item_type, text, lessons!inner(title, level, chapters(id, title))")
       .eq("id", itemId)
       .maybeSingle(),
     "load item",
@@ -99,7 +100,7 @@ export async function getItem(itemId: string): Promise<ItemWithContext | null> {
     lesson_id: string;
     item_type: LessonItem["itemType"];
     text: string;
-    lessons: { title: string; level: Lesson["level"]; chapters: { id: string; title: string } };
+    lessons: { title: string; level: Lesson["level"]; chapters: { id: string; title: string } | null };
   } | null;
   if (!row) return null;
   return {
@@ -109,7 +110,7 @@ export async function getItem(itemId: string): Promise<ItemWithContext | null> {
     text: row.text,
     lessonTitle: row.lessons.title,
     level: row.lessons.level,
-    chapterId: row.lessons.chapters.id,
-    chapterTitle: row.lessons.chapters.title,
+    chapterId: row.lessons.chapters?.id ?? null,
+    chapterTitle: row.lessons.chapters?.title ?? "Teacher materials",
   };
 }

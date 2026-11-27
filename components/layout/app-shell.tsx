@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/layout/page-skeleton";
 import Link from "next/link";
 import { SignOut } from "@phosphor-icons/react/ssr";
 import {
@@ -58,8 +59,10 @@ export function AppShell({ role, children }: { role: Role; children: React.React
       </Sidebar>
       <SidebarInset className="min-w-0">
         {/* Animate UI page transition (view transitions): only the page content moves; sidebar stays. */}
-        {/* It reads the pathname, so (Cache Components) it sits in Suspense; the fallback is the same page, unanimated. */}
-        <Suspense fallback={<div className="flex min-h-full flex-col bg-background">{children}</div>}>
+        {/* It reads the pathname, so (Cache Components) it sits in Suspense. The fallback is a skeleton,
+            NOT {children}: rendering the page in both places put two live copies of every form and
+            recorder in the DOM while the stream swapped them (found 2026-11-28). */}
+        <Suspense fallback={<PageSkeleton />}>
           <PageTransition effect="slide" className="flex min-h-full flex-col bg-background">
             {children}
           </PageTransition>

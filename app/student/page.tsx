@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { Microphone } from "@phosphor-icons/react/ssr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KiddyButton } from "@/components/brand/kiddy-button";
@@ -13,7 +14,7 @@ import { AttemptsTable } from "@/features/assessment/attempts-table";
 import { ChapterCard } from "@/features/curriculum/chapter-card";
 import { HomeworkList } from "@/features/curriculum/homework-list";
 import { continueItem } from "@/lib/progress";
-import { getCurrentStudent } from "@/server/db/demo-user";
+import { getCurrentStudentOrPick } from "@/server/db/demo-user";
 import { listStudentAttempts } from "@/server/db/queries/attempts";
 import { listChapters } from "@/server/db/queries/curriculum";
 import { getStudentLearning } from "@/server/db/queries/learning";
@@ -29,11 +30,11 @@ export default function StudentHomePage() {
 }
 
 async function StudentHome() {
-  const student = await getCurrentStudent();
+  const student = await getCurrentStudentOrPick();
   const [chapters, attempts, learning] = await Promise.all([
     listChapters(),
     listStudentAttempts(student.id, 10),
-    getStudentLearning(student.id),
+    getStudentLearning(student),
   ]);
   // UC-03 alt 1A: resume where the student stopped (rule in lib/progress.ts).
   const next = continueItem(learning.view, learning.lastItemId);
@@ -42,7 +43,17 @@ async function StudentHome() {
 
   return (
     <>
-      <TopBar title={`Welcome back, ${student.name} 👋`} subtitle="Let's practise some English words today!" />
+      <TopBar
+        title={`Welcome back, ${student.name} 👋`}
+        subtitle={
+          <>
+            Let&apos;s practise some English words today!{" "}
+            <Link href="/student/who" className="font-semibold text-primary hover:underline">
+              Not {student.name}?
+            </Link>
+          </>
+        }
+      />
       <PageBody>
         {/* Next up: Piko + word card + one big kiddy button (landing hero / learning buddy). */}
         <PikoSays

@@ -30,8 +30,21 @@ export async function getDb(): Promise<SupabaseClient> {
   return client;
 }
 
-/** Turns a Supabase error into a thrown Error with context. */
-export function check<T>(result: { data: T; error: { message: string } | null }, what: string): T {
-  if (result.error) throw new Error(`DB ${what} failed: ${result.error.message}`);
+/** A failed DB call. `code` is the Postgres SQLSTATE (e.g. 23505 unique, PN409 from our functions). */
+export class DbError extends Error {
+  constructor(
+    message: string,
+    readonly code: string | undefined,
+    /** The DB's own message (for RAISE EXCEPTION in our functions, this is user-facing text). */
+    readonly dbMessage: string,
+  ) {
+    super(message);
+    this.name = "DbError";
+  }
+}
+
+/** Turns a Supabase error into a thrown DbError with context. */
+export function check<T>(result: { data: T; error: { message: string; code?: string } | null }, what: string): T {
+  if (result.error) throw new DbError(`DB ${what} failed: ${result.error.message}`, result.error.code, result.error.message);
   return result.data;
 }

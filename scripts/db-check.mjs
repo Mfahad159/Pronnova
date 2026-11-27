@@ -20,7 +20,7 @@ console.log(`✓ connected to ${new URL(url).hostname.split(".")[0]} with the se
 
 // 2. Tables from supabase/migrations/0001_init.sql, with row counts from the seed.
 
-const tables = ["profiles", "classes", "enrollments", "chapters", "lessons", "lesson_items", "assignments",
+const tables = ["profiles", "classes", "assignment_targets", "chapters", "lessons", "lesson_items", "assignments",
   "attempts", "word_results", "phoneme_results", "error_stats", "teacher_evaluations", "suggestions", "settings"];
 let ok = true;
 for (const t of tables) {

@@ -1,4 +1,4 @@
-import { getCurrentStudent } from "@/server/db/demo-user";
+import { findCurrentStudent } from "@/server/db/demo-user";
 import { getItem, isUuid } from "@/server/db/queries/curriculum";
 import { getAttempt } from "@/server/db/queries/attempt-store";
 import { retryAttempt } from "@/server/services/attempts";
@@ -8,7 +8,8 @@ export async function POST(_request: Request, ctx: RouteContext<"/api/attempts/[
   const { attemptId } = await ctx.params;
   if (!isUuid(attemptId)) return Response.json({ error: "Unknown attempt." }, { status: 404 });
 
-  const student = await getCurrentStudent();
+  const student = await findCurrentStudent(); // archived students get nothing
+  if (!student) return Response.json({ error: "Pick your name again." }, { status: 404 });
   const attempt = await getAttempt(attemptId);
   if (!attempt || attempt.studentId !== student.id) return Response.json({ error: "Unknown attempt." }, { status: 404 });
   const item = await getItem(attempt.itemId);

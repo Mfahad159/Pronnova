@@ -21,7 +21,7 @@ What FYP-1 must deliver and how we know each use case is done. Confirm with the 
 | UC-05 | Record Speech | Student | Audio validation + private storage | ✅ Done (Phase 3) |
 | UC-06 | View Feedback & Score | Student | Results API, signed playback URLs | ✅ Done with mock scorer (Phase 4): score + class, coloured words, tricky sounds, hear the word, play own recording, try again / next word |
 | UC-07 | View Progress (+ AI suggestions) | Student, AI Engine | Progress over time, repeated errors from `error_stats`, Gemini or template suggestions | ⬜ Not started (tables + error counts already exist) |
-| UC-08 | Assign / Reassign Lesson | Teacher | Create/move assignments | 🟡 Assign-on-upload exists (UC-10); reassign not |
+| UC-08 | Assign / Reassign Lesson | Teacher | Create/move assignments | ✅ **Assign only** (2026-11-28): `POST /api/assignments` to classes and/or students, one transaction. Reassign/unassign/move: out of scope |
 | UC-09 | Select Difficulty Level | Teacher | Update a lesson's level | 🟡 Level set on upload; changing later not |
 | UC-10 | Upload Practice Material | Teacher | Validated atomic save (lesson + items + assignment) | ✅ Done (Phase 2) |
 | UC-11 | Organize Lessons / Chapters | Teacher | Reorder / move lessons, create chapters | ⬜ Not started |
@@ -31,7 +31,9 @@ What FYP-1 must deliver and how we know each use case is done. Confirm with the 
 13 use cases; 30% ≈ 4. **Confirmed by the team (2026-11-26): the FYP-1 set is UC-03, 04, 05, 06, 10 — 5 of 13 (38%).**
 
 ## Out of scope for FYP-1
-UC-01/02 (auth), UC-07 (progress + Gemini), UC-08/09, UC-11/12/13. Build the tables they need, not the screens.
+UC-01/02 (auth), UC-07 (progress + Gemini), UC-08 reassign/unassign, UC-09, UC-11/12/13, PDF/CSV import, multi-class students, teacher accounts, reports. Build the tables they need, not the screens.
+
+**Added 2026-11-28 (team brief):** roster (classes + students, archive), teacher material library (paste / Word import, lock after attempts, duplicate), UC-08 assign only, "Who are you?" student picker.
 
 ## Plan
 Phases 1–5 with tasks and exit checks: [fyp1-implementation-plan.md](fyp1-implementation-plan.md).
