@@ -1,15 +1,29 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ThinkingOrb, type OrbState } from "thinking-orbs";
 import { ease } from "@animate-ui/react/utils/motion";
 import { cn } from "@/lib/utils";
+import { SharpOrb } from "@/features/voice/sharp-orb";
 
 /** What the microphone is doing, everywhere we record (practice recorder, landing demo). */
 export type MicStatus = "ready" | "requesting" | "listening" | "processing" | "done" | "off";
 
 /** Brand coral ink (KiddyButton coral, keep-brand-coral decision). */
 export const CORAL = "#ff594b";
+const CORAL_RGB = { r: 255, g: 89, b: 75 };
+
+const WIDE = "(min-width: 640px)";
+function subscribeWide(onChange: () => void) {
+  const mql = window.matchMedia(WIDE);
+  mql.addEventListener("change", onChange);
+  return () => mql.removeEventListener("change", onChange);
+}
+/** Tailwind `sm` and up (no setState-in-effect). */
+function useWide() {
+  return useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE).matches, () => false);
+}
 
 export const LOOK: Record<MicStatus, { orb: OrbState; label: string; active: boolean; tint: boolean }> = {
   ready: { orb: "breathing", label: "Tap to speak", active: false, tint: false },
@@ -81,18 +95,11 @@ export function MicStage({
   className?: string;
 }) {
   const look = LOOK[status];
-  // 64px tuned orb drawn larger with CSS so it reads at a glance (bigger again from tablets up).
+  // Drawn crisply at its real size (SharpOrb), bigger from 640px up.
+  const wide = useWide();
   const orb = (
     <span className="flex size-28 items-center justify-center sm:size-32">
-      <ThinkingOrb
-        state={look.orb}
-        size={64}
-        theme="light"
-        color={look.tint ? CORAL : undefined}
-        paused={status === "off"}
-        aria-hidden
-        className="scale-[1.6] sm:scale-[1.85]"
-      />
+      <SharpOrb state={look.orb} size={wide ? 128 : 112} color={look.tint ? CORAL_RGB : undefined} paused={status === "off"} />
     </span>
   );
   return (
