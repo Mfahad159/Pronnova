@@ -48,7 +48,7 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 19 | Brief wants `students`, `materials`, `material_items` tables, but `profiles`, `lessons`, `lesson_items` already do the job | Team: extend the existing tables (no parallel system); `enrollments` folded into `profiles.class_id` and dropped |
 | 20 | Brief: one shared splitter for "Paste" and "Word import"; it also says Urdu text passes through unchanged | Splitter only splits on . ! ? — Urdu "۔" is NOT treated as a sentence end, so Urdu text stays whole |
 | 24 | Font: teammate's commit 4361d45 switched the app to **Quicksand**; earlier request + older docs say **Google Sans Flex** | Kept Quicksand (latest, consistent everywhere); **team to confirm** |
-| 25 | WCAG AA vs brand: white on the bright KiddyButton coral is 3.1:1; soft field borders 1.3:1 | Not changed; options in `docs/qa-report.md` §6 — **team to decide** |
+| 25 | WCAG AA vs brand: white on the bright KiddyButton coral is 3.1:1; soft field borders 1.3:1 | **KiddyButton: team kept the brand coral (2026-11-28), accepted exception.** Field borders: still open, options in `docs/qa-report.md` §6 |
 | 26 | Unslop audit flags emoji / "!" / uppercase chips; they're the deliberate Class 1 tone (ADR-006/007) | Kept; list in `docs/qa-report.md` §4 |
 | 21 | Phase B brief labels levels Easy/Medium/Hard ("Long for Easy…") | Kept Basic/Medium/Advanced (team decision #17); warnings read "Long for Basic: 1–3 words suggested" |
 | 22 | Phase B brief: keep the picked student in `localStorage` | Server-rendered pages can't read localStorage, so the id is in localStorage AND mirrored to a cookie (`pronnova_student`) |

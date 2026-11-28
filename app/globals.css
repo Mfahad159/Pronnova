@@ -14,6 +14,8 @@
   --color-score-good: var(--score-good);
   --color-score-average: var(--score-average);
   --color-level-medium: var(--level-medium);
+  --color-kiddy-face: var(--kiddy-face);
+  --color-kiddy-lip: var(--kiddy-lip);
   --color-level-advanced: var(--level-advanced);
   --color-tint-peach: var(--tint-peach);
   --color-tint-sky: var(--tint-sky);
@@ -87,6 +89,11 @@
   --score-good: #8f5d10;          /* 70-84 (AA on its tints, Phase 5) */
   --score-average: #c8281e;       /* < 70 (AA on its tints, Phase 5) */
 
+  /* KiddyButton (team decision 2026-11-28): deeper coral face so white text meets WCAG AA (5.4:1);
+     the darker lip keeps the original face/lip step. The bright --brand-coral stays for big headline words. */
+  --kiddy-face: #c4362a;
+  --kiddy-lip: #8f271f;
+
   /* Level badges (landing learning-journey colours; Basic uses --score-excellent) */
   --level-medium: #ffb000;
   --level-advanced: #2db8ff;
@@ -141,6 +148,8 @@
   --score-average: #ff7a6e;
   --level-medium: #ffb000;
   --level-advanced: #2db8ff;
+  --kiddy-face: #c4362a;
+  --kiddy-lip: #8f271f;
   --tint-peach: #3a2a22;
   --tint-sky: #1e2f3a;
   --tint-mint: #22331f;

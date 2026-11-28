@@ -15,7 +15,7 @@ export default function GlobalError({ retry, reset }: { error: unknown; retry?: 
           <button
             type="button"
             onClick={again}
-            className="h-12 rounded-[0.875rem] bg-brand-coral px-7 font-semibold text-white shadow-[0_5px_0_0_var(--primary)]"
+            className="h-12 rounded-[0.875rem] bg-kiddy-face px-7 font-semibold text-white shadow-[0_5px_0_0_var(--kiddy-lip)]"
           >
             Try again
           </button>

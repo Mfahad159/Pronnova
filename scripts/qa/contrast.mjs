@@ -44,8 +44,9 @@ const pairs = [
   ["input border vs page (UI part)", tok.input, tok.background, "large"],
 ];
 
-// Below AA on purpose until the team decides (docs/qa-report.md → "Needs a decision"):
-// the bright brand coral of the KiddyButton face, and the soft 2px field borders.
+// Below AA on purpose (docs/qa-report.md §6):
+// - KiddyButton's bright brand coral: ACCEPTED by the team (2026-11-28), keep it.
+// - soft 2px field borders: decision still open.
 const KNOWN = new Set([
   "white on brand coral (KiddyButton, 16px semibold)",
   "white on brand coral (KiddyButton lg, 18px semibold)",
@@ -57,8 +58,9 @@ const rows = pairs.map(([what, fg, bg, need]) => {
   const min = need === "normal" ? 4.5 : 3;
   const pass = r >= min;
   if (!pass && !KNOWN.has(what)) fails++;
-  return { what, fg, bg, ratio: r.toFixed(2), needs: `${min}:1`, result: pass ? "PASS" : KNOWN.has(what) ? "KNOWN (decision)" : "FAIL" };
+  const known = /KiddyButton/.test(what) ? "ACCEPTED (team)" : "OPEN (decision)";
+  return { what, fg, bg, ratio: r.toFixed(2), needs: `${min}:1`, result: pass ? "PASS" : KNOWN.has(what) ? known : "FAIL" };
 });
 console.table(rows);
-console.log(fails ? `${fails} new pair(s) below AA` : `All pairs meet WCAG AA except ${KNOWN.size} known brand decisions`);
+console.log(fails ? `${fails} new pair(s) below AA` : `All pairs meet WCAG AA except the accepted KiddyButton coral (2 sizes) and the open field-border decision`);
 process.exit(fails ? 1 : 0);

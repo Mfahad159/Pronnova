@@ -13,7 +13,7 @@ Every check below is repeatable. Commands are in [How to re-run](#how-to-re-run)
 | 3 | Interaction errors | ✅ Pass, with real engine-down and Supabase-down servers. 1 bug fixed |
 | 4 | Design consistency | ✅ Pass. Level colours are tokens now. Unslop audit: light, mostly deliberate (see below) |
 | 5 | Responsive | ✅ Pass at 360 / 768 / 1280 / 1440 px. 2 layout fixes |
-| 6 | Accessibility | ✅ Pass, except **2 brand decisions** waiting on the team (button face, field borders) |
+| 6 | Accessibility | ✅ Pass, with 1 accepted exception (KiddyButton brand coral, team decision 2026-11-28) and 1 decision open (field borders) |
 | 7 | Browsers / devices | 🟡 Chrome + Edge automated and passing. Firefox blocked on this PC. Safari, iPhone and Android: **manual checklist below** |
 | 8 | Performance | ✅ Pass: pages < 3 s, feedback ≤ 10 s, 50 users at once OK. 1 improvement made |
 | 9 | Data integrity | ✅ Pass (8/8 checks on 196 real attempts, incl. 50 submitted at once) |
@@ -111,12 +111,12 @@ Browser tests + `scripts/qa/failure-servers.mjs` (two extra production servers w
 - **Labels:** every button, link, input and select on the 15 screens has an accessible name (ui-audit).
 - **Screen reader:** the score is announced through a polite live region ("Your score is N percent").
 - **Reduced motion:** the page loader skips its animation. Animate UI follows the system setting.
-- **Contrast** (`scripts/qa/contrast.mjs`): 16 of 19 pairs pass AA. The other 3 are **team decisions**:
+- **Contrast** (`scripts/qa/contrast.mjs`): 16 of 19 pairs pass AA. The other 3:
 
 | Pair | Ratio | Needs | Options |
 |---|---|---|---|
-| White text on the KiddyButton's bright coral (#ff594b) | 3.1:1 | 4.5:1 | (a) face → #c4362a (5.4:1, a deeper coral) · (b) bold text ≥ 19 px, where 3:1 is enough as "large text" · (c) keep for the brand and accept |
-| Soft 2 px field borders vs page | 1.3:1 | 3:1 (WCAG 1.4.11) | (a) border → ink at ~45% (noticeably darker) · (b) keep: fields also have labels, placeholder and a strong focus ring |
+| White text on the KiddyButton's bright coral (#ff594b), 2 sizes | 3.1:1 | 4.5:1 | **Decided 2026-11-28: keep the brand coral** (accepted exception). Mitigation: KiddyButtons always have a clear text label and icon, are large (40–54 px tall) with bold heading type, and the focus ring passes AA |
+| Soft 2 px field borders vs page | 1.3:1 | 3:1 (WCAG 1.4.11) | **Still open:** (a) border → ink at ~45% (noticeably darker) · (b) keep: fields also have labels, placeholder and a strong focus ring |
 
 ## 7. Browsers / devices 🟡
 | Browser | How | Result |
@@ -185,7 +185,7 @@ Also checked:
 ## Still open (not bugs: decisions, keys or hardware)
 | Item | Why open | Owner |
 |---|---|---|
-| KiddyButton contrast, field-border contrast | Brand decision (see §6) | Team |
+| Field-border contrast | Brand decision (see §6). The KiddyButton coral was decided: kept | Team |
 | Font: **Quicksand** (commit 4361d45) vs **Google Sans Flex** (earlier request, older docs) | Teammate changed it on purpose; used consistently | Team |
 | Unslop suggestions (emoji, "!", uppercase chips) | Deliberate Class 1 tone | Team |
 | Azure scorer + "Azure vs own engine" write-up | `AZURE_SPEECH_KEY/REGION` and `PYTHON_ENGINE_URL` empty | Team → then dev |
