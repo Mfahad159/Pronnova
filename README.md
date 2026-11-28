@@ -1,87 +1,49 @@
 # Pronnova
 
-English pronunciation practice and assessment for Class 1 students in Pakistan, with a teacher dashboard for classes, lessons and assignments.
+Pronnova helps young learners practise speaking English clearly. Children listen to a word or sentence, say it out loud, and get instant, friendly feedback. Teachers set the lessons and follow each child's progress.
 
-Final Year Project (FYP-1), FAST-NU Chiniot.
+Built for Class 1 students and their teachers.
 
-![Landing page](docs/screenshots/landing.jpg)
+![Pronnova](docs/screenshots/landing.jpg)
 
-## How it works
+## For students
 
-**Student**
+1. Choose your name from your class list. No password needed.
+2. Open a lesson your teacher gave you, or pick a chapter.
+3. Tap Listen to hear the word, then record yourself saying it.
+4. See your score and a short tip. Try again or move to the next word.
 
-1. Pick your name from the class list (no password, a teacher-managed roster).
-2. Open an assigned lesson or a chapter.
-3. Listen to the word or sentence, then record your own voice.
-4. Get a score (0–100) with a short tip, then try again or move to the next item.
-
-| Student home | Practice and feedback |
+| Your home page | Practice and feedback |
 | --- | --- |
 | ![Student home](docs/screenshots/student-dashboard.jpg) | ![Practice feedback](docs/screenshots/practice-feedback.jpg) |
 
-**Teacher**
+## For teachers
 
-1. Create classes and add students.
-2. Create a lesson: type items, paste a list, or upload a Word file. Items are split and checked for the chosen level (Basic, Medium, Advanced).
-3. Assign the lesson to a whole class or selected students, with a due date.
-4. Review attempts and progress on the dashboard.
+1. Create your classes and add your students.
+2. Make a lesson: type the words, paste a list, or upload a Word file. Pronnova checks that each item suits the level you chose (Basic, Medium or Advanced).
+3. Assign the lesson to the whole class or to selected students, with a due date.
+4. Follow each student's attempts and progress from your dashboard.
 
-| Materials library | Material editor |
+| Your lessons | Making a lesson |
 | --- | --- |
-| ![Teacher materials](docs/screenshots/teacher-library.jpg) | ![Material editor](docs/screenshots/material-editor.jpg) |
+| ![Teacher lessons](docs/screenshots/teacher-library.jpg) | ![Lesson editor](docs/screenshots/material-editor.jpg) |
 
-**Under the hood**
+## Feedback
 
-The browser records audio and sends it to a server route. The server stores the recording in a private Supabase bucket, scores it with the configured speech engine, and saves the attempt. All database and storage access runs on the server with the secret key; the browser never talks to Supabase directly.
+Every attempt gets a score from 0 to 100 and a simple label:
 
-## Tech stack
-
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui with Animate UI and Motion, Supabase (Postgres and Storage), Vitest, Playwright.
-
-## Getting started
-
-Requirements: Node.js 20+ and a Supabase project.
-
-```powershell
-npm install
-```
-
-Create `.env.local` in the project root:
-
-```
-SUPABASE_URL=
-SUPABASE_SECRET_KEY=
-SUPABASE_DB_URL=
-SPEECH_ENGINE=mock
-```
-
-`SPEECH_ENGINE` can be `mock`, `azure` (needs `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`) or `python` (needs `SPEECH_ENGINE_URL`).
-
-Set up the database and start the app:
-
-```powershell
-npm run db:push
-npm run db:seed
-npm run dev
-```
-
-Open http://localhost:3000 and choose Student or Teacher.
-
-## Scripts
-
-| Command | Purpose |
+| Score | Label |
 | --- | --- |
-| `npm run dev` | Development server |
-| `npm run build` / `npm start` | Production build and server |
-| `npm test` | Unit tests (Vitest) |
-| `npm run test:db` | Database tests |
-| `npm run test:e2e` | End-to-end tests (Playwright) |
-| `npm run db:push` / `db:seed` / `db:status` | Apply migrations, load demo data, check status |
+| 85 and above | Excellent |
+| 70 to 84 | Good |
+| Below 70 | Average |
 
-## Documentation
+Each result comes with one clear tip for the next try, and students can replay the correct pronunciation as often as they like.
 
-- [docs/index.md](docs/index.md): map of all documentation
-- [docs/team-guide.md](docs/team-guide.md): structure, flows and local setup
-- [docs/architecture.md](docs/architecture.md): system design
-- [docs/database.md](docs/database.md): tables and functions
-- [docs/qa-report.md](docs/qa-report.md) and [docs/demo-script.md](docs/demo-script.md): QA results and demo walkthrough
+## Privacy
+
+Recordings are stored privately and are only used to give feedback and show progress to the student's teacher.
+
+## Running Pronnova
+
+Setup instructions are in the [team guide](docs/team-guide.md).
