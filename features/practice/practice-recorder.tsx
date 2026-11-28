@@ -5,7 +5,6 @@ import {
   ArrowCounterClockwise,
   ArrowRight,
   CircleNotch,
-  Microphone,
   MicrophoneSlash,
   PaperPlaneTilt,
   Stop,
@@ -16,8 +15,8 @@ import { KiddyButton } from "@/components/brand/kiddy-button";
 import { PikoSays } from "@/components/brand/piko";
 import { InkButton, OutlineButton } from "@/components/brand/ui";
 import { ScorePill } from "@/features/assessment/score-pill";
-import { LiveWaveform } from "@/features/voice/live-waveform";
-import { MicOrb, MicStatusPill } from "@/features/voice/mic-status";
+import { MicCursor } from "@/features/voice/mic-cursor";
+import { MicInline, MicStage, type MicStatus } from "@/features/voice/mic-status";
 import { useRecorder } from "@/features/voice/use-recorder";
 import { RECORDING } from "@/lib/audio";
 import { classify } from "@/lib/scoring";
@@ -37,7 +36,7 @@ const cheer = {
 /** UC-05 (record) + UC-04 (submit) + UC-06 (feedback), styled like the landing demo's right column. */
 export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: string; itemText: string; nextHref: string | null }) {
   const { phase, error, elapsedMs, recording, result, set, reset } = usePracticeStore();
-  const { start, stop, cancel, analyserRef } = useRecorder();
+  const { start, stop, cancel } = useRecorder();
   const [status, setStatus] = useState("");
 
   // New exercise → fresh session (and free the old recording's memory).
@@ -91,6 +90,19 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
   }
 
   const isRecording = phase === "recording";
+  // Mic state for the cursor tag (and the pills below).
+  const micStatus: MicStatus =
+    phase === "requesting"
+      ? "requesting"
+      : phase === "recording"
+        ? "listening"
+        : phase === "submitting"
+          ? "processing"
+          : phase === "recorded" || phase === "scored"
+            ? "done"
+            : phase === "error" || phase === "failed"
+              ? "off"
+              : "ready";
   const remaining = Math.max(0, RECORDING.maxMs - elapsedMs);
   const score = result?.score ?? 0;
   const wrongWords = result ? result.words.filter((w) => w.isError) : [];
@@ -101,7 +113,9 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
   return (
     // Animate UI AutoHeight: the card grows/shrinks smoothly between mic → recording → listen → result.
     <AutoHeight deps={[phase, !!error]} className="w-full">
-    <div className="flex w-full flex-col gap-5">
+    <div className="relative flex w-full flex-col gap-5">
+      {/* Animate UI cursor: inside the mic section the pointer shows the mic state. */}
+      <MicCursor status={micStatus} />
       <p role="status" aria-live="polite" className="sr-only">
         {status}
       </p>
@@ -109,40 +123,24 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
       {/* Record / stop (landing demo mic card) */}
       {phase === "idle" || phase === "requesting" || phase === "error" ? (
         <div className="flex flex-col items-center rounded-2xl border border-border bg-background p-6 text-center sm:p-8">
-          {/* thinking-orbs mic state: ready / asking for permission / off after an error */}
-          <MicStatusPill status={phase === "requesting" ? "requesting" : phase === "error" ? "off" : "ready"} className="mb-5" />
-          <button
-            type="button"
-            onClick={start}
-            disabled={phase === "requesting"}
-            aria-pressed={false}
-            aria-label="Start recording"
-            className="flex size-20 items-center justify-center rounded-full bg-brand-coral text-white shadow-[0_5px_0_0_var(--primary)] outline-none transition-[transform,box-shadow,filter] duration-150 hover:translate-y-[3px] hover:shadow-[0_2px_0_0_var(--primary)] focus-visible:ring-3 focus-visible:ring-ring active:translate-y-[3px] active:shadow-[0_2px_0_0_var(--primary)] disabled:opacity-60 motion-reduce:transition-none"
-          >
-            {phase === "requesting" ? (
-              <CircleNotch className="size-8 animate-spin" weight="bold" aria-hidden />
-            ) : (
-              <Microphone className="size-8" weight="duotone" aria-hidden />
-            )}
-          </button>
-          <p className="mt-5 font-heading text-lg font-semibold text-foreground">
-            {phase === "requesting" ? "Allow the microphone" : "Tap the mic and say it"}
-          </p>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {phase === "requesting"
-              ? "Say yes when your browser asks."
-              : `Tap stop when you finish. It stops by itself after ${RECORDING.maxMs / 1000} seconds.`}
-          </p>
+          {/* The dotted orb is the mic: tap it to start. State, then the hint, below it. */}
+          <MicStage
+            status={phase === "requesting" ? "requesting" : phase === "error" ? "off" : "ready"}
+            onStart={start}
+            startLabel="Start recording"
+            hint={
+              phase === "requesting"
+                ? "Say yes when your browser asks."
+                : `Tap stop when you finish. It stops by itself after ${RECORDING.maxMs / 1000} seconds.`
+            }
+          />
         </div>
       ) : null}
 
       {isRecording ? (
         <div className="flex flex-col items-center rounded-2xl border-2 border-primary/40 bg-secondary/40 p-6 text-center sm:p-8">
-          <MicOrb status="listening" className="mb-3" />
-          <MicStatusPill status="listening" detail={`${secs(elapsedMs)} · ${Math.ceil(remaining / 1000)}s left`} />
-          <div className="mt-4 flex w-full justify-center">
-            <LiveWaveform analyserRef={analyserRef} active={isRecording} />
-          </div>
+          {/* One clean indicator while recording: the orb, "Listening…", then the time. */}
+          <MicStage status="listening" time={`${secs(elapsedMs)} · ${Math.ceil(remaining / 1000)}s left`} />
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
@@ -182,7 +180,7 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
         <div className="rounded-2xl border border-border bg-background p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             {phase === "submitting" ? (
-              <MicStatusPill status="processing" />
+              <MicInline status="processing" />
             ) : (
               <p className="font-heading text-sm font-semibold text-foreground">Listen to yourself</p>
             )}

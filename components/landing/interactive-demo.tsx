@@ -8,7 +8,6 @@ import {
   CheckCircle,
   CircleNotch,
   Info,
-  Microphone,
   SpeakerHigh,
   Stop,
   WarningCircle,
@@ -18,8 +17,8 @@ import { KiddyButton } from "@/components/brand/kiddy-button";
 import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { OutlineButton, Panel } from "@/components/brand/ui";
 import { ScorePill } from "@/features/assessment/score-pill";
-import { LiveWaveform } from "@/features/voice/live-waveform";
-import { MicStatusPill } from "@/features/voice/mic-status";
+import { MicCursor } from "@/features/voice/mic-cursor";
+import { MicStage, type MicStatus } from "@/features/voice/mic-status";
 import { useRecorder } from "@/features/voice/use-recorder";
 import { RECORDING } from "@/lib/audio";
 import { speakReference } from "@/lib/speech-tts";
@@ -40,7 +39,7 @@ const DEMO_STEPS = [
  */
 export function InteractiveDemo() {
   const { phase, error, elapsedMs, recording, reset } = usePracticeStore();
-  const { start, stop, cancel, analyserRef } = useRecorder();
+  const { start, stop, cancel } = useRecorder();
 
   const [ttsState, setTtsState] = useState<"idle" | "speaking" | "unsupported">("idle");
   const [hasListened, setHasListened] = useState(false);
@@ -92,6 +91,18 @@ export function InteractiveDemo() {
   const isRecording = phase === "recording";
   const isRequesting = phase === "requesting";
   const seconds = (elapsedMs / 1000).toFixed(1);
+  // One mic state for the status pill and the cursor tag.
+  const micStatus: MicStatus = isRequesting
+    ? "requesting"
+    : isRecording
+      ? "listening"
+      : phase === "error"
+        ? "off"
+        : effectiveStage === "checking"
+          ? "processing"
+          : phase === "recorded"
+            ? "done"
+            : "ready";
   const maxSec = RECORDING.maxMs / 1000;
 
   return (
@@ -162,76 +173,33 @@ export function InteractiveDemo() {
               ) : null}
             </div>
 
-            {/* Right half: Voice Orb */}
-            <div className="flex flex-col items-center justify-center px-6 py-9 text-center sm:px-10 sm:py-12">
-              {/* Interactive Voice Orb */}
-              <div className="relative flex size-36 items-center justify-center">
-                {/* Outer ambient/pulse ring */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "absolute inset-0 rounded-full transition-transform duration-300 motion-reduce:animate-none",
-                    isRecording
-                      ? "animate-ping bg-brand-coral/20"
-                      : "bg-tint-peach/90",
-                  )}
-                />
-                {/* Middle glow ring */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "absolute inset-3 rounded-full transition-colors",
-                    isRecording ? "bg-brand-coral/30" : "bg-brand-coral/15",
-                  )}
-                />
-
-                <button
-                  type="button"
-                  disabled={isRequesting}
-                  onClick={isRecording ? stop : handleStart}
-                  aria-pressed={isRecording}
-                  aria-label={isRecording ? "Stop recording" : "Tap the orb to record Apple"}
-                  className={cn(
-                    "relative z-10 flex size-22 items-center justify-center rounded-full bg-gradient-to-br from-brand-coral to-chart-1 text-white outline-none transition-transform duration-150 hover:scale-105 focus-visible:ring-4 focus-visible:ring-ring active:scale-95 disabled:opacity-60 motion-reduce:transition-none",
-                    isRecording && "from-destructive to-primary",
-                  )}
-                >
-                  {isRequesting ? (
-                    <CircleNotch className="size-8 animate-spin" weight="bold" aria-hidden />
-                  ) : isRecording ? (
-                    <Stop className="size-8" weight="fill" aria-hidden />
-                  ) : (
-                    <Microphone className="size-9" weight="duotone" aria-hidden />
-                  )}
-                </button>
-              </div>
-
-              {/* thinking-orbs mic state under the orb button (ready / asking / listening / checking / done). */}
-              <MicStatusPill
-                className="mt-4"
-                status={
-                  isRequesting
-                    ? "requesting"
-                    : isRecording
-                      ? "listening"
-                      : phase === "error"
-                        ? "off"
-                        : effectiveStage === "checking"
-                          ? "processing"
-                          : phase === "recorded"
-                            ? "done"
-                            : "ready"
+            {/* Right half: Voice Orb (Animate UI cursor shows the mic state while the pointer is here) */}
+            <div className="relative flex flex-col items-center justify-center px-6 py-9 text-center sm:px-10 sm:py-12">
+              <MicCursor status={micStatus} />
+              {/* The dotted thinking-orb is the mic: tap it to record; its animation shows the state.
+                  Below it: the state text, the time while recording, and a short hint. */}
+              <MicStage
+                status={micStatus}
+                onStart={isRecording ? undefined : handleStart}
+                startLabel="Tap the orb to record Apple"
+                time={isRecording ? `${seconds}s / ${maxSec}s` : undefined}
+                hint={
+                  isRecording || phase === "error"
+                    ? undefined
+                    : isRequesting
+                      ? "Say yes when your browser asks."
+                      : "Say “Apple” after you tap. Audio stays on your device in this demo."
                 }
-                detail={isRecording ? `${seconds}s / ${maxSec}s` : undefined}
               />
 
               {isRecording ? (
                 <div className="mt-3 flex w-full max-w-xs flex-col items-center gap-3">
-                  <LiveWaveform analyserRef={analyserRef} active />
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
                       onClick={stop}
+                      aria-pressed
+                      aria-label="Stop recording"
                       className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-5 font-heading text-xs font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring"
                     >
                       <Stop className="size-3.5" weight="fill" aria-hidden />
@@ -258,20 +226,7 @@ export function InteractiveDemo() {
                     Try Again
                   </OutlineButton>
                 </div>
-              ) : (
-                <>
-                  <p className="mt-4 font-heading text-lg font-semibold text-foreground">
-                    {isRequesting
-                      ? "Waiting for microphone permission..."
-                      : phase === "recorded"
-                        ? "Recording captured — tap orb to re-record"
-                        : "Tap the orb & say “Apple”"}
-                  </p>
-                  <p className="mt-1.5 max-w-xs text-sm text-muted-foreground">
-                    Uses your real browser microphone. Audio stays on your device in this demo and is released automatically.
-                  </p>
-                </>
-              )}
+              ) : null}
             </div>
           </div>
 

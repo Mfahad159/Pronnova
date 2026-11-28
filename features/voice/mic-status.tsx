@@ -9,14 +9,14 @@ import { cn } from "@/lib/utils";
 export type MicStatus = "ready" | "requesting" | "listening" | "processing" | "done" | "off";
 
 /** Brand coral ink (KiddyButton coral, keep-brand-coral decision). */
-const CORAL = "#ff594b";
+export const CORAL = "#ff594b";
 
-const LOOK: Record<MicStatus, { orb: OrbState; label: string; active: boolean; tint: boolean }> = {
-  ready: { orb: "breathing", label: "Ready", active: false, tint: false },
+export const LOOK: Record<MicStatus, { orb: OrbState; label: string; active: boolean; tint: boolean }> = {
+  ready: { orb: "breathing", label: "Tap to speak", active: false, tint: false },
   requesting: { orb: "connecting", label: "Asking for the mic", active: true, tint: false },
   listening: { orb: "listening", label: "Listening", active: true, tint: true },
   processing: { orb: "working", label: "Checking your voice", active: true, tint: true },
-  done: { orb: "shaping", label: "Done", active: false, tint: false },
+  done: { orb: "shaping", label: "Tap to record again", active: false, tint: false },
   off: { orb: "breathing", label: "Mic is off", active: false, tint: false },
 };
 
@@ -37,72 +37,95 @@ function Dots() {
   );
 }
 
-/**
- * Mic status pill in the thinking-orbs style: a dotted orb whose animation shows the mic state
- * (breathing = ready, connecting = asking permission, listening = recording, working = checking),
- * plus a short label that cross-fades when the state changes. `detail` adds e.g. the timer.
- * The orb is decorative; the label is the accessible text (the recorders keep their own live region).
- * Pinned to the light theme: Pronnova has no dark mode, and "auto" would draw light dots on our light
- * cards when the OS is dark.
- */
-export function MicStatusPill({ status, detail, className }: { status: MicStatus; detail?: string; className?: string }) {
+/** State text that cross-fades (with a little blur) when the mic state changes. */
+function StateLabel({ status, className }: { status: MicStatus; className?: string }) {
   const look = LOOK[status];
   return (
-    <MotionConfig reducedMotion="user">
-      <motion.div
-        layout
-        transition={{ duration: 0.35, ease: ease.out }}
-        data-mic-status={status}
-        className={cn(
-          "inline-flex max-w-full items-center gap-2 rounded-full border py-1 pr-4 pl-1 sm:gap-2.5",
-          look.tint ? "border-primary/25 bg-secondary/70" : "border-foreground/10 bg-card",
-          className,
-        )}
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.p
+        key={status}
+        initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+        transition={{ duration: 0.25, ease: ease.out }}
+        className={cn("flex items-center justify-center font-heading font-bold", look.tint ? "text-primary" : "text-foreground", className)}
       >
-        <span className="flex size-8 shrink-0 items-center justify-center">
-          <ThinkingOrb
-            state={look.orb}
-            size={32}
-            theme="light"
-            color={look.tint ? CORAL : undefined}
-            paused={status === "off"}
-            aria-hidden
-          />
-        </span>
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span
-            key={status}
-            initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
-            transition={{ duration: 0.25, ease: ease.out }}
-            className={cn("flex min-w-0 items-center text-sm font-semibold", look.tint ? "text-primary" : "text-muted-foreground")}
-          >
-            <span className="truncate">{look.label}</span>
-            {look.active ? <Dots /> : null}
-            {detail ? <span className="ml-1.5 shrink-0 font-medium tabular-nums opacity-80">{detail}</span> : null}
-          </motion.span>
-        </AnimatePresence>
-      </motion.div>
-    </MotionConfig>
+        {look.label}
+        {look.active ? <Dots /> : null}
+      </motion.p>
+    </AnimatePresence>
   );
 }
 
 /**
- * The big orb for the recording moment: the 64px tuned design on tablets and up, the 32px one
- * scaled up on phones so it still reads at a glance without crowding the card.
+ * The mic, as one dotted thinking-orb (no mic button, no pill): the orb's animation IS the state
+ * (breathing = ready, connecting = asking permission, listening = recording, working = checking,
+ * shaping = recorded). Below it: the state text, then the time, then an optional hint.
+ * Pass `onStart` to make the orb itself the tap target (when not recording).
+ * Pinned to the light theme: Pronnova has no dark mode, and "auto" would draw light dots on our
+ * light cards when the OS is dark. Reduced motion gets a still frame (built into thinking-orbs).
  */
-export function MicOrb({ status, className }: { status: MicStatus; className?: string }) {
+export function MicStage({
+  status,
+  time,
+  hint,
+  onStart,
+  startLabel = "Start recording",
+  className,
+}: {
+  status: MicStatus;
+  time?: string;
+  hint?: React.ReactNode;
+  onStart?: () => void;
+  startLabel?: string;
+  className?: string;
+}) {
   const look = LOOK[status];
-  const common = { state: look.orb, theme: "light" as const, color: look.tint ? CORAL : undefined, paused: status === "off", "aria-hidden": true };
+  // 64px tuned orb drawn larger with CSS so it reads at a glance (bigger again from tablets up).
+  const orb = (
+    <span className="flex size-28 items-center justify-center sm:size-32">
+      <ThinkingOrb
+        state={look.orb}
+        size={64}
+        theme="light"
+        color={look.tint ? CORAL : undefined}
+        paused={status === "off"}
+        aria-hidden
+        className="scale-[1.6] sm:scale-[1.85]"
+      />
+    </span>
+  );
   return (
-    <span className={cn("flex items-center justify-center", className)}>
-      <span className="flex size-12 items-center justify-center sm:hidden">
-        <ThinkingOrb {...common} size={32} className="scale-150" />
-      </span>
-      <span className="hidden sm:flex">
-        <ThinkingOrb {...common} size={64} />
-      </span>
+    <MotionConfig reducedMotion="user">
+      <div data-mic-status={status} className={cn("flex flex-col items-center text-center", className)}>
+        {onStart ? (
+          <button
+            type="button"
+            onClick={onStart}
+            disabled={status === "requesting"}
+            aria-label={startLabel}
+            className="rounded-full outline-none transition-transform duration-200 hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring active:scale-95 disabled:opacity-70 motion-reduce:transition-none"
+          >
+            {orb}
+          </button>
+        ) : (
+          orb
+        )}
+        <StateLabel status={status} className="mt-3 text-lg sm:text-xl" />
+        {time ? <p className="mt-1 font-heading text-base font-semibold tabular-nums text-muted-foreground">{time}</p> : null}
+        {hint ? <div className="mt-1.5 max-w-xs text-sm text-muted-foreground">{hint}</div> : null}
+      </div>
+    </MotionConfig>
+  );
+}
+
+/** Small inline form (20px orb + state text, no pill), e.g. "Checking your voice…" next to a recording. */
+export function MicInline({ status, className }: { status: MicStatus; className?: string }) {
+  const look = LOOK[status];
+  return (
+    <span data-mic-status={status} className={cn("inline-flex items-center gap-2", className)}>
+      <ThinkingOrb state={look.orb} size={20} theme="light" color={look.tint ? CORAL : undefined} aria-hidden />
+      <StateLabel status={status} className="text-sm" />
     </span>
   );
 }
