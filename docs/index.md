@@ -14,6 +14,7 @@ Read this first. Then open only what your task needs.
 | [architecture.md](architecture.md) | Parts of the system and how they talk | Changing data flow or adding a service |
 | [stack-options.md](stack-options.md) | Free-tier comparison + recommendation | Choosing or changing a service |
 | [design.md](design.md) | Layout, style, reference image, asset use | Building UI |
+| [design/image-prompts.md](design/image-prompts.md) | Prompts to generate new illustrations in the Pronnova art style | Making new images/avatars |
 | [agent-skills.md](agent-skills.md) | Approved AI skills + UI component sources | Before installing a skill or copying UI blocks |
 | [decisions/](decisions/) | Decision records: 001 stack, 002 no login in FYP-1, 003 test tools, 004 lesson access (unlock + visibility), 005 speech contract frozen, 006 audience Class 1, 007 landing page is the design base, 008 Animate UI motion + lucide arrows | You want to know why something was chosen |
 | [../specs/README.md](../specs/README.md) | Feature specs | Before building a feature |

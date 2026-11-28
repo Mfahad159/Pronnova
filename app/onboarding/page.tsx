@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react/ssr";
 import { RoleTransition } from "@/components/animate-ui/components/page-transition";
 import { LandingNav } from "@/components/layout/landing-nav";
+import { StudentRoleIllustration, TeacherRoleIllustration } from "@/components/brand/role-illustrations";
 import { SetupSteps } from "@/components/brand/setup-steps";
 
 export const metadata = { title: "Get started" };
@@ -12,15 +12,13 @@ const roles = [
     href: "/student",
     title: "I'm a student",
     body: "Read words and sentences out loud, get a score for every word, and see what to practise next.",
-    image: "/objects/img1.jpg",
-    alt: "A student reading into a microphone",
+    Art: StudentRoleIllustration,
   },
   {
     href: "/teacher",
     title: "I'm a teacher",
     body: "Upload practice material for your class, set due dates, and see who needs help with which sounds.",
-    image: "/avatar/avatar_standing_beside_dice.png",
-    alt: "A teacher at a lectern",
+    Art: TeacherRoleIllustration,
   },
 ] as const;
 
@@ -52,7 +50,8 @@ export default function OnboardingPage() {
                 className="group flex h-full flex-col overflow-hidden rounded-3xl border bg-card outline-none transition-colors hover:border-primary/50 focus-visible:ring-3 focus-visible:ring-ring"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
-                  <Image src={r.image} alt={r.alt} fill sizes="(min-width: 640px) 420px, 100vw" className="object-cover object-top" />
+                  {/* Landing-style illustration (decorative; the card title names the role). */}
+                  <r.Art className="absolute inset-0 size-full transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none" />
                 </div>
                 <div className="flex flex-1 items-start gap-3 p-5">
                   <div className="flex-1">
