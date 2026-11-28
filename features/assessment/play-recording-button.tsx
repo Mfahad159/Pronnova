@@ -83,7 +83,7 @@ export function PlayRecordingButton({
           disabled={!hasAudio || state === "loading"}
           aria-label={label}
           className={cn(
-            "flex size-9 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-45 [&_svg]:size-4",
+            "flex size-9 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-45 [&_svg]:size-4",
             state === "error"
               ? "bg-destructive/10 text-destructive"
               : "bg-secondary text-primary hover:bg-primary hover:text-primary-foreground",

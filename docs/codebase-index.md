@@ -16,6 +16,9 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `vitest.config.ts`, `tests/unit/` | Unit tests (`npm test`), incl. splitter, material/assignment rules, docx import, API validation | ✅ |
 | `vitest.db.config.ts`, `tests/db/` | Opt-in DB tests (`npm run test:db`) against the project in `.env.local`: 0004 rules (rollback, 409 lock, duplicate, CHECK, targets, visibility). Creates and removes `zz-test-…` rows | ✅ |
 | `tests/fixtures/docx.ts` | Builds tiny .docx files in memory (`*.docx` is git-ignored) | ✅ |
+| `scripts/qa/` | Phase 5 QA scripts: `ui-audit` (4 widths, labels, reduced motion), `contrast` (WCAG from tokens), `integrity` (stats recount), `security`, `perf` (pages, feedback, 50 users), `failure-servers` (real engine-down / Supabase-down) — see `docs/qa-report.md` | ✅ |
+| `tests/e2e/fixtures.ts`, `qa-*.spec.ts` | Shared `test` (goto waits for the page to finish arriving); QA browser tests for use cases, routing, keyboard | ✅ |
+| `app/global-error.tsx` | Last-resort branded error screen (root layout errors) | ✅ |
 | `playwright.config.ts`, `tests/e2e/` | Browser tests (`npm run test:e2e`) with Chrome's fake mic: routes, Phase 2, Phase 3 recording. `E2E_MUTATE=1` runs tests that write data; `E2E_FIREFOX=1` adds Firefox | ✅ |
 | `scripts/db-check.mjs` | `npm run db:check`: checks tables, seed, bucket and that the browser key is blocked | ✅ |
 | `scripts/db-pg.mjs` | `npm run db:push / db:seed / db:status / db:verify` over a direct Postgres connection (`pg`, needs `SUPABASE_DB_URL`). Records migrations in `supabase_migrations.schema_migrations` like the Supabase CLI did | ✅ |

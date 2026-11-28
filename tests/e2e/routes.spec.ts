@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 // Smoke test: every main route loads its heading and not our error screen (needs the seeded DB).
 // Note: don't assert on role="alert" — Next.js always renders an empty route announcer with that role.
@@ -9,7 +9,6 @@ const routes: [path: string, heading: RegExp][] = [
   ["/student/chapters", /^chapters$/i],
   ["/student/progress", /your progress/i],
   ["/teacher", /hello/i],
-  ["/student/who", /who are you/i],
   ["/teacher/materials", /^materials$/i],
   ["/teacher/materials/new", /^new material$/i],
   ["/teacher/chapters", /organize chapters/i],
@@ -57,13 +56,19 @@ test("recordings API hides unknown or audio-less attempts", async ({ request }) 
 });
 
 test("page loader: shows on every full load (incl. refresh) and fades out after load", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "commit" }); // look while it loads
   const loader = page.locator(".pn-loader");
   await expect(loader).toHaveCount(1);
   await expect(loader).toHaveCount(0, { timeout: 8_000 }); // gone once the page has loaded
   await expect(page.getByRole("link", { name: "Explore Student Experience" })).toBeVisible();
 
-  await page.reload();
+  await page.reload({ waitUntil: "commit" });
   await expect(page.locator(".pn-loader")).toHaveCount(1);
   await expect(page.locator(".pn-loader")).toHaveCount(0, { timeout: 8_000 });
+});
+
+test("returning device: /student/who goes straight to the dashboard", async ({ page }) => {
+  await page.goto("/student/who"); // this device already picked Ayesha (playwright.config.ts)
+  await expect(page).toHaveURL(/\/student$/);
+  await expect(page.getByRole("heading", { level: 1, name: /^hi, ayesha/i })).toBeVisible();
 });

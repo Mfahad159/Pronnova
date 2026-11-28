@@ -1,11 +1,9 @@
-import { MagnifyingGlass } from "@phosphor-icons/react/ssr";
-import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 /**
  * App top bar in the landing navbar's style (ADR-007): floating white rounded bar with a soft
- * border, bold title, optional search, and one main action (usually a KiddyButton).
+ * border, bold title and one main action (usually a KiddyButton).
  */
 export function TopBar({
   title,
@@ -25,14 +23,11 @@ export function TopBar({
           </TooltipTrigger>
           <TooltipContent side="bottom">Show or hide the menu</TooltipContent>
         </Tooltip>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-[10rem] flex-1 basis-40">
           <h1 className="truncate font-heading text-lg font-bold tracking-tight md:text-xl">{title}</h1>
           {subtitle ? <p className="truncate text-sm text-muted-foreground">{subtitle}</p> : null}
         </div>
-        <div className="relative hidden w-60 lg:block">
-          <MagnifyingGlass className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input type="search" placeholder="Search lessons…" aria-label="Search lessons" className="h-10 rounded-xl pl-9" />
-        </div>
+        {/* No search box: there was one here that did nothing (Phase 5 QA, check 2 "no dead controls"). */}
         {action}
       </div>
     </header>

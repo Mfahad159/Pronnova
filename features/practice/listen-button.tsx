@@ -19,7 +19,7 @@ export function ListenButton({ text, label, className }: { text: string; label?:
             onUnsupported: () => setState("unsupported"),
           })
         }
-        className="inline-flex h-12 items-center gap-2.5 rounded-xl border-2 border-foreground/15 bg-card px-6 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-primary/40 hover:bg-secondary/50 focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="inline-flex h-12 items-center gap-2.5 rounded-xl border-2 border-foreground/15 bg-card px-6 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-primary/40 hover:bg-secondary/50 focus-visible:ring-3 focus-visible:ring-ring"
       >
         <SpeakerHigh className={cn("size-5 text-primary", state === "speaking" && "animate-pulse")} weight="duotone" aria-hidden />
         {label ?? "Listen"}

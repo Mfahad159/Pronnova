@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { CURRICULUM_TAG } from "@/server/db/queries/learning";
 import { connection } from "next/server";
 import { cleanAssignment, validateAssignment, type AssignmentInput } from "@/lib/assignments";
 import { cleanMaterial, hasErrors, todayInPakistan, validateMaterial, type MaterialInput } from "@/lib/materials";
@@ -42,6 +44,7 @@ export async function POST(request: Request) {
     const teacher = await getCurrentTeacher();
     const write = { title: m.title, level: m.level as Level, instructions: m.instructions, items: m.items };
     const id = assign ? await createMaterialAndAssign(teacher.id, write, assign) : await createMaterial(teacher.id, write);
+    revalidateTag(CURRICULUM_TAG, { expire: 0 }); // students see the change on their next request
     return json({ id, warnings }, 201);
   } catch (err) {
     return errorResponse(err, { unique: "Each class or student can only be picked once." });

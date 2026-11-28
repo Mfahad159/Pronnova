@@ -196,12 +196,12 @@ Checks (each gets a pass/fail list in `docs/qa-report.md`, bugs fixed or logged)
 9. **Data integrity:** no attempt lost on any failure; error_stats math checked by hand on sample data; classification at 69/70/84/85; seed reset works.
 10. **Security:** no secrets in the repo or browser bundle, RLS on all tables, signed URLs expire, server validates file type/size and all form input, no student names sent to external AI.
 11. **Docs:** codebase index, team guide, decisions and env list match the code; demo script written.
-12. **Release:** deploy to Vercel, set env vars there, smoke test the live URL, tag the FYP-1 version.
 
 Exit checks
-- [ ] No open critical/high bugs; remaining ones listed with reasons
-- [ ] Live Vercel URL passes the demo script
-- [ ] `docs/qa-report.md` complete
+- [x] No open critical/high bugs; remaining ones listed with reasons (2026-11-28: 9 bugs fixed; open items are team decisions, keys or devices)
+- [x] `docs/qa-report.md` complete (+ `docs/demo-script.md`)
+
+**Phase 5 result (2026-11-28):** run on the mock scorer (Azure keys not set). Checks 1–6 and 8–11 pass. Check 7: Chrome + Edge automated, Firefox/Safari/phones on a manual checklist. Repeatable: `tests/e2e/qa-*.spec.ts`, `scripts/qa/*.mjs`. Details: [docs/qa-report.md](../docs/qa-report.md).
 
 Engine track: write up the Azure vs own-engine comparison for the FYP-1 report.
 

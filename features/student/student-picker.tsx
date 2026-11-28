@@ -112,7 +112,7 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
                 type="button"
                 onClick={() => pickClass(c.id)}
                 className={cn(
-                  "flex min-h-20 w-full items-center justify-between gap-3 rounded-2xl border-2 border-foreground/12 p-5 text-left font-heading text-xl font-bold outline-none transition-colors hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring/50",
+                  "flex min-h-20 w-full items-center justify-between gap-3 rounded-2xl border-2 border-foreground/12 p-5 text-left font-heading text-xl font-bold outline-none transition-colors hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring",
                   tints[i % tints.length],
                 )}
               >
@@ -157,7 +157,7 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
                     aria-checked={on}
                     onClick={() => setChosen(s.id)}
                     className={cn(
-                      "relative flex w-full flex-col items-center gap-2 rounded-2xl border-2 p-4 outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                      "relative flex w-full flex-col items-center gap-2 rounded-2xl border-2 p-4 outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring",
                       on ? "border-primary bg-secondary" : "border-foreground/12 bg-card hover:border-primary/40",
                     )}
                   >

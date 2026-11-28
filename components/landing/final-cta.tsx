@@ -25,7 +25,7 @@ export function FinalCta() {
               </KiddyButton>
               <Link
                 href="/teacher"
-                className="inline-flex h-12 items-center justify-center rounded-[0.875rem] border-2 border-foreground/20 bg-card px-6 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex h-12 items-center justify-center rounded-[0.875rem] border-2 border-foreground/20 bg-card px-6 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
               >
                 Explore Teacher Experience
               </Link>

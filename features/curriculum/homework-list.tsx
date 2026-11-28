@@ -41,7 +41,7 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
                     <span
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold",
-                        h.overdue ? "bg-destructive/10 text-destructive" : h.dueSoon ? "bg-[#ffb000]/20 text-score-good" : "bg-secondary text-primary",
+                        h.overdue ? "bg-destructive/10 text-destructive" : h.dueSoon ? "bg-level-medium/20 text-score-good" : "bg-secondary text-primary",
                       )}
                     >
                       {h.overdue ? <WarningCircle className="size-3.5" weight="bold" /> : <CalendarBlank className="size-3.5" weight="bold" />}
@@ -67,14 +67,14 @@ export function HomeworkList({ homework }: { homework: HomeworkEntry[] }) {
         );
         const card = cn(
           "block rounded-2xl border-2 bg-card p-4",
-          h.overdue ? "border-destructive/30" : h.dueSoon ? "border-[#ffb000]/50" : "border-foreground/12",
+          h.overdue ? "border-destructive/30" : h.dueSoon ? "border-level-medium/50" : "border-foreground/12",
         );
         return (
           <li key={h.lessonId}>
             {h.nextItemId ? (
               <Link
                 href={`/student/practice/${h.nextItemId}`}
-                className={cn(card, "outline-none transition-colors hover:border-primary/40 hover:bg-secondary/30 focus-visible:ring-3 focus-visible:ring-ring/50")}
+                className={cn(card, "outline-none transition-colors hover:border-primary/40 hover:bg-secondary/30 focus-visible:ring-3 focus-visible:ring-ring")}
               >
                 {body}
               </Link>

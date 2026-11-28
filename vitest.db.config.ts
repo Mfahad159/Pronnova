@@ -13,6 +13,7 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./", import.meta.url)),
       "server-only": fileURLToPath(new URL("./tests/unit/server-only-stub.ts", import.meta.url)),
       "next/server": fileURLToPath(new URL("./tests/db/next-server-stub.ts", import.meta.url)),
+      "next/cache": fileURLToPath(new URL("./tests/db/next-cache-stub.ts", import.meta.url)),
     },
   },
   test: {

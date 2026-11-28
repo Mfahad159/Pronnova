@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./fixtures";
 
 // UC-05 Record + UC-04 Attempt with the fake microphone (see playwright.config.ts).
 // These save attempts to the database → run with E2E_MUTATE=1.
@@ -56,8 +56,19 @@ test.describe("recording", () => {
 
   test("a too-short recording is rejected in the browser", async ({ page }) => {
     await openDog(page);
+    // Press Stop from INSIDE the page the instant it appears: clicking from the test could take
+    // longer than the 0.5 s minimum on a busy machine and make this test flaky (Phase 5).
+    await page.evaluate(() => {
+      const obs = new MutationObserver(() => {
+        const stop = document.querySelector<HTMLButtonElement>('button[aria-label="Stop recording"]');
+        if (stop) {
+          obs.disconnect();
+          stop.click();
+        }
+      });
+      obs.observe(document.body, { subtree: true, childList: true, attributes: true });
+    });
     await page.getByRole("button", { name: "Start recording" }).click();
-    await page.getByRole("button", { name: "Stop recording" }).click();
     // Filter: Next.js also renders a route announcer with role="alert".
     await expect(page.getByRole("alert").filter({ hasText: /too short/i })).toBeVisible();
   });

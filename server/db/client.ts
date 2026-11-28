@@ -20,6 +20,14 @@ let client: SupabaseClient | null = null;
  */
 export async function getDb(): Promise<SupabaseClient> {
   await connection();
+  return getDbForCache();
+}
+
+/**
+ * Same client WITHOUT `connection()`: only for `"use cache"` functions, which may not call
+ * request-time APIs (node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-cache.md).
+ */
+export function getDbForCache(): SupabaseClient {
   if (client) return client;
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SECRET_KEY;

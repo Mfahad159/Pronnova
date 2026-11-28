@@ -58,9 +58,9 @@ export function PanelTitle({ children }: { children: React.ReactNode }) {
 }
 
 const outline =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 border-foreground/15 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-primary/40 hover:bg-secondary/50 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-60 [&_svg]:size-5";
+  "inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 border-foreground/15 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-primary/40 hover:bg-secondary/50 focus-visible:ring-3 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60 [&_svg]:size-5";
 const ink =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none transition-colors hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-60 [&_svg]:size-4";
+  "inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none transition-colors hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60 [&_svg]:size-4";
 
 /** Secondary action (landing: "Listen to “Apple”"). */
 export function OutlineButton({
@@ -97,14 +97,14 @@ export const tabsTriggerClass =
 /** Level badge colours from the landing's learning-journey cards. */
 export const levelBadge = {
   basic: "bg-score-excellent text-white",
-  medium: "bg-[#ffb000] text-foreground",
-  advanced: "bg-[#2db8ff] text-foreground",
+  medium: "bg-level-medium text-foreground",
+  advanced: "bg-level-advanced text-foreground",
 } as const;
 /** Selected level card tone from the landing. */
 export const levelTone = {
   basic: "border-score-excellent/40 bg-tint-mint",
-  medium: "border-[#ffb000]/50 bg-tint-cream",
-  advanced: "border-[#2db8ff]/40 bg-tint-sky",
+  medium: "border-level-medium/50 bg-tint-cream",
+  advanced: "border-level-advanced/40 bg-tint-sky",
 } as const;
 
 /** Small number tile (landing teacher preview: "Sample Students 28"). */

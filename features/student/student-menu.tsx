@@ -27,7 +27,7 @@ export function StudentMenu({ name, className }: { name: string; className: stri
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={`${name}, ${className}. Open profile menu`}
-        className="flex w-full items-center gap-2.5 rounded-xl border-2 border-foreground/12 bg-card p-2 text-left outline-none hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:p-0"
+        className="flex w-full items-center gap-2.5 rounded-xl border-2 border-foreground/12 bg-card p-2 text-left outline-none hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:p-0"
       >
         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tint-peach font-heading font-bold text-primary">
           {name.charAt(0).toUpperCase()}

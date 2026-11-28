@@ -59,7 +59,7 @@ export function LandingNav() {
                 >
                   <Link
                     href={l.href}
-                    className="block rounded-xl px-2.5 py-2 text-sm font-medium whitespace-nowrap text-foreground/80 outline-none transition-colors group-data-[active=true]/nav:text-primary focus-visible:ring-3 focus-visible:ring-ring/50"
+                    className="block rounded-xl px-2.5 py-2 text-sm font-medium whitespace-nowrap text-foreground/80 outline-none transition-colors group-data-[active=true]/nav:text-primary focus-visible:ring-3 focus-visible:ring-ring"
                   >
                     {l.label}
                   </Link>

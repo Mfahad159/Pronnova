@@ -17,8 +17,8 @@ const selectClass =
 /** Literal classes so Tailwind generates them (level colours from the landing). */
 export const levelDot = {
   basic: { bg: "bg-score-excellent", before: "before:bg-score-excellent" },
-  medium: { bg: "bg-[#ffb000]", before: "before:bg-[#ffb000]" },
-  advanced: { bg: "bg-[#2db8ff]", before: "before:bg-[#2db8ff]" },
+  medium: { bg: "bg-level-medium", before: "before:bg-level-medium" },
+  advanced: { bg: "bg-level-advanced", before: "before:bg-level-advanced" },
 } as const;
 
 export type FieldProps = { id: string; "aria-invalid"?: boolean; "aria-describedby"?: string };

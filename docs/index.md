@@ -6,6 +6,8 @@ Read this first. Then open only what your task needs.
 |---|---|---|
 | [codebase-index.md](codebase-index.md) | Map of folders, routes, APIs, tables, assets | Before touching any code |
 | [team-guide.md](team-guide.md) | Plain-English guide: structure, main flows, run locally, where to change things | New to the project, or onboarding a teammate |
+| [qa-report.md](qa-report.md) | Phase 5 QA: every check, bugs fixed, what is still open, how to re-run | Before a release or the evaluation |
+| [demo-script.md](demo-script.md) | 12-minute demo for the FYP-1 evaluation + likely questions | Preparing the demo |
 | [srs.md](srs.md) | Full SRS in Markdown (use cases, requirements, 21 diagrams in `srs/`) | You need exact requirement wording or a use case flow — search it, don't read it all |
 | [project-context.md](project-context.md) | What Pronnova is, users, scope, use cases | You need the "why" |
 | [database.md](database.md) | Every table and why it exists, design decisions (viva Q&A), how to change the schema, migration log | Touching the database or defending its design |
@@ -40,11 +42,14 @@ Original inputs (read-only, don't edit): `../Pronnova_SRS_Updated_28_oct.docx` (
 | 9 | ER diagram lacks fields UC-10 and the UI need (lesson title/instructions, chapter art) | Added as columns; listed in `architecture.md` |
 | 10 | Supabase renamed keys (secret `sb_secret_…`) and no longer auto-exposes new tables | Env is `SUPABASE_URL` + `SUPABASE_SECRET_KEY`; migration grants tables to `service_role` only |
 | 11 | SRS 3.2.2 "show a lesson only when assigned" vs UC-03 self-selected practice; SRS never says when a level unlocks | ADR-004: built-in lessons open to all (levels unlock at ≥70% on every item of the previous level); teacher material only for assignees |
-| 12 | Not-found inside a streamed (Suspense) page returns HTTP 200 with the 404 screen | Accepted for now; review in Phase 5 |
+| 12 | Not-found inside a streamed (Suspense) page returns HTTP 200 with the 404 screen | Resolved (Phase 5): by design in Next — status is sent before streaming; Next adds `noindex` instead (checked by `qa-routing.spec.ts`) |
 | 17 | Brief (2026-11-28) names levels easy/medium/hard; SRS + app use Basic/Medium/Advanced | Team: keep Basic/Medium/Advanced; easy=basic, hard=advanced in the brief's rules |
 | 18 | Brief's 25-word cap vs ADR-006's 8-word Class 1 cap | Team: brief wins (25 hard, level fit as warnings); ADR-006 updated |
 | 19 | Brief wants `students`, `materials`, `material_items` tables, but `profiles`, `lessons`, `lesson_items` already do the job | Team: extend the existing tables (no parallel system); `enrollments` folded into `profiles.class_id` and dropped |
 | 20 | Brief: one shared splitter for "Paste" and "Word import"; it also says Urdu text passes through unchanged | Splitter only splits on . ! ? — Urdu "۔" is NOT treated as a sentence end, so Urdu text stays whole |
+| 24 | Font: teammate's commit 4361d45 switched the app to **Quicksand**; earlier request + older docs say **Google Sans Flex** | Kept Quicksand (latest, consistent everywhere); **team to confirm** |
+| 25 | WCAG AA vs brand: white on the bright KiddyButton coral is 3.1:1; soft field borders 1.3:1 | Not changed; options in `docs/qa-report.md` §6 — **team to decide** |
+| 26 | Unslop audit flags emoji / "!" / uppercase chips; they're the deliberate Class 1 tone (ADR-006/007) | Kept; list in `docs/qa-report.md` §4 |
 | 21 | Phase B brief labels levels Easy/Medium/Hard ("Long for Easy…") | Kept Basic/Medium/Advanced (team decision #17); warnings read "Long for Basic: 1–3 words suggested" |
 | 22 | Phase B brief: keep the picked student in `localStorage` | Server-rendered pages can't read localStorage, so the id is in localStorage AND mirrored to a cookie (`pronnova_student`) |
 | 23 | Brief: "no progress analytics" on the dashboard; the old home had chapters + attempt history | Dashboard = greeting, Continue, Your lessons; chapter cards and the recent-attempts list (UC-03/UC-06 playback) stay below — no charts |

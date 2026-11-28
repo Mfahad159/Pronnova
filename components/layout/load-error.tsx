@@ -5,8 +5,9 @@ import { ArrowCounterClockwise } from "@phosphor-icons/react/ssr";
 import { KiddyButton } from "@/components/brand/kiddy-button";
 
 /** Shared body for app/student/error.tsx and app/teacher/error.tsx (Piko, landing style). */
-export function LoadError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  const notConfigured = error.message.includes("Database is not configured");
+export function LoadError({ error, onRetry }: { error: unknown; onRetry: () => void }) {
+  const err = error instanceof Error ? (error as Error & { digest?: string }) : null;
+  const notConfigured = !!err?.message.includes("Database is not configured");
   return (
     <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-16 text-center" role="alert">
       <div className="flex size-28 items-center justify-center rounded-2xl border-2 border-foreground/12 bg-tint-peach p-2">
@@ -20,8 +21,8 @@ export function LoadError({ error, reset }: { error: Error & { digest?: string }
           ? "Add SUPABASE_URL and SUPABASE_SECRET_KEY to .env.local, run the migration and seed, then restart the dev server. Steps are in docs/team-guide.md."
           : "Please check your internet connection and try again."}
       </p>
-      {error.digest ? <p className="text-xs text-muted-foreground">Error code: {error.digest}</p> : null}
-      <KiddyButton onClick={reset}>
+      {err?.digest ? <p className="text-xs text-muted-foreground">Error code: {err.digest}</p> : null}
+      <KiddyButton onClick={onRetry}>
         <ArrowCounterClockwise weight="bold" /> Try again
       </KiddyButton>
     </div>

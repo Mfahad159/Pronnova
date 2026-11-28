@@ -59,7 +59,7 @@ export function TeacherPreview() {
 
           <Link
             href="/onboarding"
-            className="group/arrow mt-7 inline-flex h-11 items-center gap-2 rounded-xl border-2 border-foreground/20 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="group/arrow mt-7 inline-flex h-11 items-center gap-2 rounded-xl border-2 border-foreground/20 bg-card px-5 font-heading text-sm font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
           >
             Open Teacher Area
             <ArrowRight className="size-4 transition-transform group-hover/arrow:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
@@ -84,7 +84,7 @@ export function TeacherPreview() {
                 aria-selected={tab === "overview"}
                 onClick={() => setTab("overview")}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50",
+                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                   tab === "overview" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -97,7 +97,7 @@ export function TeacherPreview() {
                 aria-selected={tab === "students"}
                 onClick={() => setTab("students")}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50",
+                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                   tab === "students" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
                 )}
               >

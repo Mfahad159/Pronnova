@@ -1,8 +1,9 @@
 import "server-only";
+import { cacheLife, cacheTag } from "next/cache";
 import { mergeVisible } from "@/lib/assignments";
 import { todayInPakistan } from "@/lib/materials";
 import { PASS_SCORE, itemAccess, learningView, type Assignment, type ChapterView, type PChapter } from "@/lib/progress";
-import { check, getDb } from "../client";
+import { check, getDb, getDbForCache } from "../client";
 import { listVisibleAssignmentRows } from "./assignments";
 
 /** Group for assigned teacher materials that don't belong to a chapter (migration 0004). */
@@ -59,6 +60,24 @@ const toLesson = (l: LessonRow): PChapter["lessons"][number] => ({
   items: [...l.lesson_items].sort((a, b) => a.order_no - b.order_no).map((i) => ({ id: i.id, text: i.text, itemType: i.item_type })),
 });
 
+/** Cache tag for the curriculum (chapters → lessons → items). Material writes revalidate it. */
+export const CURRICULUM_TAG = "curriculum";
+
+/**
+ * The curriculum is the same for every student, so it is cached (Phase 5 load test: 50 students at
+ * once made this the slowest query). Refreshes on its own within ~1 minute (cacheLife "minutes")
+ * and immediately after any material write (revalidateTag in the materials API).
+ */
+async function loadCurriculum(): Promise<ChapterRow[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(CURRICULUM_TAG);
+  return check(
+    await getDbForCache().from("chapters").select(`id, title, order_no, lessons(${LESSON_COLS})`).order("order_no"),
+    "load chapters",
+  ) as unknown as ChapterRow[];
+}
+
 /**
  * Everything UC-03 needs for one (active) student: content, best scores, what's assigned to them
  * (their class + them individually, deduplicated), last attempt. Callers reject archived students.
@@ -67,21 +86,20 @@ export async function getStudentLearning(student: { id: string; classId: string 
   const db = await getDb();
   const today = todayInPakistan();
 
-  const [chaptersRes, scoresRes, triedRes, lastRes, visibleRows] = await Promise.all([
-    db.from("chapters").select(`id, title, order_no, lessons(${LESSON_COLS})`).order("order_no"),
-    db.from("attempts").select("item_id, score").eq("student_id", student.id).eq("status", "scored"),
-    db.from("attempts").select("item_id").eq("student_id", student.id),
-    db.from("attempts").select("item_id").eq("student_id", student.id).order("created_at", { ascending: false }).limit(1),
+  // One attempts query serves best scores, tried items and the last item (was three queries).
+  const [chapterRows, attemptsRes, visibleRows] = await Promise.all([
+    loadCurriculum(),
+    db.from("attempts").select("item_id, score, status").eq("student_id", student.id).order("created_at", { ascending: false }),
     listVisibleAssignmentRows(student),
   ]);
-
-  const chapterRows = check(chaptersRes, "load chapters") as unknown as ChapterRow[];
-  const scores = check(scoresRes, "load best scores") as { item_id: string; score: number | string }[];
-  const tried = new Set((check(triedRes, "load attempted items") as { item_id: string }[]).map((r) => r.item_id));
-  const last = check(lastRes, "load last attempt") as { item_id: string }[];
+  const attempts = check(attemptsRes, "load attempts") as { item_id: string; score: number | string | null; status: string }[];
 
   const best = new Map<string, number>();
-  for (const s of scores) best.set(s.item_id, Math.max(best.get(s.item_id) ?? 0, Number(s.score)));
+  for (const a of attempts) {
+    if (a.status === "scored" && a.score != null) best.set(a.item_id, Math.max(best.get(a.item_id) ?? 0, Number(a.score)));
+  }
+  const tried = new Set(attempts.map((a) => a.item_id));
+  const last = attempts.slice(0, 1);
 
   // Class + individual assignments, one per material, nearest upcoming due date.
   const assigned = new Map<string, Assignment>(

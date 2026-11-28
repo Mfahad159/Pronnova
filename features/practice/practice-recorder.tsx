@@ -114,7 +114,7 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
             disabled={phase === "requesting"}
             aria-pressed={false}
             aria-label="Start recording"
-            className="flex size-20 items-center justify-center rounded-full bg-brand-coral text-white shadow-[0_5px_0_0_var(--primary)] outline-none transition-[transform,box-shadow,filter] duration-150 hover:translate-y-[3px] hover:shadow-[0_2px_0_0_var(--primary)] focus-visible:ring-3 focus-visible:ring-ring/60 active:translate-y-[3px] active:shadow-[0_2px_0_0_var(--primary)] disabled:opacity-60 motion-reduce:transition-none"
+            className="flex size-20 items-center justify-center rounded-full bg-brand-coral text-white shadow-[0_5px_0_0_var(--primary)] outline-none transition-[transform,box-shadow,filter] duration-150 hover:translate-y-[3px] hover:shadow-[0_2px_0_0_var(--primary)] focus-visible:ring-3 focus-visible:ring-ring active:translate-y-[3px] active:shadow-[0_2px_0_0_var(--primary)] disabled:opacity-60 motion-reduce:transition-none"
           >
             {phase === "requesting" ? (
               <CircleNotch className="size-8 animate-spin" weight="bold" aria-hidden />
@@ -148,14 +148,14 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
               onClick={stop}
               aria-pressed
               aria-label="Stop recording"
-              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 font-heading text-sm font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 font-heading text-sm font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring"
             >
               <Stop className="size-4" weight="fill" aria-hidden /> Stop
             </button>
             <button
               type="button"
               onClick={cancel}
-              className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-foreground/20 bg-card px-4 text-sm font-medium text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-foreground/20 bg-card px-4 text-sm font-medium text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
             >
               <X className="size-4" aria-hidden /> Cancel
             </button>

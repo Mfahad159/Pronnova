@@ -31,7 +31,7 @@ export default function OnboardingPage() {
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 py-10 md:px-6">
         <Link
           href="/"
-          className="mb-6 inline-flex w-fit items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="mb-6 inline-flex w-fit items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring"
         >
           <ArrowLeft className="size-4" /> Back
         </Link>
@@ -43,7 +43,7 @@ export default function OnboardingPage() {
             <li key={r.href}>
               <Link
                 href={r.href}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border bg-card outline-none transition-colors hover:border-primary/50 focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border bg-card outline-none transition-colors hover:border-primary/50 focus-visible:ring-3 focus-visible:ring-ring"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
                   <Image src={r.image} alt={r.alt} fill sizes="(min-width: 640px) 420px, 100vw" className="object-cover object-top" />

@@ -13,6 +13,8 @@
   --color-score-excellent: var(--score-excellent);
   --color-score-good: var(--score-good);
   --color-score-average: var(--score-average);
+  --color-level-medium: var(--level-medium);
+  --color-level-advanced: var(--level-advanced);
   --color-tint-peach: var(--tint-peach);
   --color-tint-sky: var(--tint-sky);
   --color-tint-mint: var(--tint-mint);
@@ -66,7 +68,7 @@
   --card-foreground: #100e0e;
   --popover: #ffffff;
   --popover-foreground: #100e0e;
-  --primary: #d63c2f;             /* coral (logo #FF594B, darkened to pass AA with white text) */
+  --primary: #c4362a;             /* coral (logo #FF594B, darkened for AA: 5.4:1 with white, 4.75:1 on --secondary; Phase 5) */
   --brand-coral: #ff594b;         /* bright brand coral for kiddy button top face */
   --primary-foreground: #ffffff;
   --secondary: #ffeedf;
@@ -75,15 +77,19 @@
   --muted-foreground: #5b5650;
   --accent: #ffe8c6;
   --accent-foreground: #100e0e;
-  --destructive: #d93025;
+  --destructive: #c8281e;
   --border: #f0e4d8;
   --input: #eadccd;
-  --ring: #ff8d28;
+  --ring: #d35f00;                /* focus ring, drawn solid: 3.8:1 on the page (Phase 5) */
 
   /* Score colors (SRS 3.2.5) */
   --score-excellent: #157a3e;     /* >= 85 */
-  --score-good: #9a6412;          /* 70-84 */
-  --score-average: #d93025;       /* < 70 */
+  --score-good: #8f5d10;          /* 70-84 (AA on its tints, Phase 5) */
+  --score-average: #c8281e;       /* < 70 (AA on its tints, Phase 5) */
+
+  /* Level badges (landing learning-journey colours; Basic uses --score-excellent) */
+  --level-medium: #ffb000;
+  --level-advanced: #2db8ff;
 
   /* Soft tints for chapter & character cards */
   --tint-peach: #ffe8d6;
@@ -102,12 +108,12 @@
 
   --sidebar: #ffffff;
   --sidebar-foreground: #100e0e;
-  --sidebar-primary: #d63c2f;
+  --sidebar-primary: #c4362a;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #fff1ea;
   --sidebar-accent-foreground: #c2382c;
   --sidebar-border: #f0e4d8;
-  --sidebar-ring: #ff8d28;
+  --sidebar-ring: #d35f00;
 }
 
 .dark {
@@ -133,6 +139,8 @@
   --score-excellent: #4cc97b;
   --score-good: #f2b544;
   --score-average: #ff7a6e;
+  --level-medium: #ffb000;
+  --level-advanced: #2db8ff;
   --tint-peach: #3a2a22;
   --tint-sky: #1e2f3a;
   --tint-mint: #22331f;

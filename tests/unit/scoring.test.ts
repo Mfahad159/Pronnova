@@ -6,8 +6,10 @@ describe("classify (SRS 3.2.5)", () => {
     [100, "excellent"],
     [85, "excellent"],
     [84.9, "good"],
+    [84, "good"],
     [70, "good"],
     [69.9, "average"],
+    [69, "average"],
     [0, "average"],
   ])("%s → %s", (score, expected) => {
     expect(classify(score)).toBe(expected);

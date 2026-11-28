@@ -191,7 +191,7 @@ export function InteractiveDemo() {
                   aria-pressed={isRecording}
                   aria-label={isRecording ? "Stop recording" : "Tap the orb to record Apple"}
                   className={cn(
-                    "relative z-10 flex size-22 items-center justify-center rounded-full bg-gradient-to-br from-brand-coral to-chart-1 text-white outline-none transition-transform duration-150 hover:scale-105 focus-visible:ring-4 focus-visible:ring-ring/60 active:scale-95 disabled:opacity-60 motion-reduce:transition-none",
+                    "relative z-10 flex size-22 items-center justify-center rounded-full bg-gradient-to-br from-brand-coral to-chart-1 text-white outline-none transition-transform duration-150 hover:scale-105 focus-visible:ring-4 focus-visible:ring-ring active:scale-95 disabled:opacity-60 motion-reduce:transition-none",
                     isRecording && "from-destructive to-primary",
                   )}
                 >
@@ -216,7 +216,7 @@ export function InteractiveDemo() {
                     <button
                       type="button"
                       onClick={stop}
-                      className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-5 font-heading text-xs font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+                      className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-5 font-heading text-xs font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring"
                     >
                       <Stop className="size-3.5" weight="fill" aria-hidden />
                       Stop
@@ -224,7 +224,7 @@ export function InteractiveDemo() {
                     <button
                       type="button"
                       onClick={cancel}
-                      className="inline-flex h-10 items-center rounded-xl border border-foreground/20 bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+                      className="inline-flex h-10 items-center rounded-xl border border-foreground/20 bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
                     >
                       Cancel
                     </button>
@@ -271,7 +271,7 @@ export function InteractiveDemo() {
                     <button
                       type="button"
                       onClick={handleRetry}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/50"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <ArrowCounterClockwise className="size-3.5" weight="bold" aria-hidden />
                       Re-record
@@ -326,7 +326,7 @@ export function InteractiveDemo() {
                     </OutlineButton>
                     <Link
                       href="/onboarding"
-                      className="group/arrow inline-flex h-11 items-center gap-1.5 rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+                      className="group/arrow inline-flex h-11 items-center gap-1.5 rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring"
                     >
                       Open Full Student Practice
                       <ArrowRight className="size-4 transition-transform group-hover/arrow:translate-x-0.5 motion-reduce:transition-none" aria-hidden />

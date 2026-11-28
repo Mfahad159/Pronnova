@@ -134,14 +134,14 @@ export function AssessmentShowcase() {
               <button
                 type="button"
                 onClick={handleListen}
-                className="inline-flex h-10 items-center gap-2 rounded-xl border border-foreground/15 bg-background px-4 text-xs font-semibold text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex h-10 items-center gap-2 rounded-xl border border-foreground/15 bg-background px-4 text-xs font-semibold text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
               >
                 <SpeakerHigh className={cn("size-4 text-primary", speaking && "animate-pulse")} weight="duotone" aria-hidden />
                 {speaking ? "Playing Reference..." : "Play Reference Pronunciation"}
               </button>
               <Link
                 href="/#demo"
-                className="inline-flex h-10 items-center gap-2 rounded-xl bg-foreground px-4 text-xs font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex h-10 items-center gap-2 rounded-xl bg-foreground px-4 text-xs font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring"
               >
                 <ArrowCounterClockwise className="size-3.5" weight="bold" aria-hidden />
                 Try This Word in Demo

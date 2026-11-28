@@ -109,7 +109,7 @@ export function YoungLearners() {
                   onClick={() => handleCardClick(card)}
                   aria-pressed={active}
                   className={cn(
-                    "flex flex-col items-center rounded-xl border-2 p-5 text-center outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "flex flex-col items-center rounded-xl border-2 p-5 text-center outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring",
                     card.tone,
                     active ? "border-primary" : "border-foreground/10 hover:border-primary/40",
                   )}

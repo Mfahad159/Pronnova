@@ -158,7 +158,7 @@ function ItemCard({ item, open }: { item: ItemView; open: boolean }) {
           className={cn(
             base,
             mastered ? "border-score-excellent/30 bg-tint-mint/60" : "border-primary/15 bg-tint-peach/60",
-            "outline-none transition-colors hover:border-primary/45 focus-visible:ring-3 focus-visible:ring-ring/50",
+            "outline-none transition-colors hover:border-primary/45 focus-visible:ring-3 focus-visible:ring-ring",
           )}
         >
           {content}

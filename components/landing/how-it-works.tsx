@@ -195,7 +195,7 @@ export function HowItWorks() {
                   onClick={() => setSelected((prev) => (prev === idx ? null : idx))}
                   aria-expanded={isActive}
                   className={cn(
-                    "flex w-full flex-col items-start rounded-2xl border-2 p-5 text-left outline-none transition-colors sm:p-6 focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "flex w-full flex-col items-start rounded-2xl border-2 p-5 text-left outline-none transition-colors sm:p-6 focus-visible:ring-3 focus-visible:ring-ring",
                     isActive ? step.tone : "border-border bg-card hover:border-primary/30",
                   )}
                 >

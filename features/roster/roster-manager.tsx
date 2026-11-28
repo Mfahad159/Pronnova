@@ -118,7 +118,7 @@ function ClassList({
                     onClick={() => onSelect(c.id)}
                     aria-pressed={c.id === selectedId}
                     className={cn(
-                      "flex min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 text-left outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                      "flex min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 text-left outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring",
                       c.id === selectedId ? "border-primary/40 bg-secondary text-primary" : "border-foreground/10 hover:border-primary/30",
                     )}
                   >
@@ -196,7 +196,7 @@ function AddStudentForm({ classId, onAdded }: { classId: string; onAdded: () => 
   return (
     <form
       aria-busy={pending}
-      className="grid gap-3 rounded-2xl border-2 border-dashed border-foreground/15 bg-muted/30 p-4 sm:grid-cols-[1fr_8rem_auto] sm:items-start"
+      className="grid gap-3 rounded-2xl border-2 border-dashed border-foreground/15 bg-muted/30 p-4 sm:grid-cols-[1fr_8rem] sm:items-start xl:grid-cols-[1fr_8rem_auto]"
       onSubmit={(e) => {
         e.preventDefault();
         start(async () => {
@@ -223,13 +223,13 @@ function AddStudentForm({ classId, onAdded }: { classId: string; onAdded: () => 
       <Field label="Roll no." error={fieldError(errors, "rollNo")}>
         {(p) => <Input {...p} className={inputClass} value={rollNo} onChange={(e) => setRollNo(e.target.value)} inputMode="numeric" placeholder="7" />}
       </Field>
-      <div className="grid gap-2 sm:pt-7">
+      <div className="grid gap-2 sm:col-span-2 xl:col-span-1 xl:pt-7">
         <KiddyButton type="submit" size="sm" disabled={pending}>
           {pending ? <CircleNotch className="animate-spin" /> : <Plus weight="bold" />} Add student
         </KiddyButton>
       </div>
       {message ? (
-        <p role="alert" className="text-sm text-destructive sm:col-span-3">
+        <p role="alert" className="text-sm text-destructive sm:col-span-2 xl:col-span-3">
           {message}
         </p>
       ) : null}

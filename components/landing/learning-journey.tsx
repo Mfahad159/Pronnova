@@ -144,7 +144,7 @@ export function LearningJourney() {
                   onClick={() => handleSelectLevel(lvl)}
                   aria-expanded={isSelected}
                   className={cn(
-                    "mt-5 inline-flex h-10 w-full items-center justify-center rounded-xl border font-heading text-xs font-semibold outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "mt-5 inline-flex h-10 w-full items-center justify-center rounded-xl border font-heading text-xs font-semibold outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring",
                     isSelected
                       ? "border-foreground bg-foreground text-background"
                       : "border-foreground/15 bg-card text-foreground hover:bg-muted",
@@ -175,7 +175,7 @@ export function LearningJourney() {
                   type="button"
                   onClick={() => setActiveWord(w)}
                   className={cn(
-                    "rounded-xl border px-4 py-2 font-heading text-sm font-semibold outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "rounded-xl border px-4 py-2 font-heading text-sm font-semibold outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring",
                     activeWord.word === w.word
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-foreground/15 bg-background text-foreground hover:border-primary/40",
@@ -202,14 +202,14 @@ export function LearningJourney() {
               <button
                 type="button"
                 onClick={() => handleSpeak(activeWord.word)}
-                className="inline-flex h-11 items-center gap-2 rounded-xl border border-foreground/15 bg-secondary/70 px-5 font-heading text-sm font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-foreground/15 bg-secondary/70 px-5 font-heading text-sm font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring"
               >
                 <SpeakerHigh className={cn("size-4 text-primary", speaking && "animate-pulse")} weight="duotone" aria-hidden />
                 {speaking ? `Playing “${activeWord.word}”` : `Listen to “${activeWord.word}”`}
               </button>
               <Link
                 href="/#demo"
-                className="inline-flex h-11 items-center rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex h-11 items-center rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring"
               >
                 Try Recording in Demo
               </Link>

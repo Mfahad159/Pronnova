@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test("landing sections are reachable, interactive tabs work, and the FAQ opens", async ({ page, isMobile }) => {
   await page.goto("/");

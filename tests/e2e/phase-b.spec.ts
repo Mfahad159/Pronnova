@@ -1,4 +1,4 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import { expect, test, type Browser, type Page } from "./fixtures";
 import { makeDocx } from "../fixtures/docx";
 
 // Phase B exit checks 1–7, walked through in a real browser (fake microphone). Writes data, so it

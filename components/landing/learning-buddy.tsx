@@ -70,7 +70,7 @@ export function LearningBuddy() {
                     type="button"
                     onClick={() => setIdx(i)}
                     className={cn(
-                      "rounded-xl border px-4 py-2 text-xs font-semibold outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                      "rounded-xl border px-4 py-2 text-xs font-semibold outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring",
                       idx === i
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-foreground/15 bg-card text-foreground hover:border-primary/40",

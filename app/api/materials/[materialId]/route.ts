@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { CURRICULUM_TAG } from "@/server/db/queries/learning";
 import { cleanMaterial, hasErrors, validateMaterial, type MaterialInput } from "@/lib/materials";
 import type { Level } from "@/types";
 import { isUuid } from "@/server/db/queries/curriculum";
@@ -54,6 +56,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/materials/
       instructions: m.instructions,
       items: itemsChanged ? m.items : null,
     });
+    revalidateTag(CURRICULUM_TAG, { expire: 0 }); // students see the change on their next request
     return json({ material: await getMaterial(materialId), warnings });
   } catch (err) {
     return errorResponse(err);
