@@ -79,8 +79,9 @@ export function SiteFooter() {
       />
 
       <div className="relative z-10 border-t border-background/12">
-        <p className="mx-auto w-full max-w-6xl px-4 py-5 text-xs text-background/65 md:px-6">
-          Pronnova — Final Year Project (FYP-1), BS Computer Science · FAST-NUCES Chiniot · Demonstration Build
+        {/* Year is written in (not new Date()): the footer is prerendered. Update it each January. */}
+        <p className="mx-auto w-full max-w-6xl px-4 py-5 text-center text-xs text-background/65 md:px-6 md:text-left">
+          © 2026 Pronnova. All rights reserved.
         </p>
       </div>
     </footer>
