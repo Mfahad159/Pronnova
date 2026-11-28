@@ -17,6 +17,7 @@ import { PikoSays } from "@/components/brand/piko";
 import { InkButton, OutlineButton } from "@/components/brand/ui";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { LiveWaveform } from "@/features/voice/live-waveform";
+import { MicOrb, MicStatusPill } from "@/features/voice/mic-status";
 import { useRecorder } from "@/features/voice/use-recorder";
 import { RECORDING } from "@/lib/audio";
 import { classify } from "@/lib/scoring";
@@ -108,6 +109,8 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
       {/* Record / stop (landing demo mic card) */}
       {phase === "idle" || phase === "requesting" || phase === "error" ? (
         <div className="flex flex-col items-center rounded-2xl border border-border bg-background p-6 text-center sm:p-8">
+          {/* thinking-orbs mic state: ready / asking for permission / off after an error */}
+          <MicStatusPill status={phase === "requesting" ? "requesting" : phase === "error" ? "off" : "ready"} className="mb-5" />
           <button
             type="button"
             onClick={start}
@@ -135,10 +138,8 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
 
       {isRecording ? (
         <div className="flex flex-col items-center rounded-2xl border-2 border-primary/40 bg-secondary/40 p-6 text-center sm:p-8">
-          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-            <span className="size-2.5 animate-pulse rounded-full bg-primary" aria-hidden />
-            Listening… {secs(elapsedMs)} · {Math.ceil(remaining / 1000)}s left
-          </div>
+          <MicOrb status="listening" className="mb-3" />
+          <MicStatusPill status="listening" detail={`${secs(elapsedMs)} · ${Math.ceil(remaining / 1000)}s left`} />
           <div className="mt-4 flex w-full justify-center">
             <LiveWaveform analyserRef={analyserRef} active={isRecording} />
           </div>
@@ -180,7 +181,11 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
       {(phase === "recorded" || phase === "submitting") && recording ? (
         <div className="rounded-2xl border border-border bg-background p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="font-heading text-sm font-semibold text-foreground">Listen to yourself</p>
+            {phase === "submitting" ? (
+              <MicStatusPill status="processing" />
+            ) : (
+              <p className="font-heading text-sm font-semibold text-foreground">Listen to yourself</p>
+            )}
             <span className="text-xs text-muted-foreground tabular-nums">{secs(recording.durationMs)}</span>
           </div>
           <audio controls src={recording.url} className="mt-3 w-full" aria-label="Your recording" />

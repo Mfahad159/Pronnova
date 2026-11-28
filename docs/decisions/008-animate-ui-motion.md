@@ -19,3 +19,7 @@ The team wanted the app to feel alive in a consistent way: navbar, sidebar, tabs
 - Reduced motion is respected by Animate UI automatically (`reducedMotion: 'user'`).
 - Two icon libraries are installed; keep new icons on Phosphor unless it is an arrow or part of an Animate UI component.
 - Rerunning `npx @animate-ui/cli animate <name>` after adding a new shadcn component animates it too.
+
+## Update 2026-11-28: transitions and mic orbs
+- **Page transitions:** in-area changes use the `content` effect (gentle centre zoom, the top bar keeps its place); `RoleTransition` zooms a whole area in from the centre (60% → 100% + blur) on a role switch.
+- **Mic states:** `thinking-orbs@0.3.2` (MIT, no dependencies, canvas, team request with the install command) draws a dotted orb per mic state in `features/voice/mic-status.tsx`: `breathing` = ready, `connecting` = asking permission, `listening` = recording, `working` = checking, `shaping` = done. Pinned to the light theme and tinted brand coral while active; reduced motion gets a still frame (built in).

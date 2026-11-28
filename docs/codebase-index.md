@@ -60,7 +60,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `lib/api-client.ts` | `api()` browser fetch helper → `{ ok, status, data, error, fieldErrors }` | ✅ |
 | `features/teacher/class-avatars.tsx` | Animate UI avatar group of the class's students (dashboard) | ✅ |
 | `features/assessment/` | `score-pill.tsx` (score + class), `attempts-table.tsx` (history table; `showStudent` for teacher view), `play-recording-button.tsx` (fetches a signed link, plays/stops) | ✅ |
-| `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx` | ✅ |
+| `features/voice/` | `use-recorder.ts` (mic permission, MediaRecorder, 15 s auto-stop, silence/too-short checks, releases mic), `live-waveform.tsx`, `mic-status.tsx` (`MicStatusPill` + `MicOrb`: thinking-orbs dotted orb per mic state — ready / asking / listening / checking / done — used in the practice recorder and the landing demo) | ✅ |
 | `features/practice/` | `practice-recorder.tsx` — record → listen back → send → score + feedback / retry (UC-05, UC-04, UC-06) in the landing demo style; `practice-steps.tsx` header step chips; `listen-button.tsx` browser-voice "Listen" | ✅ |
 | `hooks/use-mobile.ts` | Below-`lg` (1024px) check used by the sidebar (drawer mode) | ✅ |
 | `lib/scoring.ts` | `classify()` (85/70 cut-offs), `errorRate()` | ✅ |

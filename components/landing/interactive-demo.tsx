@@ -19,6 +19,7 @@ import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { OutlineButton, Panel } from "@/components/brand/ui";
 import { ScorePill } from "@/features/assessment/score-pill";
 import { LiveWaveform } from "@/features/voice/live-waveform";
+import { MicStatusPill } from "@/features/voice/mic-status";
 import { useRecorder } from "@/features/voice/use-recorder";
 import { RECORDING } from "@/lib/audio";
 import { speakReference } from "@/lib/speech-tts";
@@ -205,12 +206,27 @@ export function InteractiveDemo() {
                 </button>
               </div>
 
+              {/* thinking-orbs mic state under the orb button (ready / asking / listening / checking / done). */}
+              <MicStatusPill
+                className="mt-4"
+                status={
+                  isRequesting
+                    ? "requesting"
+                    : isRecording
+                      ? "listening"
+                      : phase === "error"
+                        ? "off"
+                        : effectiveStage === "checking"
+                          ? "processing"
+                          : phase === "recorded"
+                            ? "done"
+                            : "ready"
+                }
+                detail={isRecording ? `${seconds}s / ${maxSec}s` : undefined}
+              />
+
               {isRecording ? (
                 <div className="mt-3 flex w-full max-w-xs flex-col items-center gap-3">
-                  <p className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                    <span className="size-2 animate-pulse rounded-full bg-primary" aria-hidden />
-                    Recording · {seconds}s / {maxSec}s
-                  </p>
                   <LiveWaveform analyserRef={analyserRef} active />
                   <div className="flex items-center gap-3">
                     <button
