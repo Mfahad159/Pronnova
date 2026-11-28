@@ -11,11 +11,12 @@ describe("Pronnova engine → app result (ADR-010)", () => {
     expect(r.words).toEqual([]);
   });
 
-  it("word colour: all ok → green, worst near → amber, any sub/del/ins → red", () => {
+  it("word colour: all ok → green, near or extra sound only → amber, any sub/del → red", () => {
     expect(wordStatus([{ expected: "k", heard: "k", status: "ok" }])).toBe("ok");
     expect(wordStatus([{ expected: "θ", heard: "t", status: "near" }, { expected: "ɪ", heard: "ɪ", status: "ok" }])).toBe("near");
     expect(wordStatus([{ expected: "æ", heard: "ʌ", status: "sub" }])).toBe("bad");
-    expect(wordStatus([{ expected: null, heard: "ə", status: "ins" }, { expected: "s", heard: "s", status: "ok" }])).toBe("bad");
+    expect(wordStatus([{ expected: null, heard: "ə", status: "ins" }, { expected: "s", heard: "s", status: "ok" }])).toBe("near");
+    expect(wordStatus([{ expected: "k", heard: null, status: "del" }])).toBe("bad");
   });
 
   it("maps words and phonemes with statuses and positions; insertions are not stored as phonemes", () => {

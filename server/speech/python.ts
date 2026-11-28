@@ -39,10 +39,14 @@ interface EngineScore {
 /** Credit per status, stored as gop_score (0–100) so old reports keep working. */
 const CREDIT: Record<PhonemeStatus, number> = { ok: 100, near: 50, sub: 0, del: 0 };
 
-/** green if every sound is ok, amber if the worst is "near", red otherwise (sub / del / ins). */
+/**
+ * green if every sound is ok; amber for a near miss or an extra sound only; red if a sound was wrong
+ * or missing (sub / del). An extra sound alone (insertion) costs points but every expected sound was
+ * said, so it is amber, not red (seen in the landing demo: "Apple" 90 % with all sounds right).
+ */
 export function wordStatus(phonemes: EnginePhoneme[]): WordStatus {
-  if (phonemes.some((p) => p.status === "sub" || p.status === "del" || p.status === "ins")) return "bad";
-  if (phonemes.some((p) => p.status === "near")) return "near";
+  if (phonemes.some((p) => p.status === "sub" || p.status === "del")) return "bad";
+  if (phonemes.some((p) => p.status === "near" || p.status === "ins")) return "near";
   return "ok";
 }
 

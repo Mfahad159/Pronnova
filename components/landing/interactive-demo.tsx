@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   ArrowCounterClockwise,
-  ArrowRight,
-  CheckCircle,
   CircleNotch,
-  Info,
   SpeakerHigh,
   Stop,
   WarningCircle,
@@ -16,12 +12,12 @@ import { AppleIllustration } from "@/components/brand/illustrations";
 import { KiddyButton } from "@/components/brand/kiddy-button";
 import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { OutlineButton, Panel } from "@/components/brand/ui";
-import { ScorePill } from "@/features/assessment/score-pill";
 import { MicCursor } from "@/features/voice/mic-cursor";
 import { MicStage, type MicStatus } from "@/features/voice/mic-status";
 import { useRecorder } from "@/features/voice/use-recorder";
 import { RECORDING } from "@/lib/audio";
-import { speakReference } from "@/lib/speech-tts";
+import { playReference } from "@/features/practice/reference-audio";
+import { DemoResult, saveDemoTry, type DemoScore } from "@/components/landing/demo-result";
 import { cn } from "@/lib/utils";
 import { usePracticeStore } from "@/stores/practice-store";
 
@@ -35,7 +31,8 @@ const DEMO_STEPS = [
 /**
  * SECTION 02 — INTERACTIVE DEMO: "Experience Pronnova"
  * Cardless single-row layout inside one clean Panel: illustrated target word on the left,
- * interactive Voice Orb recorder on the right, and a clearly labelled demonstration assessment below.
+ * the dotted-orb recorder on the right, and below it a LIVE check by the Pronnova engine
+ * (POST /api/demo/score). Nothing is stored on the server; the last tries stay in localStorage.
  */
 export function InteractiveDemo() {
   const { phase, error, elapsedMs, recording, reset } = usePracticeStore();
@@ -43,7 +40,10 @@ export function InteractiveDemo() {
 
   const [ttsState, setTtsState] = useState<"idle" | "speaking" | "unsupported">("idle");
   const [hasListened, setHasListened] = useState(false);
-  const [demoStage, setDemoStage] = useState<"idle" | "checking" | "done">("idle");
+  // Live check with the real engine (POST /api/demo/score). Nothing is stored on the server.
+  const [demoStage, setDemoStage] = useState<"idle" | "checking" | "done" | "rejected" | "failed">("idle");
+  const [demoResult, setDemoResult] = useState<DemoScore | null>(null);
+  const [demoError, setDemoError] = useState("");
 
   useEffect(() => {
     return () => reset();
@@ -58,22 +58,44 @@ export function InteractiveDemo() {
 
   const handleListen = () => {
     setHasListened(true);
-    speakReference("Apple", {
+    playReference("Apple", "normal", {
       onStart: () => setTtsState("speaking"),
       onEnd: () => setTtsState("idle"),
       onUnsupported: () => setTtsState("unsupported"),
     });
   };
 
-  const handleAssessDemo = () => {
+  const handleAssessDemo = async () => {
+    if (!recording) return;
     setDemoStage("checking");
-    window.setTimeout(() => {
-      setDemoStage("done");
-    }, 650);
+    setDemoError("");
+    const fd = new FormData();
+    fd.append("audio", recording.blob, `demo.${recording.mime.includes("mp4") ? "m4a" : "webm"}`);
+    fd.append("durationMs", String(Math.round(recording.durationMs)));
+    try {
+      const res = await fetch("/api/demo/score", { method: "POST", body: fd });
+      const data = (await res.json().catch(() => ({}))) as Partial<DemoScore> & { status?: string; error?: string };
+      if (res.ok && data.status === "scored") {
+        const result = data as DemoScore;
+        setDemoResult(result);
+        setDemoStage("done");
+        saveDemoTry({ at: new Date().toISOString(), score: result.score, classification: result.classification });
+      } else if (res.status === 503) {
+        setDemoStage("failed"); // engine off or slow: the same recording can be checked again
+        setDemoError(data.error ?? "The speech checker isn't available right now.");
+      } else {
+        setDemoStage("rejected"); // unclear audio or unusable recording: record again
+        setDemoError(data.error ?? "We couldn't hear you clearly. Try again.");
+      }
+    } catch {
+      setDemoStage("failed");
+      setDemoError("No connection. Your recording is still here — try checking again.");
+    }
   };
 
   const handleRetry = () => {
     setDemoStage("idle");
+    setDemoResult(null);
     reset();
   };
 
@@ -256,58 +278,36 @@ export function InteractiveDemo() {
 
                 {effectiveStage === "idle" ? (
                   <KiddyButton onClick={handleAssessDemo} size="md">
-                    See Sample Assessment
+                    Check my pronunciation
                   </KiddyButton>
                 ) : effectiveStage === "checking" ? (
                   <p role="status" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <CircleNotch className="size-4 animate-spin text-primary" weight="bold" aria-hidden />
-                    Preparing demonstration assessment preview...
+                    Checking your pronunciation…
                   </p>
                 ) : null}
               </div>
 
-              {effectiveStage === "done" ? (
-                <div className="mt-5 border-t border-border/70 pt-5">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
-                        <Info className="size-3.5 text-primary" weight="duotone" aria-hidden />
-                        Illustrative Demo Result (Simulated Preview)
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                        <CheckCircle className="size-4 text-score-good" weight="duotone" aria-hidden />
-                        Apple · Practice focus: opening vowel /æ/
-                      </span>
-                    </div>
-                    <ScorePill score={78} />
-                  </div>
-
-                  <p className="mt-3 text-sm text-foreground">
-                    <strong>Example feedback:</strong> “Good effort! Listen carefully to the initial vowel sound and try again.”{" "}
-                    <span className="text-muted-foreground">
-                      (Fixed sample preview — live AI scoring runs inside Student Practice.)
-                    </span>
+              {/* Unclear audio (no score) or the speech checker is off (check the SAME recording again). */}
+              {effectiveStage === "rejected" || effectiveStage === "failed" ? (
+                <div role="alert" className="mt-5 rounded-2xl border border-score-average/30 bg-score-average/5 p-4">
+                  <p className="inline-flex items-center gap-1.5 font-heading text-base font-semibold text-foreground">
+                    <WarningCircle className="size-5 shrink-0 text-score-average" weight="duotone" aria-hidden />
+                    {effectiveStage === "rejected" ? "We couldn't hear you clearly" : "Couldn't check it yet"}
                   </p>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <OutlineButton onClick={handleListen}>
-                      <SpeakerHigh className="text-primary" weight="duotone" aria-hidden />
-                      Listen Again
-                    </OutlineButton>
-                    <OutlineButton onClick={handleRetry}>
-                      <ArrowCounterClockwise weight="bold" aria-hidden />
-                      Try Again
-                    </OutlineButton>
-                    <Link
-                      href="/onboarding"
-                      className="group/arrow inline-flex h-11 items-center gap-1.5 rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background outline-none hover:bg-foreground/90 focus-visible:ring-3 focus-visible:ring-ring"
-                    >
-                      Open Full Student Practice
-                      <ArrowRight className="size-4 transition-transform group-hover/arrow:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
-                    </Link>
+                  <p className="mt-1 text-sm text-muted-foreground">{demoError}</p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {effectiveStage === "failed" ? (
+                      <OutlineButton onClick={handleAssessDemo}>
+                        <ArrowCounterClockwise weight="bold" aria-hidden /> Check again
+                      </OutlineButton>
+                    ) : null}
+                    <OutlineButton onClick={handleRetry}>Record again</OutlineButton>
                   </div>
                 </div>
               ) : null}
+
+              {effectiveStage === "done" && demoResult ? <DemoResult result={demoResult} onTryAgain={handleRetry} /> : null}
             </div>
           ) : null}
         </Panel>

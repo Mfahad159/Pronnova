@@ -20,3 +20,4 @@ The app scored attempts with a mock. The team wants a real, free, offline engine
 - The engine must be running for scoring; `engine/README.md` has the Windows setup and `scripts/download_models.py` makes the demo work offline.
 - Out of scope (not built): Whisper/word ASR, accent tips, teacher calibration, AI suggestions, fine-tuning, streaming, multi-user GPU queueing.
 - Known limits are listed in `engine/README.md` → Limitations (for the FYP-1 report).
+- **Landing demo** (added 2026-11-28): the "Apple" demo is scored live by the same engine through `POST /api/demo/score` (fixed word, no database writes); the last 5 tries are kept in the browser's localStorage only.
