@@ -10,9 +10,6 @@ import { SharpOrb } from "@/features/voice/sharp-orb";
 /** What the microphone is doing, everywhere we record (practice recorder, landing demo). */
 export type MicStatus = "ready" | "requesting" | "listening" | "processing" | "done" | "off";
 
-/** Brand coral ink (KiddyButton coral, keep-brand-coral decision). */
-export const CORAL = "#ff594b";
-const CORAL_RGB = { r: 255, g: 89, b: 75 };
 
 const WIDE = "(min-width: 640px)";
 function subscribeWide(onChange: () => void) {
@@ -25,13 +22,13 @@ function useWide() {
   return useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE).matches, () => false);
 }
 
-export const LOOK: Record<MicStatus, { orb: OrbState; label: string; active: boolean; tint: boolean }> = {
-  ready: { orb: "breathing", label: "Tap to speak", active: false, tint: false },
-  requesting: { orb: "connecting", label: "Asking for the mic", active: true, tint: false },
-  listening: { orb: "listening", label: "Listening", active: true, tint: true },
-  processing: { orb: "working", label: "Checking your voice", active: true, tint: true },
-  done: { orb: "shaping", label: "Tap to record again", active: false, tint: false },
-  off: { orb: "breathing", label: "Mic is off", active: false, tint: false },
+export const LOOK: Record<MicStatus, { orb: OrbState; label: string; active: boolean }> = {
+  ready: { orb: "breathing", label: "Tap to speak", active: false },
+  requesting: { orb: "connecting", label: "Asking for the mic", active: true },
+  listening: { orb: "listening", label: "Listening", active: true },
+  processing: { orb: "working", label: "Checking your voice", active: true },
+  done: { orb: "shaping", label: "Tap to record again", active: false },
+  off: { orb: "breathing", label: "Mic is off", active: false },
 };
 
 /** "…" that fills in one dot at a time while the mic is busy. */
@@ -62,7 +59,7 @@ function StateLabel({ status, className }: { status: MicStatus; className?: stri
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
         transition={{ duration: 0.25, ease: ease.out }}
-        className={cn("flex items-center justify-center font-heading font-bold", look.tint ? "text-primary" : "text-foreground", className)}
+        className={cn("flex items-center justify-center font-heading font-bold text-foreground", className)}
       >
         {look.label}
         {look.active ? <Dots /> : null}
@@ -74,7 +71,8 @@ function StateLabel({ status, className }: { status: MicStatus; className?: stri
 /**
  * The mic, as one dotted thinking-orb (no mic button, no pill): the orb's animation IS the state
  * (breathing = ready, connecting = asking permission, listening = recording, working = checking,
- * shaping = recorded). Below it: the state text, then the time, then an optional hint.
+ * shaping = recorded). Below it: the state text, then the time or a hint in a fixed-height slot, so
+ * the orb stays in the same place in every state. Dark ink in every state (no coral tint).
  * Pass `onStart` to make the orb itself the tap target (when not recording).
  * Pinned to the light theme: Pronnova has no dark mode, and "auto" would draw light dots on our
  * light cards when the OS is dark. Reduced motion gets a still frame (built into thinking-orbs).
@@ -99,7 +97,7 @@ export function MicStage({
   const wide = useWide();
   const orb = (
     <span className="flex size-28 items-center justify-center sm:size-32">
-      <SharpOrb state={look.orb} size={wide ? 128 : 112} color={look.tint ? CORAL_RGB : undefined} paused={status === "off"} />
+      <SharpOrb state={look.orb} size={wide ? 128 : 112} paused={status === "off"} />
     </span>
   );
   return (
@@ -119,8 +117,11 @@ export function MicStage({
           orb
         )}
         <StateLabel status={status} className="mt-3 text-lg sm:text-xl" />
-        {time ? <p className="mt-1 font-heading text-base font-semibold tabular-nums text-muted-foreground">{time}</p> : null}
-        {hint ? <div className="mt-1.5 max-w-xs text-sm text-muted-foreground">{hint}</div> : null}
+        {/* Fixed-height slot for the time or the hint, so the orb never moves when the state changes. */}
+        <div className="mt-1 flex h-12 flex-col items-center">
+          {time ? <p className="font-heading text-base font-semibold tabular-nums text-muted-foreground">{time}</p> : null}
+          {hint ? <div className="line-clamp-2 max-w-xs text-sm text-muted-foreground">{hint}</div> : null}
+        </div>
       </div>
     </MotionConfig>
   );
@@ -131,7 +132,7 @@ export function MicInline({ status, className }: { status: MicStatus; className?
   const look = LOOK[status];
   return (
     <span data-mic-status={status} className={cn("inline-flex items-center gap-2", className)}>
-      <ThinkingOrb state={look.orb} size={20} theme="light" color={look.tint ? CORAL : undefined} aria-hidden />
+      <ThinkingOrb state={look.orb} size={20} theme="light" aria-hidden />
       <StateLabel status={status} className="text-sm" />
     </span>
   );

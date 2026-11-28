@@ -192,9 +192,10 @@ export function InteractiveDemo() {
                 }
               />
 
-              {isRecording ? (
-                <div className="mt-3 flex w-full max-w-xs flex-col items-center gap-3">
-                  <div className="flex items-center gap-3">
+              {/* Stop / Cancel row keeps its height when hidden, so the orb never shifts between states. */}
+              <div className="mt-2 flex h-10 items-center justify-center gap-3">
+                {isRecording ? (
+                  <>
                     <button
                       type="button"
                       onClick={stop}
@@ -212,9 +213,11 @@ export function InteractiveDemo() {
                     >
                       Cancel
                     </button>
-                  </div>
-                </div>
-              ) : phase === "error" && error ? (
+                  </>
+                ) : null}
+              </div>
+
+              {phase === "error" && error ? (
                 <div role="alert" className="mt-3 max-w-xs space-y-3">
                   <p className="inline-flex items-center gap-1.5 font-heading text-base font-semibold text-score-average">
                     <WarningCircle className="size-5 shrink-0" weight="duotone" aria-hidden />

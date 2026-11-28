@@ -120,44 +120,45 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
         {status}
       </p>
 
-      {/* Record / stop (landing demo mic card) */}
-      {phase === "idle" || phase === "requesting" || phase === "error" ? (
+      {/* Record / stop: ONE card for ready → asking → listening, so the orb stays in the same place.
+          The orb is the mic (tap to start); state + time/hint sit below it in a fixed-height slot, and
+          the Stop / Cancel row keeps its height even when hidden. */}
+      {phase === "idle" || phase === "requesting" || phase === "error" || isRecording ? (
         <div className="flex flex-col items-center rounded-2xl border border-border bg-background p-6 text-center sm:p-8">
-          {/* The dotted orb is the mic: tap it to start. State, then the hint, below it. */}
           <MicStage
-            status={phase === "requesting" ? "requesting" : phase === "error" ? "off" : "ready"}
-            onStart={start}
+            status={micStatus}
+            onStart={isRecording ? undefined : start}
             startLabel="Start recording"
+            time={isRecording ? `${secs(elapsedMs)} · ${Math.ceil(remaining / 1000)}s left` : undefined}
             hint={
-              phase === "requesting"
-                ? "Say yes when your browser asks."
-                : `Tap stop when you finish. It stops by itself after ${RECORDING.maxMs / 1000} seconds.`
+              isRecording
+                ? undefined
+                : phase === "requesting"
+                  ? "Say yes when your browser asks."
+                  : `Tap stop when you finish. It stops by itself after ${RECORDING.maxMs / 1000} seconds.`
             }
           />
-        </div>
-      ) : null}
-
-      {isRecording ? (
-        <div className="flex flex-col items-center rounded-2xl border-2 border-primary/40 bg-secondary/40 p-6 text-center sm:p-8">
-          {/* One clean indicator while recording: the orb, "Listening…", then the time. */}
-          <MicStage status="listening" time={`${secs(elapsedMs)} · ${Math.ceil(remaining / 1000)}s left`} />
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={stop}
-              aria-pressed
-              aria-label="Stop recording"
-              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 font-heading text-sm font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring"
-            >
-              <Stop className="size-4" weight="fill" aria-hidden /> Stop
-            </button>
-            <button
-              type="button"
-              onClick={cancel}
-              className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-foreground/20 bg-card px-4 text-sm font-medium text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
-            >
-              <X className="size-4" aria-hidden /> Cancel
-            </button>
+          <div className="mt-2 flex h-11 items-center justify-center gap-3">
+            {isRecording ? (
+              <>
+                <button
+                  type="button"
+                  onClick={stop}
+                  aria-pressed
+                  aria-label="Stop recording"
+                  className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-6 font-heading text-sm font-semibold text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring"
+                >
+                  <Stop className="size-4" weight="fill" aria-hidden /> Stop
+                </button>
+                <button
+                  type="button"
+                  onClick={cancel}
+                  className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-foreground/20 bg-card px-4 text-sm font-medium text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
+                >
+                  <X className="size-4" aria-hidden /> Cancel
+                </button>
+              </>
+            ) : null}
           </div>
         </div>
       ) : null}
