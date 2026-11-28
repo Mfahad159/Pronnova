@@ -1,5 +1,5 @@
 import "server-only";
-import type { AttemptResult, Classification } from "@/types";
+import type { AttemptResult, Classification, PhonemeResult, WordResult } from "@/types";
 import { check, getDb } from "../client";
 
 const BUCKET = "recordings";
@@ -8,7 +8,7 @@ export interface StoredAttempt {
   id: string;
   studentId: string;
   itemId: string;
-  status: "pending" | "scored" | "failed";
+  status: "pending" | "scored" | "failed" | "rejected";
   audioPath: string | null;
   createdAt: string;
 }
@@ -29,7 +29,7 @@ export async function getAttemptResult(id: string): Promise<AttemptResult | null
   const row = check(
     await db
       .from("attempts")
-      .select("id, status, score, classification, recognized_text, error_message, word_results(position, word, score, is_error), phoneme_results(word, phoneme, expected, detected, gop_score, is_error)")
+      .select("id, status, score, classification, recognized_text, error_message, word_results(position, word, score, is_error, status), phoneme_results(word, phoneme, expected, detected, gop_score, is_error, status, word_position, position)")
       .eq("id", id)
       .maybeSingle(),
     "load attempt result",
@@ -40,8 +40,8 @@ export async function getAttemptResult(id: string): Promise<AttemptResult | null
     classification: Classification | null;
     recognized_text: string | null;
     error_message: string | null;
-    word_results: { position: number; word: string; score: number | string; is_error: boolean }[];
-    phoneme_results: { word: string; phoneme: string; expected: string | null; detected: string | null; gop_score: number | string | null; is_error: boolean }[];
+    word_results: { position: number; word: string; score: number | string; is_error: boolean; status: WordResult["status"] | null }[];
+    phoneme_results: { word: string; phoneme: string; expected: string | null; detected: string | null; gop_score: number | string | null; is_error: boolean; status: PhonemeResult["status"] | null; word_position: number | null; position: number | null }[];
   } | null;
   if (!row) return null;
   return {
@@ -51,14 +51,21 @@ export async function getAttemptResult(id: string): Promise<AttemptResult | null
     classification: row.classification,
     recognizedText: row.recognized_text,
     error: row.error_message,
-    words: [...row.word_results].sort((a, b) => a.position - b.position).map((w) => ({ word: w.word, score: Math.round(Number(w.score)), isError: w.is_error })),
-    phonemes: row.phoneme_results.map((p) => ({
+    words: [...row.word_results]
+      .sort((a, b) => a.position - b.position)
+      .map((w) => ({ word: w.word, score: Math.round(Number(w.score)), isError: w.is_error, status: w.status ?? undefined })),
+    phonemes: [...row.phoneme_results]
+      .sort((a, b) => (a.word_position ?? 0) - (b.word_position ?? 0) || (a.position ?? 0) - (b.position ?? 0))
+      .map((p) => ({
       word: p.word,
       phoneme: p.phoneme,
       expected: p.expected ?? "",
       detected: p.detected ?? "",
       gopScore: Number(p.gop_score ?? 0),
       isError: p.is_error,
+      status: p.status ?? undefined,
+      wordPosition: p.word_position ?? undefined,
+      position: p.position ?? undefined,
     })),
   };
 }
@@ -104,6 +111,16 @@ export async function markAttemptFailed(id: string, message: string) {
   if (error) throw new Error(`DB mark failed: ${error.message}`);
 }
 
+/** Unclear audio (too quiet / too short / no speech): kept, no score, the student records again. */
+export async function markAttemptRejected(id: string, message: string, raw: unknown) {
+  const { error } = await (await getDb())
+    .from("attempts")
+    .update({ status: "rejected", error_message: message.slice(0, 500), raw_result: raw ?? null })
+    .eq("id", id)
+    .neq("status", "scored");
+  if (error) throw new Error(`DB mark rejected failed: ${error.message}`);
+}
+
 export interface CompleteArgs {
   attemptId: string;
   recognizedText: string;
@@ -112,11 +129,21 @@ export interface CompleteArgs {
   modelVersion: string;
   scoringVersion: string;
   raw: unknown;
-  words: { position: number; word: string; unit: string; score: number; is_error: boolean }[];
-  phonemes: { word: string; phoneme: string; expected: string; detected: string; gop_score: number; is_error: boolean }[];
+  words: { position: number; word: string; unit: string; score: number; is_error: boolean; status?: string }[];
+  phonemes: {
+    word: string;
+    phoneme: string;
+    expected: string;
+    detected: string;
+    gop_score: number;
+    is_error: boolean;
+    status?: string;
+    word_position?: number;
+    position?: number;
+  }[];
 }
 
-/** Saves results + error stats + marks scored, in one DB transaction (0003 complete_attempt). */
+/** Saves results + error stats + marks scored, in one DB transaction (complete_attempt, 0003/0005). */
 export async function completeAttempt(a: CompleteArgs): Promise<boolean> {
   const { data, error } = await (await getDb()).rpc("complete_attempt", {
     p_attempt_id: a.attemptId,

@@ -4,7 +4,13 @@ export type Role = "student" | "teacher";
 export type Level = "basic" | "medium" | "advanced";
 export type ItemType = "word" | "phrase" | "sentence" | "paragraph";
 export type Classification = "excellent" | "good" | "average";
-export type AttemptStatus = "pending" | "scored" | "failed";
+/** rejected = the audio was too quiet/short/silent (no score; record again). failed = engine problem (Retry). */
+export type AttemptStatus = "pending" | "scored" | "failed" | "rejected";
+
+/** Per-sound result from the Pronnova engine (ADR-010). */
+export type PhonemeStatus = "ok" | "near" | "sub" | "del";
+/** Word colour on the feedback screen: green / amber / red. */
+export type WordStatus = "ok" | "near" | "bad";
 
 export interface Profile {
   id: string;
@@ -41,6 +47,7 @@ export interface WordResult {
   word: string;
   score: number;
   isError: boolean;
+  status?: WordStatus;
 }
 
 export interface PhonemeResult {
@@ -50,6 +57,9 @@ export interface PhonemeResult {
   detected: string;
   gopScore: number;
   isError: boolean;
+  status?: PhonemeStatus;
+  wordPosition?: number;
+  position?: number;
 }
 
 export interface AttemptSummary {

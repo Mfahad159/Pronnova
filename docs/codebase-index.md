@@ -72,7 +72,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `lib/speech-tts.ts` | Client Web Speech synthesis helper (`speakReference`) for landing pronunciation previews | ✅ |
 | `lib/utils.ts` | `cn()` class helper | ✅ |
 | `types/index.ts` | Shared types (Profile, Chapter, Lesson, LessonItem, results, AttemptSummary) | ✅ |
-| `server/speech/` | Speech Engine: `types.ts` (contract), `index.ts` (`getSpeechEngine()`), `mock.ts`, `azure.ts` (stub), `python.ts` | ✅ |
+| `server/speech/` | Speech Engine (ADR-010): `types.ts` (contract), `index.ts` (`getSpeechEngine()` → Pronnova engine; `SPEECH_ENGINE=azure` → stub), `python.ts` (calls `ENGINE_URL/score` with `ENGINE_TIMEOUT_MS`, maps the response, logs timing), `tts.ts` (reference voice cache in the `tts` bucket, `hash(text+voice+speed)`, background pre-generation), `azure.ts` (stub). The old mock is `tests/doubles/mock-engine.ts` (test double only) | ✅ |
 | `server/db/client.ts` | `getDb()` — server-only Supabase client (secret key), `check()` error helper | ✅ |
 | `server/db/demo-user.ts` | The one teacher (Umar) and the one student (Ahmad), ADR-009. `getCurrentStudent()` (throws if missing/archived), `findCurrentStudent()` (null), `getCurrentTeacher()` | ✅ |
 | `server/http.ts` | JSON helpers + `errorResponse` (maps PN404/PN409/PN422 and 23505/23503/23514 to HTTP) | ✅ |
@@ -90,8 +90,9 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `supabase/migrations/0002_materials.sql` | `lessons.visibility`, `create_material()` atomic save | ✅ |
 | `supabase/migrations/0003_attempt_results.sql` | `complete_attempt()`: results + error stats + mark scored in one transaction, runs once per attempt | ✅ |
 | `supabase/migrations/0004_roster_materials_assignments.sql` | Roster on profiles, materials = teacher lessons, assignments + targets, 5 atomic functions (see `database.md`) | ✅ |
+| `supabase/migrations/0005_speech_engine.sql` | Attempt status `rejected` (unclear audio), word/phoneme `status` + positions, `complete_attempt()` stores them, private `tts` bucket | ✅ |
 | `supabase/seed.sql` | Demo people, class, 4 chapters, Class 1 lessons/items (every Basic word has a picture in `word-pictures.tsx`), homework, sample attempts. Re-runnable (wipes data) | ✅ |
-| `engine/` | Python Speech Engine (research track). Only `README.md` so far | ✅ / 🕓 |
+| `engine/` | Pronnova Speech Engine (ADR-010): FastAPI on :8001, called only by Node. `pronnova_engine/` (`app.py` endpoints, `models.py` Kokoro + wav2vec2 + espeak, `phonemes.py` normalisation, `align.py` Needleman–Wunsch, `scoring.py` maths, `audio.py` ffmpeg decode + quality, `near_pairs.json`), `run.py`, `scripts/` (download_models, make_fixtures, benchmark), `tests/` (unit + integration + fixtures). Setup: `engine/README.md` | ✅ |
 | `engine/eval/` | Test clips + comparison notes | ✅ README only |
 
 ## Routes
@@ -121,6 +122,7 @@ Both role areas share `components/layout/app-shell.tsx` via `app/student/layout.
 |---|---|---|
 | `POST /api/attempts` | Form: `attemptId` (browser uuid = idempotency key), `itemId`, `durationMs`, `audio`. Saves audio + pending attempt, scores, saves results. 200 scored · 202 saved-but-failed · 400/403/404/413 · 503 nothing saved | ✅ |
 | `POST /api/attempts/[attemptId]/retry` | Re-score a failed (or stuck pending) attempt from its stored audio; safe to repeat | ✅ |
+| `GET /api/tts?text=…&speed=normal\|slow` | Signed URL (1 h) for the engine's reference voice; cached by hash, generated on a miss; 503 → the browser falls back to its own voice | ✅ |
 | `GET /api/recordings/[attemptId]?as=student\|teacher` | 5-minute signed link to play a saved recording. Only the student who made it or a teacher of their class; otherwise 404 (also 404 when no audio was saved) | ✅ |
 | `GET /api/attempts/[id]` | Attempt + word/phoneme results | 🕓 |
 | `GET/POST /api/classes`, `PATCH /api/classes/[classId]` | List (with active student count) / create / rename classes | ✅ |

@@ -96,6 +96,8 @@ export function AttemptsTable({
               <TableCell>
                 {a.status === "failed" ? (
                   <Badge variant="destructive" className="rounded-full">Not scored</Badge>
+                ) : a.status === "rejected" ? (
+                  <Badge variant="secondary" className="rounded-full">Unclear audio</Badge>
                 ) : a.status === "pending" ? (
                   <Badge variant="secondary" className="rounded-full">Scoring…</Badge>
                 ) : (

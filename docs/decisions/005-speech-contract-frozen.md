@@ -1,7 +1,7 @@
 # ADR-005: Speech Engine contract is frozen
 
 ## Status
-Accepted (2026-11-24, end of Phase 3).
+Accepted (2026-11-24, end of Phase 3). **Response shape superseded by ADR-010 (2026-11-28)**; the rules below still apply.
 
 ## Context
 The app now stores real attempts. Two scorers are being built in parallel (Azure, our own Python engine — ADR-001). If the result shape keeps changing, stored attempts and the engine work drift apart.

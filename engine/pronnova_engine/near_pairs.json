@@ -1,0 +1,16 @@
+{
+  "_comment": "Phoneme pairs that earn half credit (status 'near'). Written in IPA; entries are normalised with the same rules as the audio (stress and length marks removed), so 'iː' and 'i' mean the same thing. Order inside a pair does not matter. Add pairs here, no code change needed.",
+  "credit": 0.5,
+  "pairs": [
+    ["ɪ", "iː"],
+    ["ʊ", "uː"],
+    ["æ", "ɛ"],
+    ["ɒ", "ɔː"],
+    ["ɑː", "ɔː"],
+    ["ə", "ʌ"],
+    ["θ", "t"],
+    ["ð", "d"],
+    ["v", "w"],
+    ["z", "s"]
+  ]
+}

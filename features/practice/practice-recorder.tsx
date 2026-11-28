@@ -7,6 +7,7 @@ import {
   CircleNotch,
   MicrophoneSlash,
   PaperPlaneTilt,
+  Play,
   Stop,
   X,
 } from "@phosphor-icons/react/ssr";
@@ -23,7 +24,7 @@ import { classify } from "@/lib/scoring";
 import { ListenButton } from "@/features/practice/listen-button";
 import { cn } from "@/lib/utils";
 import { usePracticeStore } from "@/stores/practice-store";
-import type { AttemptResult } from "@/types";
+import type { AttemptResult, WordResult } from "@/types";
 
 const secs = (ms: number) => `${Math.floor(ms / 1000)}.${Math.floor((ms % 1000) / 100)}s`;
 
@@ -65,6 +66,10 @@ export function PracticeRecorder({
       if (res.status === 200 && data.status === "scored") {
         set({ phase: "scored", result: data as AttemptResult });
         setStatus(`Your score is ${data.score} percent.`);
+      } else if (res.status === 202 && data.status === "rejected") {
+        // Kept on the server, but the audio was unclear: no score, record again (ADR-010).
+        set({ phase: "error", result: null, error: { kind: "rejected", message: data.error ?? "We couldn't hear you clearly. Try again." } });
+        setStatus(data.error ?? "We couldn't hear you clearly. Try again.");
       } else if (res.status === 202 && data.attemptId) {
         // Saved on the server, scoring failed: keep it and offer Retry (SRS 3.3.7).
         set({ phase: "failed", result: data as AttemptResult });
@@ -116,7 +121,7 @@ export function PracticeRecorder({
               : "ready";
   const remaining = Math.max(0, RECORDING.maxMs - elapsedMs);
   const score = result?.score ?? 0;
-  const wrongWords = result ? result.words.filter((w) => w.isError) : [];
+  const wrongWords = result ? result.words.filter((w) => wordColour(w) !== "ok") : [];
   const trickySounds = result
     ? [...new Set(result.phonemes.filter((p) => p.isError).map((p) => p.expected || p.phoneme))].slice(0, 4)
     : [];
@@ -180,7 +185,9 @@ export function PracticeRecorder({
           <div className="flex items-start gap-3">
             <MicrophoneSlash className="mt-0.5 size-5 shrink-0 text-score-average" weight="duotone" aria-hidden />
             <div>
-              <p className="font-heading text-base font-semibold text-foreground">Could not record</p>
+              <p className="font-heading text-base font-semibold text-foreground">
+                {error.kind === "rejected" ? "We couldn't hear you clearly" : "Could not record"}
+              </p>
               <p className="mt-1 text-sm text-muted-foreground">{error.message}</p>
             </div>
           </div>
@@ -241,10 +248,7 @@ export function PracticeRecorder({
             {result.words.map((w, i) => (
               <span
                 key={i}
-                className={cn(
-                  "rounded-lg px-2 py-0.5 font-heading font-bold",
-                  w.isError ? "bg-score-average/10 text-score-average" : "bg-score-excellent/10 text-score-excellent",
-                )}
+                className={cn("rounded-lg px-2 py-0.5 font-heading font-bold", wordTone[wordColour(w)])}
                 title={`${w.score}%`}
               >
                 {w.word}
@@ -254,10 +258,18 @@ export function PracticeRecorder({
           {wrongWords.length > 0 || trickySounds.length > 0 ? (
             <div className="mt-4 rounded-xl border border-border bg-card px-4 py-3 text-sm">
               {wrongWords.length > 0 ? (
-                <p>
-                  <span className="font-semibold">Practise: </span>
-                  {wrongWords.map((w) => w.word).join(", ")}
-                </p>
+                <div>
+                  <p className="font-semibold">Practise these words:</p>
+                  {/* UC-06 hear the word: the engine's voice, normal + 🐢 slow (cached). */}
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {[...new Set(wrongWords.map((w) => w.word))].map((word) => (
+                      <li key={word} className="flex items-center gap-2 rounded-xl border border-border bg-background py-1 pr-1 pl-3">
+                        <span className="font-heading font-bold">{word}</span>
+                        <ListenButton text={word} label="Hear" className="scale-90" />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ) : null}
               {trickySounds.length > 0 ? (
                 <p className="mt-1 text-muted-foreground">
@@ -276,6 +288,7 @@ export function PracticeRecorder({
               <ArrowCounterClockwise weight="bold" /> Try again
             </OutlineButton>
             <ListenButton text={itemText} label="Hear it again" />
+            {recording ? <OwnRecording url={recording.url} /> : null}
             {nextHref ? (
               <KiddyButton size="sm" href={nextHref}>
                 Next word <ArrowRight weight="bold" />
@@ -290,5 +303,34 @@ export function PracticeRecorder({
       ) : null}
     </div>
     </AutoHeight>
+  );
+}
+
+/** Word colour: green if every sound was right, amber for a near miss, red otherwise (ADR-010). */
+function wordColour(w: WordResult): "ok" | "near" | "bad" {
+  return w.status ?? (w.isError ? "bad" : "ok");
+}
+
+const wordTone = {
+  ok: "bg-score-excellent/10 text-score-excellent",
+  near: "bg-score-good/10 text-score-good",
+  bad: "bg-score-average/10 text-score-average",
+} as const;
+
+/** Play the student's own recording next to the result (UC-06). */
+function OwnRecording({ url }: { url: string }) {
+  const [playing, setPlaying] = useState(false);
+  return (
+    <OutlineButton
+      onClick={() => {
+        const a = new Audio(url);
+        a.onended = a.onpause = () => setPlaying(false);
+        setPlaying(true);
+        void a.play().catch(() => setPlaying(false));
+      }}
+      aria-label="Play my recording"
+    >
+      <Play weight="fill" className={cn(playing && "animate-pulse")} /> My recording
+    </OutlineButton>
   );
 }

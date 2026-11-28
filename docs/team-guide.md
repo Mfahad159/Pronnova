@@ -72,7 +72,7 @@ npm install
 ```powershell
 npm run dev
 ```
-Open http://localhost:3000. With `SPEECH_ENGINE=mock` you don't need any AI keys.
+Open http://localhost:3000. Scoring needs the speech engine running (`engine/README.md`: `.venv\Scripts\python run.py` in `engine/`); without it, attempts are saved as "not checked yet" and **Try checking again** works once it's up.
 
 Before pushing, run these checks (they must pass):
 ```powershell
@@ -111,7 +111,10 @@ All `.env*` files and `*.docx` files are git-ignored on purpose. Don't force-add
 | `SUPABASE_URL` | DB + storage (server only) | Supabase → Project Settings → Data API |
 | `SUPABASE_SECRET_KEY` | Server-side DB access (secret!) | Supabase → Project Settings → API Keys → Secret |
 | `SUPABASE_DB_URL` | Optional: create/alter tables from the terminal (`npm run db:push`) | Supabase → Connect → Session pooler URI + DB password |
-| `SPEECH_ENGINE` | Which scorer: `mock`, `azure`, `python` | Your choice. Start with `mock` |
+| `ENGINE_URL` | Pronnova speech engine | Default `http://localhost:8001` |
+| `ENGINE_TIMEOUT_MS` | How long Node waits for a score | Default `10000` |
+| `TTS_VOICE` | Reference voice (part of the audio cache key) | Default `af_heart`; must match the engine |
+| `SPEECH_ENGINE` | Only `azure` changes anything (Azure stub). `mock` is gone (ADR-010) | Leave unset |
 | `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | `azure` engine | Azure portal → Speech resource |
 | `SPEECH_ENGINE_URL` | `python` engine | URL of the Python service |
 | `GEMINI_API_KEY` | Suggestions (FYP-2) | Google AI Studio |
@@ -119,8 +122,7 @@ All `.env*` files and `*.docx` files are git-ignored on purpose. Don't force-add
 Only variables starting with `NEXT_PUBLIC_` reach the browser. Everything else stays on the server.
 
 ### Two ways to score (we build both at once)
-- **Azure** (`SPEECH_ENGINE=azure`): what the app uses first. Needs the Azure key.
-- **Our own Python engine** (`SPEECH_ENGINE=python`): built in `engine/` by one teammate. It's a small web service; the app sends it audio + text and gets back the same result shape as Azure. Setup steps will live in `engine/README.md` 🕓.
+- **Pronnova Speech Engine** (`engine/`, ADR-010): a small Python web service on port 8001 (Kokoro voice + wav2vec2 phonemes + espeak). Only the Node server calls it. Setup, tests and latency: `engine/README.md`. Azure (`SPEECH_ENGINE=azure`) is still a stub.
 - Both must return the same result shape (see `architecture.md` → Speech Engine contract). That's what lets us switch with one setting.
 
 ## 4. Where to add or change things

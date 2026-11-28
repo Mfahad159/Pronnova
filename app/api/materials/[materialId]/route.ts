@@ -1,4 +1,6 @@
 import { revalidateTag } from "next/cache";
+import { after } from "next/server";
+import { pregenerateTts } from "@/server/speech/tts";
 import { CURRICULUM_TAG } from "@/server/db/queries/learning";
 import { cleanMaterial, hasErrors, validateMaterial, type MaterialInput } from "@/lib/materials";
 import type { Level } from "@/types";
@@ -57,6 +59,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/materials/
       items: itemsChanged ? m.items : null,
     });
     revalidateTag(CURRICULUM_TAG, { expire: 0 }); // students see the change on their next request
+    if (itemsChanged) after(() => pregenerateTts(m.items)); // reference voice in the background (ADR-010)
     return json({ material: await getMaterial(materialId), warnings });
   } catch (err) {
     return errorResponse(err);

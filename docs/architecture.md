@@ -25,8 +25,8 @@ Speech Engine (behind one interface, swappable)
 
 ## Rules
 - **Browser never talks to Supabase or AI services directly.** Only server code does (`server/db/`), with the secret key. Every DB read goes through `getDb()`, which calls `connection()` so pages never query at build time.
-- **One Speech Engine contract** (below). Pages and API routes never know which engine is behind it. Pick with `SPEECH_ENGINE=mock|azure|python`.
-- **Never lose an attempt.** Save the audio + an `attempts` row with `status = pending` *before* scoring. On failure set `status = failed`; a retry re-scores the same row.
+- **One Speech Engine contract** (below). Pages and API routes never know which engine is behind it. The scorer is the Pronnova engine (`engine/`, ADR-010); `SPEECH_ENGINE=azure` switches to the Azure stub. No mock in the app (test double only).
+- **Never lose an attempt.** Save the audio + an `attempts` row with `status = pending` *before* scoring. Engine down / timeout / error → `failed` (Retry re-scores the same audio). Unclear audio → `rejected` (no score, record again).
 - Store `model_version` and `scoring_version` on every attempt so results stay comparable when the engine changes.
 - Server components by default; `"use client"` only for recording and interactive widgets.
 
@@ -34,20 +34,19 @@ Speech Engine (behind one interface, swappable)
 `POST /api/attempts` → `server/services/attempts.ts`: upload audio → insert `pending` → score with the selected engine → `complete_attempt()` (results + error stats, one transaction). Scoring failure → `failed` + audio kept → `POST /api/attempts/[attemptId]/retry`. The browser-made attempt id makes resends idempotent.
 
 ## Speech Engine contract
-**Frozen** (ADR-005).
-Input: audio (webm/opus or wav, ≤ 15 s), reference text, optional reference phonemes.
+ADR-010 (replaces the shape frozen in ADR-005). Node → `POST {ENGINE_URL}/score` (multipart `audio` + `reference_text`), timeout `ENGINE_TIMEOUT_MS` (10 s):
 
 ```json
 {
-  "recognized_text": "the cat sat on the mat",
-  "score": 82,
-  "words":    [{ "word": "sat", "score": 64, "is_error": true }],
-  "phonemes": [{ "word": "sat", "phoneme": "æ", "expected": "æ", "detected": "e", "gop_score": 41, "is_error": true }],
-  "model_version": "azure-pa-2026-11",
-  "raw": { }
+  "overall": 87.5, "class": "Excellent",
+  "words": [{ "text": "think", "score": 87.5,
+              "phonemes": [{ "expected": "θ", "heard": "t", "status": "near" }] }],
+  "tricky_sounds": [{ "phoneme": "θ", "count": 1 }],
+  "audio_quality": { "ok": true },
+  "heard_phonemes": "t ɪ ŋ k", "engine_version": "pronnova-engine-0.1.0", "timings": { }
 }
 ```
-The app computes the classification (Excellent/Good/Average) from `score` — not the engine.
+`status`: ok / near / sub / del / ins. Unclear audio → `audio_quality: { ok: false, reason }`, no score. `server/speech/python.ts` maps this to `ScoreResult` (word colour ok/near/bad, phoneme statuses + positions, gop_score = 100/50/0). The app still computes the stored classification from the score (`lib/scoring.ts`, same 85/70 cut-offs). Reference voice: `POST /tts` → MP3, cached by Node (`server/speech/tts.ts`).
 
 ## Data model (from SRS ER diagram)
 | Table | Key columns | Notes |

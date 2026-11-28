@@ -1,7 +1,6 @@
-import "server-only";
-import type { ScoreRequest, ScoreResult, SpeechEngine } from "./types";
+import type { ScoreRequest, ScoreResult, SpeechEngine } from "@/server/speech/types";
 
-/** Fake scores so the UI works with no keys. Same text → same scores. */
+/** TEST DOUBLE only (ADR-010): fake, deterministic scores. Never used by the app. Same text → same scores. */
 export const mockEngine: SpeechEngine = {
   name: "mock",
   async score({ referenceText }: ScoreRequest): Promise<ScoreResult> {
@@ -18,6 +17,8 @@ export const mockEngine: SpeechEngine = {
       });
     const score = words.length ? Math.round(words.reduce((s, w) => s + w.score, 0) / words.length) : 0;
     return {
+      audioQuality: { ok: true },
+      trickySounds: [],
       recognizedText: referenceText.toLowerCase(),
       score,
       words,

@@ -63,3 +63,10 @@ bun.lock
 bun.lockb
 yarn.lock
 pnpm-lock.yaml
+
+# Speech engine (Python): virtualenv, model cache, caches
+engine/.venv/
+engine/.hf-cache/
+__pycache__/
+*.pyc
+.pytest_cache/

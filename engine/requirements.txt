@@ -1,0 +1,19 @@
+# Pronnova Speech Engine — Python 3.12, Windows/Linux. Pinned (full lock: requirements-lock.txt).
+# Install PyTorch FIRST from the CUDA index (see README), then: pip install -r requirements.txt
+#   torch==2.5.1  torchaudio==2.5.1   (cu121 build for the RTX 3050; cpu build otherwise)
+kokoro==0.9.4
+misaki==0.9.4
+phonemizer-fork==3.3.2
+espeakng-loader==0.2.4
+transformers==4.46.3
+tokenizers==0.20.3
+huggingface-hub==0.36.2
+fastapi==0.115.6
+uvicorn==0.32.1
+python-multipart==0.0.20
+pydantic==2.14.4
+soundfile==0.12.1
+numpy==2.0.2
+imageio-ffmpeg==0.5.1
+httpx==0.28.1
+pytest==8.3.4

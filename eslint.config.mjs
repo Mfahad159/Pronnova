@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     ".agents/**",
     "archive/**",
     "Pronnova_mds/**",
+    // The speech engine is a Python project; its venv contains PyTorch's own JS files.
+    "engine/**",
   ]),
 ]);
 

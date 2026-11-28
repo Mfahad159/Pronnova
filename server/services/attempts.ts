@@ -8,13 +8,21 @@ import {
   getAttemptResult,
   insertPendingAttempt,
   markAttemptFailed,
+  markAttemptRejected,
   uploadRecording,
   type AttemptResult,
 } from "@/server/db/queries/attempt-store";
-import { getSpeechEngine, SpeechEngineError } from "@/server/speech";
+import { getSpeechEngine, SpeechEngineError, type AudioQualityReason } from "@/server/speech";
 
 /** Bump when our own scoring maths (not the engine) changes, so old and new scores aren't mixed up. */
-export const SCORING_VERSION = "v1";
+export const SCORING_VERSION = "v2"; // v2 = Pronnova engine: phoneme alignment, near pairs (ADR-010)
+
+/** What the student sees when the engine couldn't hear them (no score; record again). */
+export const QUALITY_MESSAGE: Record<AudioQualityReason, string> = {
+  no_speech: "We couldn't hear you clearly. Try again and speak a little louder.",
+  too_quiet: "We couldn't hear you clearly. Move closer to the microphone and try again.",
+  too_short: "That was very short. Say the whole word, then tap stop.",
+};
 
 export type SubmitOutcome =
   | { kind: "result"; result: AttemptResult } // scored, or saved-but-failed (status tells which)
@@ -23,7 +31,9 @@ export type SubmitOutcome =
 /**
  * UC-04 pipeline. Order matters (SRS 3.3.7 — never lose an attempt):
  *  1. upload audio  2. insert attempt as "pending"  3. score  4. save results atomically
- * If scoring fails after step 2, the attempt + audio stay and are marked "failed" for Retry.
+ * If scoring fails after step 2 (engine down, timeout, error), the attempt + audio stay and are
+ * marked "failed" for Retry (re-scores the SAME audio). Unclear audio → "rejected": no score, the
+ * student records again.
  * The client sends its own attempt id, so a double submit returns the first result (idempotent).
  */
 export async function submitAttempt(a: {
@@ -73,6 +83,10 @@ async function scoreAndSave(attemptId: string, audio: Blob, referenceText: strin
   const engine = getSpeechEngine();
   try {
     const r = await engine.score({ audio, referenceText });
+    if (!r.audioQuality.ok) {
+      await markAttemptRejected(attemptId, QUALITY_MESSAGE[r.audioQuality.reason], r.raw ?? null);
+      return;
+    }
     const score = Math.max(0, Math.min(100, Math.round(r.score * 100) / 100));
     await completeAttempt({
       attemptId,
@@ -81,8 +95,8 @@ async function scoreAndSave(attemptId: string, audio: Blob, referenceText: strin
       classification: classify(score),
       modelVersion: `${engine.name}:${r.modelVersion}`,
       scoringVersion: SCORING_VERSION,
-      raw: r.raw ?? null,
-      words: r.words.map((w, i) => ({ position: i, word: w.word, unit: wordUnit(w.word), score: w.score, is_error: w.isError })),
+      raw: { ...(r.raw as object | null), tricky_sounds: r.trickySounds },
+      words: r.words.map((w, i) => ({ position: i, word: w.word, unit: wordUnit(w.word), score: w.score, is_error: w.isError, status: w.status })),
       phonemes: r.phonemes.map((p) => ({
         word: p.word,
         phoneme: p.phoneme,
@@ -90,6 +104,9 @@ async function scoreAndSave(attemptId: string, audio: Blob, referenceText: strin
         detected: p.detected,
         gop_score: p.gopScore,
         is_error: p.isError,
+        status: p.status,
+        word_position: p.wordPosition,
+        position: p.position,
       })),
     });
   } catch (err) {

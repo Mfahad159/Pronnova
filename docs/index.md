@@ -16,7 +16,7 @@ Read this first. Then open only what your task needs.
 | [design.md](design.md) | Layout, style, reference image, asset use | Building UI |
 | [design/image-prompts.md](design/image-prompts.md) | Prompts to generate new illustrations in the Pronnova art style | Making new images/avatars |
 | [agent-skills.md](agent-skills.md) | Approved AI skills + UI component sources | Before installing a skill or copying UI blocks |
-| [decisions/](decisions/) | Decision records: 001 stack, 002 no login in FYP-1, 003 test tools, 004 lesson access (unlock + visibility), 005 speech contract frozen, 006 audience Class 1, 007 landing page is the design base, 008 Animate UI motion + lucide arrows, 009 one teacher + one student (no picker, roster hidden, no dummy data) | You want to know why something was chosen |
+| [decisions/](decisions/) | Decision records: 001 stack, 002 no login in FYP-1, 003 test tools, 004 lesson access (unlock + visibility), 005 speech contract frozen, 006 audience Class 1, 007 landing page is the design base, 008 Animate UI motion + lucide arrows, 009 one teacher + one student (no picker, roster hidden, no dummy data), 010 Pronnova speech engine (new engine contract) | You want to know why something was chosen |
 | [../specs/README.md](../specs/README.md) | Feature specs | Before building a feature |
 | [../AGENTS.md](../AGENTS.md) | Rules for AI agents | Always (agents) |
 

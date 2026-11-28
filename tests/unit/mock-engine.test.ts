@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mockEngine } from "@/server/speech/mock";
+import { mockEngine } from "../doubles/mock-engine";
 
 describe("mock speech engine", () => {
   it("returns one word result per reference word, same input → same scores", async () => {
