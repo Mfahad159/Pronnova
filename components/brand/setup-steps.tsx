@@ -6,14 +6,13 @@ import { ease } from "@animate-ui/react/utils/motion";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** The path from "Get started" to the student dashboard. Teachers go from step 1 to their dashboard. */
-const STEPS = ["Choose role", "Pick class", "Find your name", "Start"] as const;
+/** The path from "Get started" to a dashboard (one student and one teacher, no picking: 2026-11-28). */
+const STEPS = ["Choose your role", "Start"] as const;
 
-export type SetupStep = 0 | 1 | 2 | 3;
+export type SetupStep = 0 | 1;
 
 /**
- * Setup progress above role selection and the "Who are you?" picker, in the landing demo's pill
- * style: "1. Choose role — 2. Pick class — …". The current step is a filled coral pill that glides
+ * Setup progress above role selection, in the landing demo's pill style: "1. Choose your role — 2. Start". The current step is a filled coral pill that glides
  * to the next step (shared layoutId); done steps get a check. `finished` ticks the last step just
  * before the dashboard opens.
  */

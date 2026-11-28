@@ -5,15 +5,13 @@ import { expect, test } from "./fixtures";
 const routes: [path: string, heading: RegExp][] = [
   ["/", /helping little voices grow/i],
   ["/onboarding", /how will you use pronnova/i],
-  ["/student", /^hi, ayesha/i],
+  ["/student", /^hi, ahmad/i],
   ["/student/chapters", /^chapters$/i],
   ["/student/progress", /your progress/i],
   ["/teacher", /hello/i],
   ["/teacher/materials", /^materials$/i],
   ["/teacher/materials/new", /^new material$/i],
   ["/teacher/chapters", /organize chapters/i],
-  ["/teacher/classes", /classes & students/i],
-  ["/teacher/students", /classes & students/i], // old URL redirects
 ];
 
 for (const [path, heading] of routes) {
@@ -40,12 +38,21 @@ test("landing Get started → onboarding (with setup steps) → choose student o
   await expect(page).toHaveURL(/\/onboarding$/);
   const steps = page.getByRole("navigation", { name: "Setup progress" });
   await expect(steps).toBeVisible();
-  await expect(steps.locator('[aria-current="step"]')).toContainText("Choose role");
+  await expect(steps.locator('[aria-current="step"]')).toContainText("Choose your role");
   await page.getByRole("link", { name: /i'm a student/i }).click();
-  await expect(page.getByRole("heading", { level: 1, name: /^hi, ayesha/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /^hi, ahmad/i })).toBeVisible();
   await page.goto("/onboarding");
   await page.getByRole("link", { name: /i'm a teacher/i }).click();
-  await expect(page.getByRole("heading", { level: 1, name: /hello/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /hello, umar/i })).toBeVisible();
+});
+
+test("switching portal always goes through role selection", async ({ page, isMobile }) => {
+  await page.goto("/student");
+  if (isMobile) await page.getByRole("button", { name: "Toggle Sidebar" }).click(); // menu is a drawer on phones
+  await page.getByRole("button", { name: /pronnova, student portal/i }).click();
+  await expect(page.getByRole("menuitem", { name: /teacher/i })).toHaveCount(0);
+  await page.getByRole("menuitem", { name: /switch role/i }).click();
+  await expect(page).toHaveURL(/\/onboarding$/);
 });
 
 test("unknown chapter shows the not-found page", async ({ page }) => {
@@ -70,8 +77,14 @@ test("page loader: shows on every full load (incl. refresh) and fades out after 
   await expect(page.locator(".pn-loader")).toHaveCount(0, { timeout: 8_000 });
 });
 
-test("returning device: /student/who goes straight to the dashboard", async ({ page }) => {
-  await page.goto("/student/who"); // this device already picked Ayesha (playwright.config.ts)
-  await expect(page).toHaveURL(/\/student$/);
-  await expect(page.getByRole("heading", { level: 1, name: /^hi, ayesha/i })).toBeVisible();
+test("removed pages redirect instead of dead-ending", async ({ page }) => {
+  for (const [from, to, heading] of [
+    ["/student/who", /\/student$/, /^hi, ahmad/i],
+    ["/teacher/classes", /\/teacher$/, /hello, umar/i],
+    ["/teacher/students", /\/teacher$/, /hello, umar/i],
+  ] as const) {
+    await page.goto(from);
+    await expect(page).toHaveURL(to);
+    await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
+  }
 });

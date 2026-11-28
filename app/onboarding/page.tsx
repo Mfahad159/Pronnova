@@ -39,7 +39,7 @@ export default function OnboardingPage() {
         <SetupSteps current={0} className="mb-8" />
         <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl">How will you use Pronnova?</h1>
         <p className="mt-2 text-muted-foreground">
-          Choose one to continue. Students then pick their class and name; teachers go straight to their dashboard.
+          Choose one to continue. You can come back here any time from the menu to switch.
         </p>
 
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">

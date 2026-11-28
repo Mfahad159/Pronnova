@@ -56,7 +56,7 @@ export function AttemptsTable({
       <PikoSays
         size="sm"
         tone="card"
-        message={showStudent ? "No attempts from your students yet." : "No attempts yet. Pick a chapter and try your first one!"}
+        message={showStudent ? "No attempts yet. They appear here as soon as your student practises." : "No attempts yet. Pick a chapter and try your first one!"}
       />
     );
   }

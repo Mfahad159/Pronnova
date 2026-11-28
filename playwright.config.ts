@@ -7,17 +7,9 @@ const fakeMic = {
   launchOptions: { args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"] },
 };
 
-// Most tests act as a device where the seeded student Ayesha was already picked on "Who are you?"
-// (cookie + localStorage, see features/student/identity.ts). Picker tests start empty instead:
-// test.use({ storageState: { cookies: [], origins: [] } }).
-const AYESHA = "00000000-0000-4000-8000-000000000002";
 // E2E_BASE_URL=http://localhost:3100 runs against an already started production build (`next start`):
 // faster and steadier than the dev server, which compiles pages on demand (Phase 5 finding).
 const BASE_URL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
-export const pickedAyesha = {
-  cookies: [{ name: "pronnova_student", value: AYESHA, domain: "localhost", path: "/", expires: -1, httpOnly: true, secure: false, sameSite: "Lax" as const }],
-  origins: [{ origin: BASE_URL, localStorage: [{ name: "pronnova.studentId", value: AYESHA }] }],
-};
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -26,7 +18,7 @@ export default defineConfig({
   // Against a production build (E2E_BASE_URL): no retries — that run is the one that counts.
   timeout: 60_000,
   retries: process.env.E2E_BASE_URL ? 0 : 1,
-  use: { baseURL: BASE_URL, storageState: pickedAyesha },
+  use: { baseURL: BASE_URL },
   webServer: process.env.E2E_BASE_URL ? undefined : { command: "npm run dev", url: "http://localhost:3000", reuseExistingServer: true },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], ...fakeMic } },

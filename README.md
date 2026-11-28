@@ -8,9 +8,9 @@ Built for Class 1 students and their teachers.
 
 ## For students
 
-1. Choose your name from your class list. No password needed.
-2. Open a lesson your teacher gave you, or pick a chapter.
-3. Tap Listen to hear the word, then record yourself saying it.
+1. Choose **I'm a student**. No password needed.
+2. Your home page shows the work your teacher assigned, or "No work assigned yet! Happy weekend!".
+3. Open a lesson, tap Listen to hear the word, then tap the dotted orb and say it.
 4. See your score and a short tip. Try again or move to the next word.
 
 | Your home page | Practice and feedback |
@@ -19,10 +19,10 @@ Built for Class 1 students and their teachers.
 
 ## For teachers
 
-1. Create your classes and add your students.
+1. Choose **I'm a teacher**.
 2. Make a lesson: type the words, paste a list, or upload a Word file. Pronnova checks that each item suits the level you chose (Basic, Medium or Advanced).
-3. Assign the lesson to the whole class or to selected students, with a due date.
-4. Follow each student's attempts and progress from your dashboard.
+3. Assign the lesson to your student with a due date.
+4. See their attempts, scores and the words they find hard on your dashboard.
 
 | Your lessons | Making a lesson |
 | --- | --- |

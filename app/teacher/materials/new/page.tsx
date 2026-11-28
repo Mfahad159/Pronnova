@@ -7,7 +7,7 @@ export const metadata = { title: "New material" };
 export default function NewMaterialPage() {
   return (
     <>
-      <TopBar title="New material" subtitle="Write, paste or upload a Word file, check the items, then save." />
+      <TopBar title="New material" subtitle="Write, paste or upload a Word file, check the items, then save." back={{ href: "/teacher/materials", label: "Back to materials" }} />
       <PageBody>
         <MaterialEditor />
       </PageBody>

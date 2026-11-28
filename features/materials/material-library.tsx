@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { levelLabel, levels } from "@/features/curriculum/level";
 import { cn } from "@/lib/utils";
 import type { Level } from "@/types";
-import { AssignDialog, type AssignClass, type AssignStudent } from "./assign-dialog";
+import { AssignDialog, type AssignTarget } from "./assign-dialog";
 import { DuplicateMaterialButton } from "./duplicate-button";
 
 export interface LibraryMaterial {
@@ -25,7 +25,7 @@ export interface LibraryMaterial {
 }
 
 /** UC-10 teacher library: search, filter by level, Open / Assign / Duplicate. */
-export function MaterialLibrary({ materials, classes, students }: { materials: LibraryMaterial[]; classes: AssignClass[]; students: AssignStudent[] }) {
+export function MaterialLibrary({ materials, student }: { materials: LibraryMaterial[]; student: AssignTarget | null }) {
   const [query, setQuery] = useState("");
   const [level, setLevel] = useState<Level | "all">("all");
   const [assigning, setAssigning] = useState<LibraryMaterial | null>(null);
@@ -125,8 +125,7 @@ export function MaterialLibrary({ materials, classes, students }: { materials: L
           onOpenChange={(o) => !o && setAssigning(null)}
           materialId={assigning.id}
           materialTitle={assigning.title}
-          classes={classes}
-          students={students}
+          student={student}
         />
       ) : null}
     </div>

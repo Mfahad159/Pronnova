@@ -5,7 +5,8 @@ import { PageBody, TopBar } from "@/components/layout/top-bar";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
 import { MaterialLibrary } from "@/features/materials/material-library";
 import { listMaterials } from "@/server/db/queries/materials";
-import { listClasses, listStudents } from "@/server/db/queries/roster";
+import { getStudent } from "@/server/db/queries/roster";
+import { DEMO_STUDENT_ID } from "@/server/db/demo-user";
 
 export const metadata = { title: "Materials" };
 
@@ -19,7 +20,7 @@ export default function MaterialsPage() {
 }
 
 async function Materials() {
-  const [materials, classes, students] = await Promise.all([listMaterials(), listClasses(), listStudents()]);
+  const [materials, student] = await Promise.all([listMaterials(), getStudent(DEMO_STUDENT_ID)]);
   return (
     <>
       <TopBar
@@ -41,8 +42,7 @@ async function Materials() {
             assignmentCount: m.assignmentCount,
             locked: m.locked,
           }))}
-          classes={classes.map((c) => ({ id: c.id, name: c.name, studentCount: c.studentCount }))}
-          students={students.map((s) => ({ id: s.id, fullName: s.fullName, rollNo: s.rollNo, classId: s.classId }))}
+          student={student && !student.archivedAt ? { id: student.id, name: student.fullName } : null}
         />
       </PageBody>
     </>

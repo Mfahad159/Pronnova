@@ -27,7 +27,11 @@ async function EditMaterial({ params }: { params: PageProps<"/teacher/materials/
 
   return (
     <>
-      <TopBar title={m.title} subtitle={m.locked ? "Items locked — students have attempted this." : "Edit the material, then save."} />
+      <TopBar
+        title={m.title}
+        subtitle={m.locked ? "Items locked — students have attempted this." : "Edit the material, then save."}
+        back={{ href: "/teacher/materials", label: "Back to materials" }}
+      />
       <PageBody>
         <MaterialEditor
           material={{ id: m.id, title: m.title, level: m.level, instructions: m.instructions, locked: m.locked, items: m.items.map((i) => i.text) }}

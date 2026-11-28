@@ -1,28 +1,7 @@
-import { Suspense } from "react";
-import { PageBody, TopBar } from "@/components/layout/top-bar";
-import { PageSkeleton } from "@/components/layout/page-skeleton";
-import { StudentPicker } from "@/features/student/student-picker";
-import { listClasses } from "@/server/db/queries/roster";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Who are you?" };
-
-// "Who are you?" — replaces login until auth arrives in FYP-2 (ADR-002). Pick class → name → Continue.
+// "Who are you?" was removed on 2026-11-28: FYP-1 now has one student (Ahmad), so there is nothing
+// to pick. Old links and bookmarks land on the dashboard instead of a dead page.
 export default function WhoPage() {
-  return (
-    <Suspense fallback={<PageSkeleton variant="cards" />}>
-      <Who />
-    </Suspense>
-  );
-}
-
-async function Who() {
-  const classes = await listClasses();
-  return (
-    <>
-      <TopBar title="Who are you?" subtitle="Pick your class, then your name." />
-      <PageBody>
-        <StudentPicker classes={classes.map((c) => ({ id: c.id, name: c.name, studentCount: c.studentCount }))} />
-      </PageBody>
-    </>
-  );
+  redirect("/student");
 }

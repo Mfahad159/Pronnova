@@ -38,7 +38,7 @@ test("back and forward keep the right page", async ({ page }) => {
   await page.goBack();
   await expect(page.getByRole("heading", { level: 1, name: /^chapters$/i })).toBeVisible();
   await page.goBack();
-  await expect(page.getByRole("heading", { level: 1, name: /^hi, ayesha/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /^hi, ahmad/i })).toBeVisible();
   await page.goForward();
   await expect(page.getByRole("heading", { level: 1, name: /^chapters$/i })).toBeVisible();
 });
@@ -53,7 +53,7 @@ for (const path of BAD) {
 
 test("no in-page link on the main screens leads to an error", async ({ page }) => {
   test.setTimeout(180_000); // fetches every internal link; the dev server is slower while the full suite runs
-  const pages = ["/", "/onboarding", "/student", "/student/chapters", "/teacher", "/teacher/materials", "/teacher/classes"];
+  const pages = ["/", "/onboarding", "/student", "/student/chapters", "/teacher", "/teacher/materials"];
   const hrefs = new Set<string>();
   for (const p of pages) {
     await page.goto(p);

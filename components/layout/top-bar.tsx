@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -9,10 +11,13 @@ export function TopBar({
   title,
   subtitle,
   action,
+  back,
 }: {
   title: string;
   subtitle?: React.ReactNode;
   action?: React.ReactNode;
+  /** Detail pages: where "Back" goes (and its label for screen readers), so no page is a dead end. */
+  back?: { href: string; label: string };
 }) {
   return (
     <header className="app-top-bar sticky top-0 z-10 bg-background/80 px-3 pt-3 pb-1 backdrop-blur-md sm:px-5">
@@ -23,6 +28,21 @@ export function TopBar({
           </TooltipTrigger>
           <TooltipContent side="bottom">Show or hide the menu</TooltipContent>
         </Tooltip>
+        {back ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href={back.href}
+                transitionTypes={["nav-back"]}
+                aria-label={back.label}
+                className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-foreground/12 bg-card text-foreground outline-none transition-colors hover:border-primary/40 hover:bg-secondary/60 focus-visible:ring-3 focus-visible:ring-ring"
+              >
+                <ArrowLeft className="size-4" aria-hidden />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{back.label}</TooltipContent>
+          </Tooltip>
+        ) : null}
         <div className="min-w-[10rem] flex-1 basis-40">
           <h1 className="truncate font-heading text-lg font-bold tracking-tight md:text-xl">{title}</h1>
           {subtitle ? <p className="truncate text-sm text-muted-foreground">{subtitle}</p> : null}

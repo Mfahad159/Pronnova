@@ -1,9 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeftRight, ChartColumn, ChevronsUpDown, FileText, LoaderCircle, LogOut, UserRoundSearch, UsersRound } from "lucide-react";
+import { ChartColumn, ChevronsUpDown, FileText, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
-import { forgetStudent } from "@/features/student/identity";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types";
 
@@ -34,21 +31,12 @@ function Avatar({ name, role, className }: { name: string; role: Role; className
 
 /**
  * Sidebar footer in the Animate UI sidebar style ("nav user"): who is using Pronnova, with a menu
- * for their shortcuts, switching student (students) and switching role. `name` is null on a device
- * where no student is picked yet.
+ * for a shortcut and "Switch role" (back to role selection). `name` is null only while loading or
+ * when the database can't be reached.
  */
 export function NavUser({ role, name, subtitle }: { role: Role; name: string | null; subtitle: string }) {
   const { isMobile } = useSidebar();
-  const router = useRouter();
-  const [pending, start] = useTransition();
-  const shown = name ?? (role === "student" ? "Who are you?" : "Teacher");
-
-  const switchStudent = () =>
-    start(async () => {
-      await forgetStudent();
-      router.replace("/student/who");
-      router.refresh();
-    });
+  const shown = name ?? (role === "student" ? "Student" : "Teacher");
 
   return (
     <SidebarMenu>
@@ -84,32 +72,17 @@ export function NavUser({ role, name, subtitle }: { role: Role; name: string | n
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               {role === "student" ? (
-                <>
-                  {name ? (
-                    <DropdownMenuItem asChild className="gap-2.5">
-                      <Link href="/student/progress">
-                        <ChartColumn /> My progress
-                      </Link>
-                    </DropdownMenuItem>
-                  ) : null}
-                  <DropdownMenuItem onSelect={(e) => (e.preventDefault(), switchStudent())} disabled={pending} className="gap-2.5 font-semibold">
-                    {pending ? <LoaderCircle className="animate-spin" /> : name ? <ArrowLeftRight /> : <UserRoundSearch />}
-                    {name ? "Not you? Switch student" : "Pick your name"}
-                  </DropdownMenuItem>
-                </>
+                <DropdownMenuItem asChild className="gap-2.5">
+                  <Link href="/student/progress">
+                    <ChartColumn /> My progress
+                  </Link>
+                </DropdownMenuItem>
               ) : (
-                <>
-                  <DropdownMenuItem asChild className="gap-2.5">
-                    <Link href="/teacher/classes">
-                      <UsersRound /> Classes & Students
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="gap-2.5">
-                    <Link href="/teacher/materials">
-                      <FileText /> Materials
-                    </Link>
-                  </DropdownMenuItem>
-                </>
+                <DropdownMenuItem asChild className="gap-2.5">
+                  <Link href="/teacher/materials">
+                    <FileText /> Materials
+                  </Link>
+                </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -36,6 +36,7 @@ async function ChapterContent({ params }: { params: PageProps<"/student/chapters
     <>
       <TopBar
         title={chapter.title}
+        back={{ href: "/student/chapters", label: "Back to chapters" }}
         subtitle={
           chapter.total === 0
             ? `Chapter ${chapter.orderNo}`

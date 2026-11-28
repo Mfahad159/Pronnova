@@ -34,7 +34,18 @@ const cheer = {
 } as const;
 
 /** UC-05 (record) + UC-04 (submit) + UC-06 (feedback), styled like the landing demo's right column. */
-export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: string; itemText: string; nextHref: string | null }) {
+export function PracticeRecorder({
+  itemId,
+  itemText,
+  nextHref,
+  doneHref,
+}: {
+  itemId: string;
+  itemText: string;
+  nextHref: string | null;
+  /** After the last word: where "All done" goes (home for assigned work, the chapter otherwise). */
+  doneHref: string;
+}) {
   const { phase, error, elapsedMs, recording, result, set, reset } = usePracticeStore();
   const { start, stop, cancel } = useRecorder();
   const [status, setStatus] = useState("");
@@ -269,7 +280,11 @@ export function PracticeRecorder({ itemId, itemText, nextHref }: { itemId: strin
               <KiddyButton size="sm" href={nextHref}>
                 Next word <ArrowRight weight="bold" />
               </KiddyButton>
-            ) : null}
+            ) : (
+              <KiddyButton size="sm" href={doneHref}>
+                All done <ArrowRight weight="bold" />
+              </KiddyButton>
+            )}
           </div>
         </div>
       ) : null}

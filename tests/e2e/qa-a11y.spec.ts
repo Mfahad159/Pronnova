@@ -55,19 +55,3 @@ test("keyboard only: the teacher can open a material and reach every editor cont
   await tabTo(page, /^save material$/i);
   await expect(page.getByRole("button", { name: "Save material" })).toBeFocused();
 });
-
-test("keyboard only: the student picker works without a mouse", async ({ browser }) => {
-  const ctx = await browser.newContext({ storageState: { cookies: [], origins: [] } });
-  const page = await ctx.newPage();
-  await page.goto("/student/who");
-  await tabTo(page, /class 1 – green/i);
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("radio", { name: /Ali/ })).toBeVisible(); // names load after the class is chosen
-  await tabTo(page, /\bali\b/i);
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("radio", { name: /Ali/ })).toHaveAttribute("aria-checked", "true");
-  await tabTo(page, /continue/i);
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { level: 1, name: /^hi, ali/i })).toBeVisible();
-  await ctx.close();
-});

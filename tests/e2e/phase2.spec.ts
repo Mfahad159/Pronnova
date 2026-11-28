@@ -11,22 +11,16 @@ test("UC-03: levels lock in order", async ({ page }) => {
   await expect(page.getByRole("link", { name: /a fat fish/i })).toHaveCount(0);
 });
 
-test("dashboard: Your lessons and Continue", async ({ page }) => {
+test("dashboard: only assigned work, or the 'no work' message; chapters stay in the sidebar", async ({ page, isMobile }) => {
   await page.goto("/student");
-  await expect(page.getByRole("heading", { name: "Your lessons" })).toBeVisible();
-  // Seed (0004): "Animal words" via Ayesha's class, "Little phrases" assigned to her individually.
-  await expect(page.getByRole("link", { name: /Animal words/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Little phrases/i })).toBeVisible();
-  await page.getByRole("link", { name: /continue practice|start practice/i }).click();
-  await expect(page).toHaveURL(/\/student\/practice\//);
-  await expect(page.getByText(/this level is locked/i)).toHaveCount(0);
-});
-
-test("UC-03: an assigned library material opens for practice", async ({ page }) => {
-  await page.goto("/student");
-  await page.getByRole("link", { name: /Animal words/i }).click();
-  await expect(page).toHaveURL(/\/student\/practice\//);
-  await expect(page.getByRole("button", { name: "Start recording" })).toBeVisible();
+  // Fresh seed: nothing assigned → the friendly empty state. After a data-writing run (phase-b) there
+  // is assigned work instead. Either way the chapter grid is not on Home any more.
+  const empty = page.getByText("No work assigned yet! Happy weekend! 🎉");
+  const lessons = page.getByRole("heading", { name: "Your lessons" });
+  await expect(empty.or(lessons)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Chapters" })).toHaveCount(0);
+  if (isMobile) await page.getByRole("button", { name: "Toggle Sidebar" }).click(); // menu is a drawer on phones
+  await expect(page.getByRole("link", { name: "Chapters", exact: true }).first()).toBeVisible(); // sidebar
 });
 
 test("UC-10 editor: Save waits for items, and the title is required", async ({ page }) => {

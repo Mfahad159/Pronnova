@@ -156,22 +156,5 @@ test.describe("UC-10 Upload / UC-08 Assign", () => {
     await page.getByRole("button", { name: /split into items/i }).click();
     await expect(page.getByRole("alert").filter({ hasText: /too much text/i })).toBeVisible();
   });
-  test("UC-08 exception: no class or student → Assign stays disabled", async ({ page }) => {
-    await page.goto("/teacher/materials");
-    await page.getByRole("button", { name: /^Assign Animal words/ }).click();
-    const dlg = page.getByRole("dialog");
-    await dlg.getByLabel("Due date").fill(new Date(Date.now() + 864e5 * 3).toISOString().slice(0, 10));
-    await expect(dlg.getByRole("button", { name: "Assign" })).toBeDisabled();
-    await expect(dlg.getByText("Nobody picked yet.")).toBeVisible();
-  });
-  test("UC-08 exception: network failure on assign → message in the dialog", async ({ page }) => {
-    await page.goto("/teacher/materials");
-    await page.getByRole("button", { name: /^Assign Animal words/ }).click();
-    const dlg = page.getByRole("dialog");
-    await dlg.getByRole("checkbox", { name: /Class 1 – Green/ }).check();
-    await dlg.getByLabel("Due date").fill(new Date(Date.now() + 864e5 * 3).toISOString().slice(0, 10));
-    await page.route("**/api/assignments", (r) => r.abort("internetdisconnected"));
-    await dlg.getByRole("button", { name: "Assign" }).click();
-    await expect(dlg.getByRole("alert").filter({ hasText: /no connection/i })).toBeVisible();
-  });
+  // UC-08 exceptions (no due date, network failure) are in phase-b.spec.ts: they need a material.
 });

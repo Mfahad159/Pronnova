@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Check, ChevronsUpDown, GraduationCap, House, Presentation } from "lucide-react";
+import { ArrowLeftRight, ChevronsUpDown, House } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +14,9 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import type { Role } from "@/types";
 
-const roles = [
-  { role: "student", label: "Student", href: "/student", Icon: GraduationCap },
-  { role: "teacher", label: "Teacher", href: "/teacher", Icon: Presentation },
-] as const;
-
 /**
  * Sidebar header in the Animate UI sidebar style (its "team switcher"): Pronnova mark, name and the
- * current role; the menu switches between the student and teacher areas (role-switch zoom).
+ * current role; the menu leads to role selection (the only way to change portal) or the home page.
  */
 export function RoleSwitcher({ role }: { role: Role }) {
   const { isMobile } = useSidebar();
@@ -32,7 +27,7 @@ export function RoleSwitcher({ role }: { role: Role }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              aria-label={`Pronnova, ${role} demo. Switch role`}
+              aria-label={`Pronnova, ${role} portal. Open menu`}
               className="h-14 rounded-xl hover:bg-secondary/60 data-[state=open]:bg-secondary"
             >
               <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-foreground/10 bg-card">
@@ -53,18 +48,19 @@ export function RoleSwitcher({ role }: { role: Role }) {
             sideOffset={8}
             className="w-60 rounded-xl border-2 border-foreground/12"
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">Switch role</DropdownMenuLabel>
-            {roles.map((r) => (
-              <DropdownMenuItem key={r.role} asChild className="gap-2.5 py-2 font-semibold">
-                <Link href={r.href} aria-current={r.role === role ? "true" : undefined}>
-                  <span className="flex size-7 items-center justify-center rounded-lg border border-foreground/10 bg-card">
-                    <r.Icon className="size-4" />
-                  </span>
-                  {r.label}
-                  {r.role === role ? <Check className="ml-auto size-4 text-primary" /> : null}
-                </Link>
-              </DropdownMenuItem>
-            ))}
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              {role === "student" ? "Student" : "Teacher"} portal
+            </DropdownMenuLabel>
+            {/* Students and teachers never jump straight into the other portal: switching always goes
+                through role selection (/onboarding). */}
+            <DropdownMenuItem asChild className="gap-2.5 py-2 font-semibold">
+              <Link href="/onboarding" transitionTypes={["nav-back"]}>
+                <span className="flex size-7 items-center justify-center rounded-lg border border-foreground/10 bg-card">
+                  <ArrowLeftRight className="size-4" />
+                </span>
+                Switch role
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className="gap-2.5 py-2">
               <Link href="/" transitionTypes={["nav-back"]}>

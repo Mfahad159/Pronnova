@@ -11,17 +11,19 @@ interface AttemptRow {
   audio_path: string | null;
   created_at: string;
   profiles: { name: string } | null;
-  lesson_items: { text: string; lessons: { level: Level; chapters: { title: string } } };
+  lesson_items: { text: string; lessons: { title: string; level: Level; chapters: { title: string } | null } };
 }
 
 const SELECT =
-  "id, item_id, status, score, duration_ms, audio_path, created_at, profiles!attempts_student_id_fkey(name), lesson_items!inner(text, lessons!inner(level, chapters!inner(title)))";
+  "id, item_id, status, score, duration_ms, audio_path, created_at, profiles!attempts_student_id_fkey(name), lesson_items!inner(text, lessons!inner(title, level, chapters(title)))";
+// chapters is NOT inner: teacher materials have no chapter, and their attempts must still show (bug
+// found 2026-11-28 in the assign → practise → evaluate check: they were silently dropped).
 
 const toSummary = (r: AttemptRow): AttemptSummary & { studentName: string } => ({
   id: r.id,
   itemId: r.item_id,
   text: r.lesson_items.text,
-  chapterTitle: r.lesson_items.lessons.chapters.title,
+  chapterTitle: r.lesson_items.lessons.chapters?.title ?? r.lesson_items.lessons.title,
   level: r.lesson_items.lessons.level,
   score: r.score == null ? 0 : Math.round(Number(r.score)),
   durationSec: Math.max(1, Math.round((r.duration_ms ?? 0) / 1000)),

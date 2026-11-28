@@ -13,7 +13,7 @@ async function loadUser(role: Role): Promise<{ name: string | null; subtitle: st
     }
     const current = await findCurrentStudent();
     const student = current ? await getStudent(current.id) : null;
-    return student ? { name: student.fullName, subtitle: student.className } : { name: null, subtitle: "Pick your class and name" };
+    return student ? { name: student.fullName, subtitle: student.className } : { name: null, subtitle: "Student · Demo" };
   } catch (err) {
     // Only database failures are swallowed. Anything else (incl. Next's "request-time data" signal
     // during prerendering) must propagate, or the menu would be baked in as empty.

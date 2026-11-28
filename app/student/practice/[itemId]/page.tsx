@@ -34,10 +34,15 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
   // Hidden = teacher material not assigned to this student: same as "doesn't exist".
   if (!item || access === "hidden") notFound();
 
+  // Back: assigned teacher work lives on Home ("Your lessons"); chapter items go back to their chapter.
+  const back = item.chapterId
+    ? { href: `/student/chapters/${item.chapterId}`, label: `Back to ${item.chapterTitle}` }
+    : { href: "/student", label: "Back to home" };
+
   if (access === "locked") {
     return (
       <>
-        <TopBar title="Practice" subtitle={`${item.chapterTitle} · ${levelLabel[item.level]}`} />
+        <TopBar title="Practice" subtitle={`${item.chapterTitle} · ${levelLabel[item.level]}`} back={back} />
         <PageBody>
           <div role="status">
             <PikoSays
@@ -52,7 +57,7 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
                 </>
               }
             >
-              <KiddyButton href={`/student/chapters/${item.chapterId}`}>Back to {item.chapterTitle}</KiddyButton>
+              <KiddyButton href={back.href}>{back.label}</KiddyButton>
             </PikoSays>
           </div>
         </PageBody>
@@ -61,7 +66,9 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
   }
 
   // "Next word" = the next item the student can open, in course order.
-  const open = openItemsInOrder(learning.view);
+  // Stays inside the same group (this chapter, or the assigned work): never jumps between them.
+  const group = learning.view.filter((c) => openItemsInOrder([c]).some((i) => i.id === item.id));
+  const open = openItemsInOrder(group);
   const idx = open.findIndex((i) => i.id === item.id);
   const next = idx >= 0 ? open[idx + 1] : undefined;
   const isWord = item.itemType === "word";
@@ -70,9 +77,10 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
     <>
       <TopBar
         title="Practice"
+        back={back}
         subtitle={
           <>
-            <Link href={`/student/chapters/${item.chapterId}`} className="hover:underline">
+            <Link href={back.href} className="hover:underline">
               {item.chapterTitle}
             </Link>{" "}
             · {item.lessonTitle}
@@ -111,7 +119,7 @@ async function PracticeContent({ params }: { params: PageProps<"/student/practic
             </div>
 
             {/* Recorder + result (landing demo right column). */}
-            <PracticeRecorder itemId={item.id} itemText={item.text} nextHref={next ? `/student/practice/${next.id}` : null} />
+            <PracticeRecorder itemId={item.id} itemText={item.text} nextHref={next ? `/student/practice/${next.id}` : null} doneHref={back.href} />
           </div>
         </Panel>
       </PageBody>

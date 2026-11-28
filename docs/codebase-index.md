@@ -43,9 +43,9 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/animate-ui/components/page-transition.tsx` | Animate UI page transition (view transitions). `PageTransition effect="content"` in `AppShell` (in-area page change: gentle centre zoom, top bar stays via `.app-top-bar` name); `RoleTransition` wraps each area (landing, onboarding, student, teacher) and zooms a new area in from the centre (`morph`: 60% → 100% + blur) | ✅ |
 | `components/layout/app-shell.tsx` | Sidebar + main area for `/student/*` and `/teacher/*`. Sidebar hides fully (offcanvas); below `lg` (1024px) it is a slide-in drawer | ✅ |
 | `components/layout/role-switcher.tsx` | Sidebar header (Animate UI "team switcher" style): Pronnova + current role, menu to switch Student / Teacher / home | ✅ |
-| `components/layout/nav-user.tsx`, `current-user-menu.tsx` | Sidebar footer user card + menu (student: My progress, Switch student; teacher: Classes, Materials; both: Switch role). Server part loads the name and never throws | ✅ |
+| `components/layout/nav-user.tsx`, `current-user-menu.tsx` | Sidebar footer user card + menu (student: My progress; teacher: Materials; both: Switch role → `/onboarding`). Server part loads the name and never throws | ✅ |
 | `components/layout/sidebar-nav.tsx` | Sidebar links with active state (client; wrapped in Suspense); closes the phone/tablet drawer after a page change | ✅ |
-| `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, search, action) + `PageBody` | ✅ |
+| `components/layout/top-bar.tsx` | `TopBar` (title, subtitle, action, optional `back` button) + `PageBody` | ✅ |
 | `components/layout/brand-logo.tsx`, `coming-soon.tsx` | Logo link; Piko placeholder for unbuilt screens | ✅ |
 | `components/layout/landing-nav.tsx` | Landing navbar (client): floating white rounded bar (`Home`, `How It Works`, `Student Experience`, `Pronunciation`, `For Teachers`, `About`, `Get started` `KiddyButton` → `/onboarding`, hidden on that page); slide-in menu below lg | ✅ |
 | `components/landing/` | Guided 11-section interactive landing tour: `hero-card` (#top, `Get started` → `/onboarding` + `Try the demo`; headline in `hero-tagline`, slowed SwappingText in a fixed-width slot), `interactive-demo` (#demo, real `useRecorder` + mic-state orb + Web Speech playback + clearly labelled demo assessment), `how-it-works` (#how-it-works, 4-step interactive cycle), `learning-buddy` (#buddy, Piko prompt switcher), `learning-journey` (#journey, Basic/Medium/Advanced sample words), `assessment-showcase` (#assessment, speech recognition vs assessment panel), `teacher-preview` (#teachers, Class Overview / Student Progress switcher), `classroom-workflow` (#classroom, 5-step teacher-student loop), `young-learners` (#learners, 6 principles + interactive flashcards), `faq` (#faq, exclusive native accordion), `final-cta`, `site-footer` (+ `footer-wave` morphing seam) | ✅ |
@@ -54,8 +54,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `components/layout/load-error.tsx` | Error screen body (DB not configured / load failed + Try again) | ✅ |
 | `features/curriculum/` | `chapter-card.tsx` (art + stage/progress bar), `homework-list.tsx`, `level.ts` (level names) | ✅ |
 | `features/materials/` | `material-editor.tsx` (one editor for new/edit: Write / Paste / Upload Word tabs → one list, inline edit, drag reorder, limits, unsaved-changes guard, locked banner), `material-library.tsx` (search, level filter, Open/Assign/Duplicate), `assign-dialog.tsx` (UC-08 assign only), `duplicate-button.tsx` | ✅ |
-| `features/roster/roster-manager.tsx` | Classes & Students screen (add/rename class; add/edit/move/archive/unarchive students) | ✅ |
-| `features/student/` | `identity.ts` (picked student: localStorage `pronnova.studentId` + cookie), `student-picker.tsx` ("Who are you?" + setup steps). Profile menu moved to `components/layout/nav-user.tsx` | ✅ |
+| `features/roster/roster-manager.tsx` | Classes & Students screen — not routed in FYP-1 (ADR-009), kept for FYP-2 | ⏸ |
 | `components/brand/form.tsx` | `Field`, `BrandSelect`, `fieldClass`/`inputClass`, `levelDot` — shared brand form pieces | ✅ |
 | `lib/api-client.ts` | `api()` browser fetch helper → `{ ok, status, data, error, fieldErrors }` | ✅ |
 | `features/teacher/class-avatars.tsx` | Animate UI avatar group of the class's students (dashboard) | ✅ |
@@ -75,7 +74,7 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 | `types/index.ts` | Shared types (Profile, Chapter, Lesson, LessonItem, results, AttemptSummary) | ✅ |
 | `server/speech/` | Speech Engine: `types.ts` (contract), `index.ts` (`getSpeechEngine()`), `mock.ts`, `azure.ts` (stub), `python.ts` | ✅ |
 | `server/db/client.ts` | `getDb()` — server-only Supabase client (secret key), `check()` error helper | ✅ |
-| `server/db/demo-user.ts` | Demo teacher; picked student from the `pronnova_student` cookie (fallback: demo student). `getCurrentStudent()` (throws if archived), `findCurrentStudent()` (null), `getCurrentStudentOrPick()` (redirects to `/student/who`) | ✅ |
+| `server/db/demo-user.ts` | The one teacher (Umar) and the one student (Ahmad), ADR-009. `getCurrentStudent()` (throws if missing/archived), `findCurrentStudent()` (null), `getCurrentTeacher()` | ✅ |
 | `server/http.ts` | JSON helpers + `errorResponse` (maps PN404/PN409/PN422 and 23505/23503/23514 to HTTP) | ✅ |
 | `server/services/docx-import.ts` | `.docx` → text (mammoth) → splitter; rejects non-docx, empty, > 5 MB | ✅ |
 | `server/db/queries/roster.ts` | Classes + students (list/create/rename, create/edit/archive) | ✅ |
@@ -100,16 +99,16 @@ Stack: Next.js 16.4 (App Router, **Cache Components on**), React 19.3, TypeScrip
 |---|---|---|---|
 | `/` | `app/page.tsx` | Guided 11-section interactive tour: Hero → Interactive Demo (`Apple` mic/TTS) → How Pronnova Works → Learning Buddy (`Piko`) → Learning Journey (`Basic`/`Medium`/`Advanced`) → Pronunciation Assessment → Teacher Dashboard preview → Classroom Workflow → Young Learners flashcards → FAQ → Final CTA & Footer | ✅ |
 | `/onboarding` | `app/onboarding/page.tsx` | Choose **Student** or **Teacher** (cards with `role-illustrations` SVGs). FYP-1 opens the demo user; FYP-2 → sign up / sign in | ✅ |
-| `/student` | `app/student/page.tsx` | Dashboard: greeting + class, Continue, Your lessons (due-date highlight, progress), chapters, recent attempts. No pick → redirects to `/student/who` | ✅ |
+| `/student` | `app/student/page.tsx` | Dashboard: greeting + class; only assigned work (Continue + Your lessons) or "No work assigned yet! Happy weekend!"; recent attempts once there are some | ✅ |
 | `/student/chapters` | `app/student/chapters/page.tsx` | UC-03 chapters + stage | ✅ |
 | `/student/chapters/[chapterId]` | `app/student/chapters/[chapterId]/page.tsx` | UC-03 levels (locked in order) → items, homework badges | ✅ |
 | `/student/practice/[itemId]` | `app/student/practice/[itemId]/page.tsx` | UC-04/05 record → send → score/retry; UC-06 basic result (full view 🕓 Phase 4) | ✅ |
 | `/student/progress` | `app/student/progress/page.tsx` | UC-07 | placeholder (FYP-2) |
-| `/student/who` | `app/student/who/page.tsx` | "Who are you?" picker: class → name → Continue (first visit; replaces login until FYP-2, ADR-002) | ✅ |
-| `/teacher/classes` | `app/teacher/classes/page.tsx` | Classes & Students (roster). `/teacher/students` redirects here | ✅ |
+| `/student/who` | `app/student/who/page.tsx` | Redirects to `/student` (picker removed, ADR-009) | ✅ |
+| `/teacher/classes`, `/teacher/students` | `app/teacher/classes/page.tsx`, `app/teacher/students/page.tsx` | Redirect to `/teacher` (roster hidden, ADR-009) | ✅ |
 | `/teacher/materials` | `app/teacher/materials/page.tsx` | Library + Assign dialog | ✅ |
 | `/teacher/materials/new`, `/teacher/materials/[materialId]` | `app/teacher/materials/new/page.tsx`, `…/[materialId]/page.tsx` | One editor for new/edit (the only upload path); edit page lists the material's assignments (read-only) | ✅ |
-| `/teacher` | `app/teacher/page.tsx` | UC-12 overview | ✅ DB stats + latest attempts |
+| `/teacher` | `app/teacher/page.tsx` | UC-12 overview of Ahmad: lessons assigned, attempts this week, average, most missed word; latest attempts; guidance when nothing is assigned | ✅ |
 | `/teacher/materials` | `app/teacher/materials/page.tsx` | UC-10 list of uploaded material + assignment | ✅ |
 | `/teacher/materials/new` | `app/teacher/materials/new/page.tsx` | UC-10 upload form (saves via `saveMaterial`) | ✅ |
 | `/teacher/chapters` | `app/teacher/chapters/page.tsx` | UC-11 | placeholder (FYP-2) |

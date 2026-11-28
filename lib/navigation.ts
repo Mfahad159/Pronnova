@@ -30,7 +30,6 @@ export const navByRole: Record<Role, NavGroup[]> = {
         { title: "Dashboard", href: "/teacher", icon: "home" },
         { title: "Materials", href: "/teacher/materials", icon: "file" },
         { title: "Chapters", href: "/teacher/chapters", icon: "layers" },
-        { title: "Classes & Students", href: "/teacher/classes", icon: "users" },
       ],
     },
   ],
