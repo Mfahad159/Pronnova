@@ -1,60 +1,190 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { MODE_FRAMES, resolvePreset } from "thinking-orbs/engine";
 import "./page-loader.css";
 
-// The Pronnova mark (public/icons/pronnova-mark.svg) split into its parts so the jaws can move:
-// upper teeth point down to the centre line, lower teeth point up, plus a drop at each end.
-const UPPER =
-  "M13.51,50 C14.69,42.94 17.46,38.23 17.46,26.45 A3.96,3.96 0 0 0 9.55,26.45 C9.55,38.23 12.32,42.94 13.51,50Z M23.62,50 C25.28,40.52 29.18,34.19 29.18,18.38 A5.57,5.57 0 0 0 18.05,18.38 C18.05,34.19 21.95,40.52 23.62,50Z M36.17,50 C38.16,38.98 42.8,31.63 42.8,13.26 A6.63,6.63 0 0 0 29.54,13.26 C29.54,31.63 34.18,38.98 36.17,50Z M50,50 C52.1,38.45 57,30.75 57,11.5 A7,7 0 0 0 43,11.5 C43,30.75 47.9,38.45 50,50Z M63.83,50 C65.82,38.98 70.46,31.63 70.46,13.26 A6.63,6.63 0 0 0 57.2,13.26 C57.2,31.63 61.84,38.98 63.83,50Z M76.38,50 C78.05,40.52 81.95,34.19 81.95,18.38 A5.57,5.57 0 0 0 70.82,18.38 C70.82,34.19 74.72,40.52 76.38,50Z M86.49,50 C87.68,42.94 90.45,38.23 90.45,26.45 A3.96,3.96 0 0 0 82.54,26.45 C82.54,38.23 85.31,42.94 86.49,50Z";
-const LOWER =
-  "M13.51,50 C14.69,57.06 17.46,61.77 17.46,73.55 A3.96,3.96 0 0 1 9.55,73.55 C9.55,61.77 12.32,57.06 13.51,50Z M23.62,50 C25.28,59.48 29.18,65.81 29.18,81.62 A5.57,5.57 0 0 1 18.05,81.62 C18.05,65.81 21.95,59.48 23.62,50Z M36.17,50 C38.16,61.02 42.8,68.37 42.8,86.74 A6.63,6.63 0 0 1 29.54,86.74 C29.54,68.37 34.18,61.02 36.17,50Z M50,50 C52.1,61.55 57,69.25 57,88.5 A7,7 0 0 1 43,88.5 C43,69.25 47.9,61.55 50,50Z M63.83,50 C65.82,61.02 70.46,68.37 70.46,86.74 A6.63,6.63 0 0 1 57.2,86.74 C57.2,68.37 61.84,61.02 63.83,50Z M76.38,50 C78.05,59.48 81.95,65.81 81.95,81.62 A5.57,5.57 0 0 1 70.82,81.62 C70.82,65.81 74.72,59.48 76.38,50Z M86.49,50 C87.68,57.06 90.45,61.77 90.45,73.55 A3.96,3.96 0 0 1 82.54,73.55 C82.54,61.77 85.31,57.06 86.49,50Z";
-const ENDS =
-  "M6.77,36.2 C10.55,42.41 10.55,57.59 6.77,63.8 C2.99,57.59 2.99,42.41 6.77,36.2Z M93.23,36.2 C97.01,42.41 97.01,57.59 93.23,63.8 C89.45,57.59 89.45,42.41 93.23,36.2Z";
+/*
+ * Page loader: the thinking-orbs "working" orb (dots on tilted orbits) spins while the page loads;
+ * once it has loaded, every dot glides into place to form a dotted Pronnova mark (the 7 tapered
+ * columns + 2 end drops of public/icons/pronnova-mark.svg) and turns from ink to the brand
+ * coral→orange gradient, then the overlay fades out.
+ * - Drawn on a canvas at its real size × devicePixelRatio, so it is sharp on every screen; bigger on
+ *   desktop than on phones (CSS clamp in page-loader.css).
+ * - Before JavaScript runs, a static dotted mark (SVG, faded in by CSS) shows instead.
+ * - Shows on every full page load (open, refresh); in-app navigation keeps the root layout, so it
+ *   doesn't show again. Reduced motion: no orbit, the dotted mark appears and fades.
+ */
+
+type Pt = { x: number; y: number; r: number };
+
+/** Logo as dots, in the mark's 0–100 viewBox. Columns taper to a point at the centre line (y = 50). */
+const LOGO: Pt[] = (() => {
+  const pts: Pt[] = [];
+  const cols = [
+    { x: 13.51, top: 22.49, w: 7.9 },
+    { x: 23.62, top: 12.81, w: 11.13 },
+    { x: 36.17, top: 6.63, w: 13.26 },
+    { x: 50, top: 4.5, w: 14 },
+  ];
+  const column = (x: number, top: number, w: number) => {
+    const half = 50 - top;
+    const n = Math.round((2 * half) / 4.3);
+    for (let i = 0; i <= n; i++) {
+      const y = top + (i * 2 * half) / n;
+      const k = Math.abs(y - 50) / half; // 0 at the pinch, 1 at the round ends
+      pts.push({ x, y, r: Math.min(2.7, w * 0.19) * (0.42 + 0.58 * k) });
+    }
+  };
+  for (const c of cols) {
+    column(c.x, c.top, c.w);
+    if (c.x !== 50) column(100 - c.x, c.top, c.w);
+  }
+  for (const x of [6.77, 93.23]) {
+    for (let y = 37.4; y <= 62.7; y += 4.2) {
+      const k = 1 - Math.abs(y - 50) / 13.8; // drops are widest in the middle
+      pts.push({ x, y, r: 0.9 + 1.1 * k });
+    }
+  }
+  return pts;
+})();
+
+const CORAL = [255, 89, 75];
+const ORANGE = [255, 141, 40];
+const INK = [58, 42, 34];
+const PAPER = [255, 250, 245];
 
 const MAX_WAIT_MS = 8000; // never block the site longer than this (e.g. a stuck image)
-const BITE_MS = 1100; // one open → closed → open cycle; keep in sync with page-loader.css
+const MERGE_MS = 850; // one dot's flight into the logo
+const STAGGER_MS = 260; // spread of start times across dots
+const HOLD_MS = 380; // admire the finished mark
 const FADE_MS = 450; // overlay fade-out; keep in sync with page-loader.css
 
 type Phase = "loading" | "leaving" | "gone";
 
-/**
- * Page loader: the Pronnova mark "bites" (jaws close so the teeth merge, then open)
- * until the page has fully loaded, then the overlay fades out at the end of a bite.
- * - Shows on every full page load (opening the site, refresh). In-app navigation keeps the root
- *   layout mounted, so moving between pages does not show it again.
- * - The bite is a CSS animation, so it runs from the first paint, before JavaScript loads.
- * - Respects prefers-reduced-motion (no bite, just the logo and a fade).
- */
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const mix = (a: number[], b: number[], t: number) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+
 export function PageLoader() {
   const [phase, setPhase] = useState<Phase>("loading");
-  const ready = useRef(false);
-
-  const leave = useCallback(() => {
-    setPhase((p) => (p === "loading" ? "leaving" : p));
-  }, []);
+  const [live, setLive] = useState(false); // canvas running (JS loaded) → hide the static fallback
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    let cycleFallback = 0;
-    const markReady = () => {
-      ready.current = true;
-      // With motion, leave when the current bite ends (onAnimationIteration). The timer is a
-      // backup for when the browser pauses animation events (e.g. a background tab).
-      if (reduced) leave();
-      else cycleFallback = window.setTimeout(leave, BITE_MS + 150);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const size = canvas.getBoundingClientRect().width || 160;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    setLive(true);
+
+    const { mode, speed, opts } = resolvePreset("working", 64);
+    const orbit = MODE_FRAMES[mode];
+    // Logo in canvas px: 76% of the canvas, centred.
+    const scale = (size * 0.76) / 100;
+    const off = size * 0.12;
+    const logo = LOGO.map((p) => ({ x: off + p.x * scale, y: off + p.y * scale, r: Math.max(0.9, p.r * scale * 0.95), c: mix(CORAL, ORANGE, (p.x + p.y) / 200) }));
+    const center = size / 2;
+    const angle = (x: number, y: number) => Math.atan2(y - center, x - center);
+
+    let raf = 0;
+    let mergeStart = 0;
+    let pairs: { from: Pt & { c: number[]; a: number }; to: (typeof logo)[number] | null; delay: number }[] = [];
+    let ready = false;
+    let leaveTimer = 0;
+
+    const dot = (x: number, y: number, r: number, c: number[], a = 1) => {
+      ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
     };
+
+    const startMerge = (orbDots: { x: number; y: number; r: number; white: number; a?: number }[]) => {
+      // Pair orb dots with logo dots by their angle around the centre, so they swirl into place.
+      const from = orbDots.map((d) => ({ x: d.x, y: d.y, r: d.r, c: mix(INK, PAPER, d.white), a: d.a ?? 1 }));
+      from.sort((p, q) => angle(p.x, p.y) - angle(q.x, q.y));
+      const to = [...logo].sort((p, q) => angle(p.x, p.y) - angle(q.x, q.y));
+      // Every logo dot gets one orb dot, picked evenly around the circle; spare orb dots fade away.
+      // (If the orb has fewer dots than the logo, some orb dots split into two.)
+      const used = new Set<number>();
+      pairs = to.map((target, j) => {
+        const k = from.length ? Math.floor((j * from.length) / to.length) : -1;
+        used.add(k);
+        return {
+          from: k >= 0 ? from[k] : { x: center, y: center, r: 1, c: INK, a: 1 },
+          to: target,
+          delay: (j / to.length) * STAGGER_MS,
+        };
+      });
+      from.forEach((f, k) => {
+        if (!used.has(k)) pairs.push({ from: f, to: null, delay: 0 });
+      });
+      mergeStart = performance.now();
+    };
+
+    const frame = (now: number) => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, size, size);
+      if (!mergeStart) {
+        const f = orbit(size, (now / 1000) * speed, opts);
+        if (ready) {
+          startMerge(f.dots);
+        } else {
+          for (const d of f.dots) dot(d.x, d.y, d.r, mix(INK, PAPER, d.white), d.a ?? 1);
+          raf = requestAnimationFrame(frame);
+          return;
+        }
+      }
+      const t = now - mergeStart;
+      for (const p of pairs) {
+        const k = easeInOut(Math.min(1, Math.max(0, (t - p.delay) / MERGE_MS)));
+        if (!p.to) {
+          dot(p.from.x, p.from.y, p.from.r, p.from.c, p.from.a * (1 - k)); // extra orb dots fade away
+          continue;
+        }
+        dot(
+          p.from.x + (p.to.x - p.from.x) * k,
+          p.from.y + (p.to.y - p.from.y) * k,
+          p.from.r + (p.to.r - p.from.r) * k,
+          mix(p.from.c, p.to.c, k),
+          p.from.a + (1 - p.from.a) * k,
+        );
+      }
+      if (t < MERGE_MS + STAGGER_MS) raf = requestAnimationFrame(frame);
+      else leaveTimer = window.setTimeout(() => setPhase((p) => (p === "loading" ? "leaving" : p)), HOLD_MS);
+    };
+
+    const drawLogo = () => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, size, size);
+      for (const p of logo) dot(p.x, p.y, p.r, p.c);
+    };
+
+    const markReady = () => {
+      if (ready) return;
+      ready = true;
+      if (reduced) {
+        drawLogo();
+        leaveTimer = window.setTimeout(() => setPhase((p) => (p === "loading" ? "leaving" : p)), HOLD_MS);
+      }
+    };
+
+    if (reduced) drawLogo();
+    else raf = requestAnimationFrame(frame);
     if (document.readyState === "complete") markReady();
     else window.addEventListener("load", markReady, { once: true });
-    const guard = window.setTimeout(leave, MAX_WAIT_MS);
+    const guard = window.setTimeout(() => setPhase((p) => (p === "loading" ? "leaving" : p)), MAX_WAIT_MS);
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener("load", markReady);
       window.clearTimeout(guard);
-      window.clearTimeout(cycleFallback);
+      window.clearTimeout(leaveTimer);
     };
-  }, [leave]);
+  }, []);
 
   // Fade-out: unmount on transitionend, or after the fade time if that event never arrives.
   useEffect(() => {
@@ -73,38 +203,20 @@ export function PageLoader() {
       aria-live="polite"
       aria-label={phase === "loading" ? "Loading Pronnova" : undefined}
       onTransitionEnd={(e) => {
-        if (e.target === e.currentTarget && phase === "leaving")
-          setPhase("gone");
+        if (e.target === e.currentTarget && phase === "leaving") setPhase("gone");
       }}
     >
-      <svg viewBox="0 0 100 100" className="pn-loader-mark" aria-hidden>
-        <defs>
-          {/* One gradient across the whole mark, so moving parts keep the logo's colours. */}
-          <linearGradient
-            id="pronnova-loader-g"
-            gradientUnits="userSpaceOnUse"
-            x1="0"
-            y1="0"
-            x2="100"
-            y2="100"
-          >
-            <stop offset="0" stopColor="#FF594B" />
-            <stop offset="1" stopColor="#FF8D28" />
-          </linearGradient>
-        </defs>
-        <g fill="url(#pronnova-loader-g)">
-          {/* Each bite ends with the jaws open again — the natural moment to fade out. */}
-          <path
-            d={UPPER}
-            className="pn-loader-upper"
-            onAnimationIteration={() => {
-              if (ready.current) leave();
-            }}
-          />
-          <path d={LOWER} className="pn-loader-lower" />
-          <path d={ENDS} className="pn-loader-ends" />
-        </g>
-      </svg>
+      <div className="pn-loader-stage">
+        {/* Before JavaScript: a still dotted mark (fades in only if JS is slow). */}
+        {!live ? (
+          <svg viewBox="0 0 100 100" className="pn-loader-fallback" aria-hidden>
+            {LOGO.map((p, i) => (
+              <circle key={i} cx={12 + p.x * 0.76} cy={12 + p.y * 0.76} r={p.r * 0.72} fill="#ff6f45" />
+            ))}
+          </svg>
+        ) : null}
+        <canvas ref={canvasRef} className="pn-loader-canvas" aria-hidden />
+      </div>
     </div>
   );
 }

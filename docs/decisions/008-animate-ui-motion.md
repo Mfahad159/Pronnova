@@ -13,7 +13,7 @@ The team wanted the app to feel alive in a consistent way: navbar, sidebar, tabs
 - **Effects:** `Highlight` (navbar hover pill, sidebar pill), `SwappingText` (hero word), `AutoHeight` (practice recorder), `AvatarGroup` (teacher dashboard).
 - **Toast:** Animate UI's toast exists only for Base UI; we use Radix, so `sonner` stays (it already animates) with brand styling.
 - **Icons:** Phosphor stays the main icon set. `lucide-react` is used for arrows (instead of text "→") and wherever an Animate UI component ships with lucide (e.g. the accordion chevron).
-- **Loader:** the first-load page loader stays plain CSS (it must animate before JavaScript loads).
+- **Loader:** (updated 2026-11-28, team request) the first-load loader is the thinking-orbs "working" orb on a sharp canvas that merges into a dotted Pronnova mark, then fades. Before JavaScript runs, a static dotted mark (SVG) shows, so the screen is never empty.
 
 ## Consequences
 - Reduced motion is respected by Animate UI automatically (`reducedMotion: 'user'`).
