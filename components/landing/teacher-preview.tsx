@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { AnimatePresence, MotionConfig, motion } from "motion/react";
+import { AutoHeight } from "@animate-ui/react/primitives/effects/auto-height";
+import { ease } from "@animate-ui/react/utils/motion";
 import { BookOpenText, Check, Info, UsersThree } from "@phosphor-icons/react/ssr";
 import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { ScorePill } from "@/features/assessment/score-pill";
@@ -28,8 +31,15 @@ const sampleDifficultyCounts = [
  */
 export function TeacherPreview() {
   const [tab, setTab] = useState<"overview" | "students">("overview");
+  // Slide in from the side of the tab you clicked.
+  const dir = tab === "overview" ? -1 : 1;
+  const tabs = [
+    { id: "overview" as const, label: "Class Overview", Icon: BookOpenText },
+    { id: "students" as const, label: "Student Progress", Icon: UsersThree },
+  ];
 
   return (
+    <MotionConfig reducedMotion="user">
     <section id="teachers" aria-labelledby="teachers-title" className="scroll-mt-24 py-14 md:py-20">
       <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
         <LandingSectionHeader
@@ -78,37 +88,46 @@ export function TeacherPreview() {
 
             {/* Functional tab switcher */}
             <div role="tablist" aria-label="Teacher preview mode" className="inline-flex rounded-xl border border-border bg-card p-1">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === "overview"}
-                onClick={() => setTab("overview")}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
-                  tab === "overview" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                <BookOpenText className="size-3.5" weight="duotone" aria-hidden />
-                Class Overview
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === "students"}
-                onClick={() => setTab("students")}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
-                  tab === "students" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                <UsersThree className="size-3.5" weight="duotone" aria-hidden />
-                Student Progress
-              </button>
+              {tabs.map(({ id, label, Icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === id}
+                  onClick={() => setTab(id)}
+                  className={cn(
+                    "relative inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold outline-none transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-ring",
+                    tab === id ? "text-background" : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {/* One black pill that glides between the tabs. */}
+                  {tab === id ? (
+                    <motion.span
+                      layoutId="teacher-preview-tab"
+                      className="absolute inset-0 rounded-lg bg-foreground"
+                      transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                      aria-hidden
+                    />
+                  ) : null}
+                  <Icon className="relative size-3.5" weight="duotone" aria-hidden />
+                  <span className="relative">{label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
+          {/* Height eases between the two views; content slides in from the clicked side. */}
+          <AutoHeight deps={[tab]} transition={{ duration: 0.4, ease: ease.resize }}>
+          <AnimatePresence mode="wait" initial={false} custom={dir}>
           {tab === "overview" ? (
-            <div className="space-y-6 p-6">
+            <motion.div
+              key="overview"
+              custom={dir}
+              initial={{ opacity: 0, x: dir * 24 }}
+              animate={{ opacity: 1, x: 0, transition: { duration: 0.3, ease: ease.out } }}
+              exit={{ opacity: 0, x: dir * -24, transition: { duration: 0.18, ease: ease.in } }}
+              className="space-y-6 p-6"
+            >
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl border border-border bg-background p-4">
                   <p className="text-xs text-muted-foreground">Sample Students</p>
@@ -137,14 +156,26 @@ export function TeacherPreview() {
                       <span className="font-semibold tabular-nums text-foreground">{d.completion}%</span>
                     </div>
                     <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div style={{ width: `${d.completion}%` }} className="h-full rounded-full bg-primary" />
+                      <motion.div
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${d.completion}%` }}
+                        transition={{ duration: 0.8, delay: 0.15, ease: ease.out }}
+                        className="h-full rounded-full bg-primary"
+                      />
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ) : (
-            <div className="p-6">
+            <motion.div
+              key="students"
+              custom={dir}
+              initial={{ opacity: 0, x: dir * 24 }}
+              animate={{ opacity: 1, x: 0, transition: { duration: 0.3, ease: ease.out } }}
+              exit={{ opacity: 0, x: dir * -24, transition: { duration: 0.18, ease: ease.in } }}
+              className="p-6"
+            >
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
@@ -156,24 +187,32 @@ export function TeacherPreview() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {sampleStudents.map((st) => (
-                      <tr key={st.name}>
+                    {sampleStudents.map((st, i) => (
+                      <motion.tr
+                        key={st.name}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.08 * i + 0.1, ease: ease.out }}
+                      >
                         <td className="py-3 font-medium text-foreground">{st.name}</td>
                         <td className="py-3 text-xs text-muted-foreground tabular-nums">{st.progress}</td>
                         <td className="py-3">
                           <ScorePill score={st.score} />
                         </td>
                         <td className="py-3 text-xs text-muted-foreground">{st.focus}</td>
-                      </tr>
+                      </motion.tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
+          </AutoHeight>
         </div>
       </div>
       </div>
     </section>
+    </MotionConfig>
   );
 }

@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { AnimatePresence, MotionConfig, motion } from "motion/react";
+import { ChevronDown } from "lucide-react";
+import { ease } from "@animate-ui/react/utils/motion";
 import { ArrowCounterClockwise, ChartBar, Microphone, SpeakerHigh } from "@phosphor-icons/react/ssr";
 import { LandingSectionHeader } from "@/components/brand/section-heading";
 import { cn } from "@/lib/utils";
@@ -158,6 +161,7 @@ export function HowItWorks() {
   }, [updateRailBounds, updateProgress]);
 
   return (
+    <MotionConfig reducedMotion="user">
     <section id="how-it-works" aria-labelledby="how-title" className="scroll-mt-24 py-12 md:py-18">
       <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
         <LandingSectionHeader
@@ -204,22 +208,39 @@ export function HowItWorks() {
                     <span>{step.title}</span>
                   </span>
 
-                  <div className="mt-4 flex items-start gap-3.5">
+                  <div className="mt-4 flex w-full items-start gap-3.5">
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-foreground/10 bg-card text-foreground">
                       <Icon className="size-5 text-primary" weight="duotone" aria-hidden="true" />
                     </span>
-                    <div>
-                      <p className="font-heading text-lg font-semibold text-foreground">{step.short}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
-                    </div>
+                    <p className="min-w-0 flex-1 font-heading text-lg font-semibold text-foreground">{step.short}</p>
+                    <motion.span
+                      aria-hidden="true"
+                      animate={{ rotate: isActive ? 180 : 0 }}
+                      transition={{ duration: 0.3, ease: ease.out }}
+                      className="mt-1 text-muted-foreground"
+                    >
+                      <ChevronDown className="size-5" />
+                    </motion.span>
                   </div>
 
-                  {isActive ? (
-                    <div className="mt-4 w-full rounded-xl border border-foreground/10 bg-card px-4 py-2.5 text-xs">
-                      <span className="font-semibold text-primary">{step.previewTitle}: </span>
-                      <span className="text-muted-foreground">{step.previewText}</span>
-                    </div>
-                  ) : null}
+                  {/* The box expands smoothly to reveal the detail + preview (height spring, then fade-in). */}
+                  <AnimatePresence initial={false}>
+                    {isActive ? (
+                      <motion.div
+                        key="more"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1, transition: { height: { duration: 0.45, ease: ease.resize }, opacity: { duration: 0.3, delay: 0.1 } } }}
+                        exit={{ height: 0, opacity: 0, transition: { height: { duration: 0.35, ease: ease.resize }, opacity: { duration: 0.15 } } }}
+                        className="w-full overflow-hidden"
+                      >
+                        <p className="pt-3 pl-[3.6rem] text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
+                        <div className="mt-4 w-full rounded-xl border border-foreground/10 bg-card px-4 py-2.5 text-xs">
+                          <span className="font-semibold text-primary">{step.previewTitle}: </span>
+                          <span className="text-muted-foreground">{step.previewText}</span>
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
                 </button>
               );
 
@@ -256,5 +277,6 @@ export function HowItWorks() {
         </div>
       </div>
     </section>
+    </MotionConfig>
   );
 }

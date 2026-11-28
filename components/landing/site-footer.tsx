@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FooterWave } from "@/components/landing/footer-wave";
 
 const columns = [
   {
@@ -35,6 +36,9 @@ const columns = [
  */
 export function SiteFooter() {
   return (
+    <>
+    {/* Morphing wave seam from the page into the footer (footer colour unchanged). */}
+    <FooterWave />
     <footer className="relative overflow-hidden bg-foreground text-background">
       <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)] md:px-6">
         <div>
@@ -80,5 +84,6 @@ export function SiteFooter() {
         </p>
       </div>
     </footer>
+    </>
   );
 }
