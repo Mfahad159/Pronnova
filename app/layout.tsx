@@ -3,6 +3,7 @@ import { Quicksand } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { PageLoader } from "@/components/brand/page-loader";
+import { AppCursor } from "@/components/brand/app-cursor";
 import "./globals.css";
 
 // Single font across the entire app (body, headings, and code/phonetics): Quicksand, variable weight.
@@ -39,6 +40,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <PageLoader />
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster />
+        {/* Coral arrow cursor across the whole app (Animate UI cursor; mouse/pen only). */}
+        <AppCursor />
       </body>
     </html>
   );

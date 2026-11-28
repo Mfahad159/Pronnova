@@ -1,16 +1,15 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { MousePointer2 } from "lucide-react";
 import { ThinkingOrb } from "thinking-orbs";
-import { Cursor, CursorContainer, CursorFollow, CursorProvider } from "@animate-ui/react/primitives/cursor";
+import { CursorContainer, CursorFollow, CursorProvider } from "@animate-ui/react/primitives/cursor";
 import { ease } from "@animate-ui/react/utils/motion";
 import { CORAL, LOOK, type MicStatus } from "@/features/voice/mic-status";
 import { cn } from "@/lib/utils";
 
 /**
- * Animate UI cursor for the mic section: inside the section the pointer becomes a coral arrow with a
- * small tag that follows it and shows the mic state (tiny thinking-orb + "Ready", "Listening"…).
+ * Animate UI cursor tag for the mic section: inside the section a small tag follows the app-wide coral
+ * arrow (components/brand/app-cursor.tsx) and shows the mic state (tiny thinking-orb + "Ready", "Listening"…).
  * Drop it in as a child of the mic section; it listens on that parent. Mouse and pen only (touch is
  * ignored by the primitive), decorative (aria-hidden): the state is also written out in the section.
  */
@@ -19,9 +18,6 @@ export function MicCursor({ status }: { status: MicStatus }) {
   return (
     <CursorProvider>
       <CursorContainer aria-hidden className="pointer-events-none absolute inset-0">
-        <Cursor>
-          <MousePointer2 className="size-5 -translate-x-0.5 -translate-y-0.5 fill-primary text-primary" />
-        </Cursor>
         <CursorFollow side="bottom" align="end" sideOffset={10}>
           <motion.span
             layout
