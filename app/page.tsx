@@ -1,3 +1,4 @@
+import { RoleTransition } from "@/components/animate-ui/components/page-transition";
 import { LandingNav } from "@/components/layout/landing-nav";
 import { AssessmentShowcase } from "@/components/landing/assessment-showcase";
 import { ClassroomWorkflow } from "@/components/landing/classroom-workflow";
@@ -17,7 +18,7 @@ import { YoungLearners } from "@/components/landing/young-learners";
 // are clearly labelled as illustrative demonstration data.
 export default function Home() {
   return (
-    <>
+    <RoleTransition area="landing">
       <LandingNav />
       <main>
         <HeroCard />
@@ -33,6 +34,6 @@ export default function Home() {
         <FinalCta />
       </main>
       <SiteFooter />
-    </>
+    </RoleTransition>
   );
 }

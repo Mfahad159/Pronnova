@@ -55,7 +55,7 @@ Student window → `http://localhost:3000/student`.
   - score %, class (Excellent/Good/Average), coloured words, tricky sounds;
   - **Hear it again**, **Try again**, **Next word**.
 - Back to the dashboard → **Recent attempts** → ▶ play your own recording (private link, expires in 5 min).
-- Reload the page: still Ayesha (remembered on this device). Profile menu → **Not you? Switch student**.
+- Reload the page: still Ayesha (remembered on this device). User menu (bottom of the sidebar) → **Not you? Switch student**.
 
 ## 4. Teacher again: the lock rule (1 min)
 - Teacher window → Materials → open **Demo words**:

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -21,6 +22,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Highlight,
@@ -51,6 +53,16 @@ export function SidebarNavStatic({ groups }: { groups: NavGroup[] }) {
 
 export function SidebarNav({ groups }: { groups: NavGroup[] }) {
   const pathname = usePathname();
+  // Phones and tablets: the menu is a drawer; close it once the chosen page opens. Only on a real
+  // page change: this nav mounts fresh inside the drawer each time it opens, so a plain
+  // on-mount close would shut the drawer straight away.
+  const { setOpenMobile } = useSidebar();
+  const shownFor = useRef(pathname);
+  useEffect(() => {
+    if (shownFor.current === pathname) return;
+    shownFor.current = pathname;
+    setOpenMobile(false);
+  }, [pathname, setOpenMobile]);
   // Longest matching href wins, so /student/chapters/x highlights "Chapters".
   // Role home (/student, /teacher) only matches exactly.
   const activeHref =

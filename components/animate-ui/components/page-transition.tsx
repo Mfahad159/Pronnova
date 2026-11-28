@@ -22,6 +22,8 @@ type PageTransitionEffect =
   | 'stack'
   | 'flow'
   | 'chop'
+  | 'morph'
+  | 'content'
   | 'random';
 
 type Effect = Exclude<PageTransitionEffect, 'random'>;
@@ -79,7 +81,15 @@ const CLIP =
   ':root[data-page-transition]::view-transition-old(root){display:none}:root[data-page-transition]::view-transition-new(root){animation:none}' +
   '::view-transition-image-pair(*.page-transition){overflow:clip}' +
   '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
-  '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
+  '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}' +
+  // Pronnova: the app top bar has its own view-transition name, so on a page change inside an area
+  // it stays in place (its text cross-fades) while only the content below swaps. On a role switch it
+  // fades in with the new area instead of morphing between two different bars.
+  '.app-top-bar{view-transition-name:app-top-bar}' +
+  ':root[data-role-switch]::view-transition-old(app-top-bar){animation:none;opacity:0}' +
+  ':root[data-role-switch]::view-transition-new(app-top-bar){animation:pn-role-bar-in .6s cubic-bezier(.22,1,.36,1) both}' +
+  ':root[data-role-switch]::view-transition-group(app-top-bar){animation:none}' +
+  '@keyframes pn-role-bar-in{from{opacity:0;filter:blur(16px)}to{opacity:1;filter:none}}';
 
 const SHARE = { duration: 0.45, ease: ease.resize };
 
@@ -134,12 +144,60 @@ function morphRadius(name: string, from: string | undefined, to: string) {
   transition?.finished.finally(() => animation.cancel());
 }
 
+// Pronnova: flags a role switch for the CLIP rules above, until the view transition ends.
+function markRoleSwitch() {
+  const root = document.documentElement;
+  root.setAttribute('data-role-switch', '');
+  const transition = (
+    document as Document & { activeViewTransition?: ViewTransition | null }
+  ).activeViewTransition;
+  const clear = () => root.removeAttribute('data-role-switch');
+  if (transition) void transition.finished.catch(() => {}).finally(clear);
+  else setTimeout(clear, 800);
+}
+
 const middle = ({ top, bottom }: Frame) => `50% ${(top + bottom) / 2}px`;
 
 const EFFECTS: Record<
   Effect,
   (back: boolean, enter: Frame, exit: Frame) => EffectAnimation
 > = {
+  // Pronnova: role switches (landing / onboarding / student / teacher). The new area zooms in from
+  // the middle of the screen (60% -> 100%) out of a blur; the old one fades and blurs away.
+  morph: (_, enter, exit) => ({
+    enter: {
+      opacity: [0, 1],
+      transform: ['scale(0.6)', 'none'],
+      transformOrigin: [middle(enter), middle(enter)],
+      filter: ['blur(16px)', 'blur(0px)'],
+      transition: { duration: 0.6, ease: ease.out },
+    },
+    exit: {
+      opacity: [1, 0],
+      transform: ['none', 'scale(1.06)'],
+      transformOrigin: [middle(exit), middle(exit)],
+      filter: ['blur(0px)', 'blur(16px)'],
+      transition: { duration: 0.3, ease: ease.leave },
+    },
+  }),
+  // Pronnova: page changes inside one area. Same centre zoom, but gentle, so it feels like the
+  // section's content is swapping on the same page (the top bar stays put, see CLIP).
+  content: (_, enter, exit) => ({
+    enter: {
+      opacity: [0, 1],
+      transform: ['scale(0.92)', 'none'],
+      transformOrigin: [middle(enter), middle(enter)],
+      filter: ['blur(8px)', 'blur(0px)'],
+      transition: { duration: 0.4, ease: ease.out },
+    },
+    exit: {
+      opacity: [1, 0],
+      transform: ['none', 'scale(1.03)'],
+      transformOrigin: [middle(exit), middle(exit)],
+      filter: ['blur(0px)', 'blur(8px)'],
+      transition: { duration: 0.2, ease: ease.leave },
+    },
+  }),
   fade: () => ({
     enter: {
       opacity: [0, 1],
@@ -505,7 +563,42 @@ function PageTransitionShared({
   );
 }
 
+type RoleTransitionProps = React.ComponentProps<'div'> & {
+  /** Which area this is (e.g. "landing", "student"). A different area mounts a new boundary. */
+  area: string;
+};
+
+/**
+ * Pronnova: wraps a whole area (landing, onboarding, student, teacher). Moving between areas plays
+ * the `morph` effect (push + scale + blur); `nav-back` reverses it. Needs no pathname, so it can
+ * sit outside Suspense and the area's static shell still prerenders.
+ */
+function RoleTransition({ area, children, ...props }: RoleTransitionProps) {
+  const reduce = useShouldReduceMotion();
+  const localRef = React.useRef<HTMLDivElement>(null);
+  const run = (types: string[]) => {
+    markRoot();
+    markRoleSwitch();
+    const frame = localRef.current
+      ? frameOf(localRef.current)
+      : { width: innerWidth, top: 0, bottom: innerHeight, x: innerWidth / 2, y: innerHeight / 2 };
+    return EFFECTS[reduce ? 'fade' : 'morph'](types.includes('nav-back'), frame, frame);
+  };
+  return (
+    <AnimateView key={area} enter={(types) => run(types).enter} exit={(types) => run(types).exit}>
+      <div ref={localRef} data-slot="role-transition" data-area={area} {...props}>
+        <style href="page-transition" precedence="default">
+          {CLIP}
+        </style>
+        {children}
+      </div>
+    </AnimateView>
+  );
+}
+
 export {
+  RoleTransition,
+  type RoleTransitionProps,
   PageTransition,
   PageTransitionShared,
   type PageTransitionProps,

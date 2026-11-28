@@ -1,25 +1,19 @@
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/layout/page-skeleton";
-import Link from "next/link";
-import { SignOut } from "@phosphor-icons/react/ssr";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { BrandLogo } from "@/components/layout/brand-logo";
-import { Eyebrow } from "@/components/brand/ui";
+import { RoleSwitcher } from "@/components/layout/role-switcher";
+import { CurrentUserMenu, UserMenuFallback } from "@/components/layout/current-user-menu";
 import { SidebarNav, SidebarNavStatic } from "@/components/layout/sidebar-nav";
 import { navByRole } from "@/lib/navigation";
-import { CurrentStudentMenu } from "@/features/student/current-student-menu";
-import { PageTransition } from "@/components/animate-ui/components/page-transition";
+import { PageTransition, RoleTransition } from "@/components/animate-ui/components/page-transition";
 import type { Role } from "@/types";
 
 /** Sidebar + main area for /student/* and /teacher/* (layout idea: docs/design.md). */
@@ -27,40 +21,25 @@ import type { Role } from "@/types";
 export function AppShell({ role, children }: { role: Role; children: React.ReactNode }) {
   const groups = navByRole[role];
   return (
+    // Role switches (onboarding <-> student <-> teacher) zoom the whole area in from the middle;
+    // page changes inside the area only swap the content (the top bar stays).
+    <RoleTransition area={role}>
     <SidebarProvider>
-      <Sidebar collapsible="icon" className="border-r border-foreground/10 [&_[data-slot=sidebar-inner]]:bg-card">
-        <SidebarHeader className="gap-3 px-3 pt-5">
-          <BrandLogo href={`/${role}`} />
-          <Eyebrow tone={role === "student" ? "coral" : "sky"} className="ml-1 group-data-[collapsible=icon]:hidden">
-            {role === "student" ? "Student" : "Teacher"} · Demo
-          </Eyebrow>
-          {/* Student profile menu (who's practising + "Not you? Switch student"); request-time, so in Suspense. */}
-          {role === "student" ? (
-            <Suspense fallback={null}>
-              <CurrentStudentMenu />
-            </Suspense>
-          ) : null}
+      <Sidebar collapsible="offcanvas" className="border-r border-foreground/10 [&_[data-slot=sidebar-inner]]:bg-card">
+        {/* Animate UI sidebar layout: role switcher on top, nav in the middle, user card at the bottom. */}
+        <SidebarHeader className="px-3 pt-4">
+          <RoleSwitcher role={role} />
         </SidebarHeader>
         <SidebarContent>
           <Suspense fallback={<SidebarNavStatic groups={groups} />}>
             <SidebarNav groups={groups} />
           </Suspense>
         </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Switch role"
-                className="h-11 rounded-xl border-2 border-foreground/15 bg-card font-heading font-semibold hover:border-primary/40 hover:bg-secondary/50 group-data-[collapsible=icon]:border-0 [&_svg]:size-5"
-              >
-                <Link href="/onboarding">
-                  <SignOut />
-                  <span>Switch role</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+        <SidebarFooter className="p-3">
+          {/* Who's using Pronnova + menu (Switch student, Switch role); request-time, so in Suspense. */}
+          <Suspense fallback={<UserMenuFallback role={role} />}>
+            <CurrentUserMenu role={role} />
+          </Suspense>
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
@@ -70,11 +49,12 @@ export function AppShell({ role, children }: { role: Role; children: React.React
             NOT {children}: rendering the page in both places put two live copies of every form and
             recorder in the DOM while the stream swapped them (found 2026-11-28). */}
         <Suspense fallback={<PageSkeleton />}>
-          <PageTransition effect="slide" className="flex min-h-full flex-col bg-background">
+          <PageTransition effect="content" className="flex min-h-full flex-col bg-background">
             {children}
           </PageTransition>
         </Suspense>
       </SidebarInset>
     </SidebarProvider>
+    </RoleTransition>
   );
 }

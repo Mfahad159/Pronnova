@@ -33,11 +33,14 @@ test("chapter → item → practice flow uses real data", async ({ page }) => {
   await expect(page.getByText("van", { exact: true })).toBeVisible();
 });
 
-test("landing Choose Role → onboarding → choose student or teacher", async ({ page }) => {
+test("landing Get started → onboarding (with setup steps) → choose student or teacher", async ({ page }) => {
   await page.goto("/");
-  // The landing page links to the role chooser through "Choose Role" (redesign 3b4bd89).
-  await page.getByRole("link", { name: "Choose Role" }).first().click();
+  // Hero "Get started" opens the role chooser (2026-11-28 UI corrections).
+  await page.getByRole("main").getByRole("link", { name: /^get started/i }).click();
   await expect(page).toHaveURL(/\/onboarding$/);
+  const steps = page.getByRole("navigation", { name: "Setup progress" });
+  await expect(steps).toBeVisible();
+  await expect(steps.locator('[aria-current="step"]')).toContainText("Choose role");
   await page.getByRole("link", { name: /i'm a student/i }).click();
   await expect(page.getByRole("heading", { level: 1, name: /^hi, ayesha/i })).toBeVisible();
   await page.goto("/onboarding");

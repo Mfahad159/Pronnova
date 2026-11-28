@@ -43,7 +43,7 @@ Simple rule: **pages are thin**. A page loads data and puts feature components o
 - The rules are in `lib/progress.ts`; the server enforces them on the practice page and the attempts API.
 
 ### Who is logged in? (FYP-1)
-No login in FYP-1 (see `decisions/002-fyp1-no-auth.md`). The landing page's **Get started** opens `/onboarding`, where you choose **demo student** or **demo teacher** (also reachable from "Switch role" in the sidebar). Real sign-up/sign-in comes in FYP-2.
+No login in FYP-1 (see `decisions/002-fyp1-no-auth.md`). The landing page's **Get started** opens `/onboarding`, where you choose **demo student** or **demo teacher** (also reachable from the role switcher at the top of the sidebar and "Switch role" in the user menu at the bottom). Setup steps (pills) show the way: Choose role → Pick class → Find your name → Start. Real sign-up/sign-in comes in FYP-2.
 
 ## 3. Run it locally
 Needs: Node.js 22+ (Supabase dropped Node 20), npm, and a free Supabase project.
@@ -93,7 +93,7 @@ npm run build
 - The logo loader shows on every full page load (opening the site, refresh), not when moving between pages inside the app. It waits for the page to load, finishes the current bite, then fades; it never stays longer than 8 s.
 - Motion comes from Animate UI (ADR-008). Added a new shadcn component? Run `npx @animate-ui/cli@latest animate <name>` to animate it. Gotchas: a `Highlight` needs `inset-0` in its `className` (else it is 0×0); don't use `HighlightItem asChild` around a link (it nests the link twice) — use `as="li"`; anything that calls `usePathname()` in a layout must sit in `<Suspense>` (Cache Components).
 - CSS modules (`*.module.css`) don't work here: `next.config.ts` sends every `.css` file through Tailwind as plain CSS. Use Tailwind classes, or a plain `.css` file with prefixed class names (like `components/brand/page-loader.css`).
-- **Students pick their name** (no login): the first visit on a device shows "Who are you?" (class → name → Continue). The id is kept in `localStorage` (`pronnova.studentId`) and mirrored to a cookie so server pages can read it. **Switch student** is in the profile menu at the top of the sidebar. An archived student is sent back to the picker.
+- **Students pick their name** (no login): the first visit on a device shows "Who are you?" (class → name → Continue). The id is kept in `localStorage` (`pronnova.studentId`) and mirrored to a cookie so server pages can read it. **Switch student** is in the user menu at the bottom of the sidebar. An archived student is sent back to the picker.
 - **Teacher screens:** *Classes & Students* (roster, archive instead of delete), *Materials* (library: search, filter, Open / Assign / Duplicate) and the material editor (Write / Paste / Upload Word). The old upload form is gone: `/teacher/materials/new` is the editor.
 - **Before a release / the evaluation:** follow "How to re-run" in `docs/qa-report.md`. Browser tests are steadiest against a production build: `npm run build; npx next start -p 3100`, then run Playwright with `E2E_BASE_URL=http://localhost:3100` (no retries). Against `npm run dev` they get 60 s and 1 retry because the dev server compiles pages on first use. `E2E_EDGE=1` adds Microsoft Edge. Demo steps: `docs/demo-script.md`.
 - The curriculum (chapters → lessons → items) is cached for everyone; a material save refreshes it at once, a reseed within about a minute.
@@ -128,6 +128,7 @@ Only variables starting with `NEXT_PUBLIC_` reach the browser. Everything else s
 |---|---|
 | Add a page | `app/<area>/<name>/page.tsx` using `TopBar` + `PageBody`, then add it to `codebase-index.md` |
 | Change sidebar links | `lib/navigation.ts` |
+| Page transitions (role switch zoom, in-area content swap) | `components/animate-ui/components/page-transition.tsx` |
 | Change colors | Tokens at the top of `app/globals.css` — not inside components |
 | Change fonts | `app/layout.tsx` (load) + `--font-sans` / `--font-heading` in `app/globals.css` |
 | Add a shadcn component | `npx shadcn@4.23.0 add <name>` → lands in `components/ui/` |

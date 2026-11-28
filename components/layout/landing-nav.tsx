@@ -29,9 +29,9 @@ const links = [
 
 /**
  * Sticky floating white rounded landing navbar with Pronnova logo, section links,
- * and a primary "Try the Demo" KiddyButton.
+ * and a primary "Get started" KiddyButton (to role selection; hidden on that page).
  */
-export function LandingNav() {
+export function LandingNav({ showCta = true }: { showCta?: boolean }) {
   return (
     <header className="sticky top-0 z-30 bg-transparent px-3 pt-3 sm:px-6">
       <nav
@@ -68,13 +68,15 @@ export function LandingNav() {
             </ul>
           </Highlight>
 
-          <KiddyButton
-            href="/#demo"
-            size="sm"
-            className="shrink-0 whitespace-nowrap"
-          >
-            Try the Demo
-          </KiddyButton>
+          {showCta ? (
+            <KiddyButton
+              href="/onboarding"
+              size="sm"
+              className="shrink-0 whitespace-nowrap"
+            >
+              Get started
+            </KiddyButton>
+          ) : null}
 
           <Sheet>
             <SheetTrigger asChild>

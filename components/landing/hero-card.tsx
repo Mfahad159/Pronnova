@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { KiddyButton } from "@/components/brand/kiddy-button";
-import { SwappingText } from "@animate-ui/react/primitives/texts/swapping";
+import { HeroTagline } from "@/components/landing/hero-tagline";
 
 /**
  * SECTION 01 — HERO: "Helping Little Voices Grow"
@@ -28,30 +29,22 @@ export function HeroCard() {
 
         {/* Central headline, supporting copy, and dual CTAs */}
         <div className="mx-auto mt-3 flex max-w-2xl flex-col items-center text-center md:mt-5">
-          <h1
-            id="hero-title"
-            className="font-heading text-4xl leading-[1.08] font-bold tracking-tight text-balance text-foreground sm:text-5xl lg:text-[3.35rem]"
-          >
-            Helping little voices grow,{" "}
-            {/* Animate UI SwappingText: the key word swaps letter by letter (screen readers hear it once). */}
-            <span className="text-brand-coral">
-              one <SwappingText text={["word", "sound", "smile"]} duration={2600} delay={1200} /> at a time.
-            </span>
-          </h1>
+          <HeroTagline />
 
           <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
             An interactive pronunciation learning experience for Class 1 learners in Pakistan, helping students practise speaking while teachers understand their progress.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
-            <KiddyButton href="/#demo" size="lg">
-              Explore the Experience
+            {/* Primary: straight to role selection (onboarding). Secondary: try the voice demo here. */}
+            <KiddyButton href="/onboarding" size="lg">
+              Get started <ArrowRight className="size-5" aria-hidden />
             </KiddyButton>
             <Link
-              href="/#how-it-works"
+              href="/#demo"
               className="inline-flex h-13.5 items-center justify-center rounded-[0.875rem] border-2 border-foreground/20 bg-card px-7 font-heading text-base font-semibold text-foreground outline-none transition-colors hover:border-foreground/40 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring"
             >
-              See How It Works
+              Try the demo
             </Link>
           </div>
         </div>

@@ -175,7 +175,7 @@ test("5. first visit shows the picker; reload goes to the dashboard; Switch work
   await page.getByRole("button", { name: /open profile menu/i }).click();
   await page.getByRole("menuitem", { name: /switch student/i }).click();
   await expect(page).toHaveURL(/\/student\/who$/);
-  await expect(page.getByText(/step 1 · pick your class/i)).toBeVisible();
+  await expect(page.getByText(/^pick your class$/i)).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem("pronnova.studentId"))).toBeNull();
   await ctx.close();
 });

@@ -15,7 +15,7 @@ export function TopBar({
   action?: React.ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-10 bg-background/80 px-3 pt-3 pb-1 backdrop-blur-md sm:px-5">
+    <header className="app-top-bar sticky top-0 z-10 bg-background/80 px-3 pt-3 pb-1 backdrop-blur-md sm:px-5">
       <div className="mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center gap-3 rounded-2xl border border-foreground/10 bg-card/95 px-3 py-2.5 sm:px-4">
         <Tooltip>
           <TooltipTrigger asChild>

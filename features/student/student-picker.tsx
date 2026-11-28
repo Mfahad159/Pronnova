@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CircleNotch, Check } from "@phosphor-icons/react/ssr";
 import { KiddyButton } from "@/components/brand/kiddy-button";
 import { PikoSays } from "@/components/brand/piko";
+import { SetupSteps } from "@/components/brand/setup-steps";
 import { Panel, PanelHeader, PanelTitle } from "@/components/brand/ui";
 import { api } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
   const [chosen, setChosen] = useState<string | null>(null);
   const [error, setError] = useState<string>();
   const [pending, start] = useTransition();
+  const [finished, setFinished] = useState(false);
 
   // Returning visitor: re-use the saved student if they're still active.
   useEffect(() => {
@@ -78,14 +80,20 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
     setError(undefined);
   };
 
-  const proceed = () =>
+  const proceed = () => {
+    if (!chosen) return;
+    // Outside the transition so the last step ticks green at once, while the dashboard loads.
+    setFinished(true);
     start(async () => {
-      if (!chosen) return;
       const r = await rememberStudent(chosen);
-      if (!r.ok) return setError(r.status === 404 ? "That name isn't available any more. Pick again." : (r.error ?? undefined));
+      if (!r.ok) {
+        setFinished(false);
+        return setError(r.status === 404 ? "That name isn't available any more. Pick again." : (r.error ?? undefined));
+      }
       router.replace("/student");
       router.refresh();
     });
+  };
 
   if (checking) {
     return (
@@ -97,13 +105,20 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
 
   const cls = classes.find((c) => c.id === classId);
 
-  if (!cls) {
+  return (
+    <div className="space-y-6">
+      <SetupSteps current={cls ? 2 : 1} finished={finished} />
+      {cls ? renderNames(cls) : renderClasses()}
+    </div>
+  );
+
+  function renderClasses() {
     return classes.length === 0 ? (
       <PikoSays tone="cream" message="No classes yet. Ask your teacher!" />
     ) : (
       <Panel>
         <PanelHeader>
-          <PanelTitle>Step 1 · Pick your class</PanelTitle>
+          <PanelTitle>Pick your class</PanelTitle>
         </PanelHeader>
         <ul className="grid gap-3 p-5 sm:grid-cols-2 sm:p-6">
           {classes.map((c, i) => (
@@ -126,10 +141,11 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
     );
   }
 
-  return (
+  function renderNames(cls: PickerClass) {
+    return (
     <Panel>
       <PanelHeader>
-        <PanelTitle>Step 2 · Find your name in {cls.name}</PanelTitle>
+        <PanelTitle>Find your name in {cls.name}</PanelTitle>
         <button type="button" onClick={() => pickClass(null)} className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
           <ArrowLeft className="size-4" aria-hidden /> Other class
         </button>
@@ -183,5 +199,6 @@ export function StudentPicker({ classes }: { classes: PickerClass[] }) {
         </KiddyButton>
       </div>
     </Panel>
-  );
+    );
+  }
 }

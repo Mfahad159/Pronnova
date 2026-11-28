@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react/ssr";
+import { RoleTransition } from "@/components/animate-ui/components/page-transition";
 import { LandingNav } from "@/components/layout/landing-nav";
+import { SetupSteps } from "@/components/brand/setup-steps";
 
 export const metadata = { title: "Get started" };
 
@@ -26,17 +28,21 @@ const roles = [
 // FYP-2 will route these choices to Sign up / Sign in instead.
 export default function OnboardingPage() {
   return (
-    <div className="flex min-h-svh flex-col">
-      <LandingNav />
+    <RoleTransition area="onboarding" className="flex min-h-svh flex-col">
+      <LandingNav showCta={false} />
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 py-10 md:px-6">
         <Link
           href="/"
+          transitionTypes={["nav-back"]}
           className="mb-6 inline-flex w-fit items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring"
         >
           <ArrowLeft className="size-4" /> Back
         </Link>
+        <SetupSteps current={0} className="mb-8" />
         <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl">How will you use Pronnova?</h1>
-        <p className="mt-2 text-muted-foreground">Choose one to continue. You can switch any time from the menu.</p>
+        <p className="mt-2 text-muted-foreground">
+          Choose one to continue. Students then pick their class and name; teachers go straight to their dashboard.
+        </p>
 
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {roles.map((r) => (
@@ -63,6 +69,6 @@ export default function OnboardingPage() {
         </ul>
         <p className="mt-6 text-xs text-muted-foreground">Demo mode: no sign-in, sample data only.</p>
       </main>
-    </div>
+    </RoleTransition>
   );
 }
